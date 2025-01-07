@@ -5510,18 +5510,6 @@ bool NPopupMenuWindow::handle_key(NKeyEventArgs& event_args) {
 }
 
 
-NPopupMenuWindow::ptr NPopupMenuWindow::create(
-    NWindow::ptr parentWindow,
-    const std::vector<NMenuItem>& menu_items,
-    const NRect& anchor,
-    NAttachment attachment
-) {
-    ptr result = ptr(new self(parentWindow, anchor, attachment));
-    result->Init(parentWindow, menu_items);
-    result->add_to_parent_window(parentWindow);
-    return result;
-}
-
 
 void NPopupMenuWindow::close()
 {

@@ -334,11 +334,14 @@ private:
             *pErrorCode = U_BUFFER_OVERFLOW_ERROR;
             return length;
         }
-        memcpy(dest, src, length * sizeof(UChar));
-        if (length+1 < capacity)
+        if (dest != nullptr)
         {
-            dest[length] = 0;
-        }   
+            memcpy(dest, src, length * sizeof(UChar));
+            if (length+1 < capacity)
+            {
+                dest[length] = 0;
+            }   
+        }
         return length;
     }
     

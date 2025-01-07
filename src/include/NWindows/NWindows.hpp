@@ -1470,11 +1470,11 @@ namespace nwindows
 
 
         PostHandle post(
-            NWindow::clock_t::duration delay, 
+            NWindow::clock_t::duration delay,
             std::function<void(void)>&& fn);
 
         PostHandle post(
-            NWindow::clock_t::time_point when, 
+            NWindow::clock_t::time_point when,
             std::function<void(void)>&& fn);
 
         PostHandle post(std::function<void(void)>&& fn);
@@ -2486,6 +2486,19 @@ namespace nwindows
     inline void NWindow::w_color_pair_off(NColorPair colorPair) {
         wattr_off(curses_window_, colorPair.attr, nullptr);
     }
+
+    inline NPopupMenuWindow::ptr NPopupMenuWindow::create(
+        NWindow::ptr parentWindow,
+        const std::vector<NMenuItem>& menu_items,
+        const NRect& anchor,
+        NAttachment attachment
+    ) {
+        ptr result = ptr(new self(parentWindow, anchor, attachment));
+        result->Init(parentWindow, menu_items);
+        result->add_to_parent_window(parentWindow);
+        return result;
+    }
+
 
 
 
