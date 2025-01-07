@@ -1,8 +1,8 @@
 #### NWindows TUI Library
-<!--[![Build Status](https://github.com/reravies/nwindows.svg?branch=master)](https://github.com/rerdavies/nwindows) -->
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Build Status](https://github.com/rerdavies/nwindows/actions/workflows/cmake-multi-platform.yml/badge.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  
 [![Documentation](https://img.shields.io/badge/documentation-Developer%20Guide-blue)](https://reravies.github.io/nwindows/documentation)
-[![Documentation](https://img.shields.io/badge/documentation-Examples-blue)](https://reravies.github.io/nwindows/examples)
+[![Documentation](https://img.shields.io/badge/documentation-Examples-blue)](https://github.com/rerdavies/nwindows/tree/main/examples)
 <!--[![Documentation](https://img.shields.io/badge/documentation-Release%20Notes-blue)](https://reravies.github.io/nwindows/) -->
 
 INITIAL DEPLOYMENT IN PROGRESS. NOT YET READY FOR USE!!!
