@@ -1,4 +1,4 @@
-import React, {useEffect,useState} from 'react';
+import {useState} from 'react';
 import PageColumn from './PageColumn';
 import SearchBox from './SearchBox';
 import { useLocation, useNavigate } from 'react-router-dom';

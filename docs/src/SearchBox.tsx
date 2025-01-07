@@ -74,6 +74,9 @@ export class SearchBox extends React.Component<SearchBoxProps, SearchBoxState> {
         }
     }
     componentDidUpdate(prevProps: Readonly<SearchBoxProps>, prevState: Readonly<SearchBoxState>, snapshot?: any): void {
+        prevState as any;
+        snapshot as any;
+        
         if (prevProps.initialText !== this.props.initialText) {
             this.setState({ searchText: this.props.initialText ?? "" });
         }
@@ -118,7 +121,6 @@ export class SearchBox extends React.Component<SearchBoxProps, SearchBoxState> {
                     }
                 >
                     <TextField id="standard-basic"
-                        freeSolo
                         inputRef={(input) => {
                             this.inputRef = input as HTMLInputElement;
                             if (this.inputRef) {
