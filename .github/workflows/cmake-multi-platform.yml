@@ -5,11 +5,10 @@ name: CMake on multiple platforms
 on:
   push:
     branches: [ "main", "dev" ]
-  #pull_request:
-  #  branches: [ "main" ]
-   paths-ignore:
-      - "docs/**"
-
+    #pull_request:
+    #  branches: [ "main" ]
+    paths:
+       - !docs/**
 jobs:
   build:
     runs-on: ${{ matrix.os }}
