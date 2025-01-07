@@ -1,0 +1,18 @@
+#build files
+build/
+core
+.vscode/*
+
+Testing/
+
+docs/package-lock.json
+
+CMakeFiles
+
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

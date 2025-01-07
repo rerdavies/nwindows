@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg5"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2" />
+  <g
+     id="layer1">
+    <path
+       id="rect1937"
+       style="display:inline;fill:#ff0000"
+       d="m 61.917969,36.525391 c 0,152.201169 0,304.402339 0,456.603519 132.431641,0 264.863281,0 397.294921,0 0,-152.86784 0,-305.73568 0,-458.603519 -132.43164,0 -264.86328,0 -397.294921,0 0,0.666666 0,1.333333 0,2 z" />
+    <rect
+       style="display:inline;fill:#000000;stroke-width:0.95288"
+       id="rect1995"
+       width="314.375"
+       height="323.93958"
+       x="101.0957"
+       y="133.92569" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:395.154px;font-family:Roboto;-inkscape-font-specification:'Roboto Heavy';text-align:end;text-anchor:end;display:inline;fill:#000000;stroke-width:2.31535"
+       x="354.59445"
+       y="417.74161"
+       id="text2103"
+       transform="scale(1.0631353,0.94061405)"><tspan
+         id="tspan2101"
+         x="354.59445"
+         y="417.74161"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-family:Roboto;-inkscape-font-specification:'Roboto Heavy';fill:#ff0000;stroke-width:2.31535">n</tspan></text>
+  </g>
+</svg>

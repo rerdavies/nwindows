@@ -1,0 +1,23 @@
+---
+BasedOnStyle: Microsoft
+AccessModifierOffset: -4
+AlignAfterOpenBracket: AlwaysBreak
+AlignOperands: AlignAfterOperator
+AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeBinaryOperators: All
+BreakBeforeBraces: Allman
+BreakConstructorInitializers: BeforeComma
+BreakFunctionDefinitionParameters: true
+BreakInheritanceList: AfterComma
+CompactNamespaces: true
+ConstructorInitializerIndentWidth: 2
+ExperimentalAutoDetectBinPacking: true
+NamespaceIndentation: All
+PackConstructorInitializers: Never
+RemoveSemicolon: true
+SpaceBeforeCtorInitializerColon: false
+KeepEmptyLinesAtEOF: false
+BracedInitializerIndentWidth: 4
