@@ -36,8 +36,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: ''  # was 'npm'
-                # probably needs cache-dependency-path: ''
+          cache: 'npm'  # was 'npm'
+          cache-dependency-path: './docs/package-lock.json
       - name: Install dependencies
         working-directory: ./docs
         run: npm ci
