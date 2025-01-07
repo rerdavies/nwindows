@@ -3433,7 +3433,9 @@ void NButtonElement::suffix(const std::string& value) {
 }
 
 
+#ifdef DEBUG_NELEMENT_LIFECYCLE
 uint64_t NElement::g_allocated_element_count_ = 0;
+#endif
 
 NElement::NElement(const std::string& elementTag)
     : tag_(elementTag)
