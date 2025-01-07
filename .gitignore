@@ -5,8 +5,6 @@ core
 
 Testing/
 
-docs/package-lock.json
-
 CMakeFiles
 
 .idea
