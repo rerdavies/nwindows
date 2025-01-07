@@ -10,9 +10,11 @@ The library uses elements to compose user interfaces using an innovative and con
 
 Built on top of the *ncursesw* library, *NWindows* works on both xterm and raw linux terminal windows, and also works over ssh.
 
-![image](docs/image/screenshot.png")
+![image](docs/public/image/screenshot.png")
 
-<img src="docs/image/screenshot.png" alt="screenshot" style="width: 80%, max-width: max-width: 600, margin-left: 16px/>
+xxx
+
+<img src="docs/public/image/screenshot.png" alt="screenshot" style="width: 80%, max-width: max-width: 600, margin-left: 16px/>
 
 Here is a simple example of an *NWindows* application that demonstrates the use of NWindow's manipulator syntax to create users interfaces. The program creates a window with a button that closes the window when clicked:
         
@@ -42,7 +44,7 @@ int main(void) {
 
 which display the following output when executed.
 
-![image](docs/image/hello_world.png)
+![image](docs/public/image/hello_world.png)
 
 See the [documentation](https://github.io/rerdavies/nwindows"> for instructions on installing, and using 
 *NWindows*.
