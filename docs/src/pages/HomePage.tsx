@@ -11,6 +11,7 @@ function HomePage() {
         <PageColumn>
             <div>
                 <Banner subtitle="TUI Library"/>
+                <p>INITIAL DEPLOYMENT IN PROGRESS. NOT YET READY FOR USE!!!</p>
                 <p>
                     The <span className="name">NWindows</span> library is a C++ text user interface (TUI) library for building console applications.
                     The library uses elements to compose user interfaces using an innovative and concise manipulator system. The library provides a

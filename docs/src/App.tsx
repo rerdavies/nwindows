@@ -1,13 +1,15 @@
 import React, { useEffect } from 'react';
 import logo from '/logo.svg'
 
-import './App.css'
-import Toolbar from '@mui/material/Toolbar'
-import Button from '@mui/material/Button'
+import './App.css';
+import Toolbar from '@mui/material/Toolbar';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
 import HomeIcon from '@mui/icons-material/Home';
 import ArticleIcon from '@mui/icons-material/Article';
 import ApiIcon from '@mui/icons-material/Api';
 import ArrowDropdownIcon from '@mui/icons-material/ArrowDropDown';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 import Divider from '@mui/material/Divider'
 import Paper from '@mui/material/Paper'
@@ -139,6 +141,11 @@ function App() {
                                     return true;
                                 }} />
                         )}
+                        <IconButton onClick={()=>{
+                            window.open("https://github.com/rerdavies/nwindows/","_blank");
+                        }}> 
+                            <GitHubIcon />
+                        </IconButton>
                     </React.Fragment>) :
                         (<React.Fragment>
                             {/************* COMPACT NAV BAR */}

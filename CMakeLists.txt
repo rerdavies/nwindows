@@ -13,4 +13,7 @@ add_subdirectory("examples/hello_world")
 add_subdirectory("examples/hello_world2")
 add_subdirectory("examples/context_edit")
 
-add_subdirectory("docs")
+# Docs are built by seperate CI step on github. The main CI build doesn't have NPM/Node JS installed.
+if(NOT DEFINED ENV{GITHUB_ACTIONS})
+    add_subdirectory("docs")
+endif()
