@@ -1,20 +1,16 @@
 #### NWindows TUI Library
-[![Build Status](https://github.com/reravies/nwindows.svg?branch=master)](https://github.com/rerdavies/nwindows)
+<!--[![Build Status](https://github.com/reravies/nwindows.svg?branch=master)](https://github.com/rerdavies/nwindows)-->
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Documentation](https://img.shields.io/badge/documentation-Developer%20Guide-blue)](https://reravies.github.io/nwindows/)
 [![Documentation](https://img.shields.io/badge/documentation-Examples-blue)](https://reravies.github.io/nwindows/examples)
-[![Documentation](https://img.shields.io/badge/documentation-Release%20Notes-blue)](https://reravies.github.io/nwindows/)
+<!--[![Documentation](https://img.shields.io/badge/documentation-Release%20Notes-blue)](https://reravies.github.io/nwindows/) -->
 
 The *NWindows* library is a C++ text user interface (TUI) library for building console applications on Linux.
 The library uses elements to compose user interfaces using an innovative and concise manipulator system. The library provides a rich set of elements with which to build user interfaces.
 
 Built on top of the *ncursesw* library, *NWindows* works on both xterm and raw linux terminal windows, and also works over ssh.
 
-![image](docs/public/image/screenshot.png")
-
-xxx
-
-<img src="docs/public/image/screenshot.png" alt="screenshot" style="width: 80%, max-width: max-width: 600, margin-left: 16px/>
+&nbsp;&nbsp;![image](docs/public/image/screenshot.png)
 
 Here is a simple example of an *NWindows* application that demonstrates the use of NWindow's manipulator syntax to create users interfaces. The program creates a window with a button that closes the window when clicked:
         
@@ -42,9 +38,8 @@ int main(void) {
 }
 ```
 
-which display the following output when executed.
+which displays the following output when executed.
 
-![image](docs/public/image/hello_world.png)
+&nbsp;&nbsp;![image](docs/public/image/hello_world.png)
 
-See the [documentation](https://github.io/rerdavies/nwindows"> for instructions on installing, and using 
-*NWindows*.
+See the [documentation](https://github.io/rerdavies/nwindows> for more information, and for instructions on installing, and using *NWindows*.
