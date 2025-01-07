@@ -40,7 +40,7 @@ jobs:
           #cache-dependency-path: './docs/package-lock.json'
       - name: Install dependencies
         working-directory: ./docs
-        run: npm ci
+        run: ./config.sh
       - name: Build
         working-directory: ./docs
         run: ./build.sh
