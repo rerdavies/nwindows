@@ -1,3 +1,4 @@
+import CenteredImage from '../CenteredImage';
 import Code from '../Code';
 import DocsPage from '../DocsPage';
 import M from '../M';
@@ -250,7 +251,8 @@ window->title("Hello");
                 <p>This code sample is included in the <M>examples/hello_world2</M> folder of the NWindows project, and is built as part of the 
                     project build procedure.</p>
                 <p>When you run the program, you get the following output:</p>
-                <img src="image/hello_world2.png" alt="hello world" style={{ maxWidth: "100%", marginLeft: 32,  }} />
+                <CenteredImage src="/nwindows/image/hello_world2.png" 
+                    alt="hello world"  />
             </div>
         </DocsPage>
     );

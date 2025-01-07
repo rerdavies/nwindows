@@ -4,6 +4,7 @@ import M from '../M';
 import ClassDescription, { PropertyEntry, PropertyList, EnumDefinitionList } from '../ClassDescription';
 import Code from '../Code';
 import SectionHead from '../SectionHead';
+import CenteredImage from '../CenteredImage';
 
 
 function NWindowsElements() {
@@ -247,7 +248,9 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                             <p>Modifies how text is displayed.
                             </p>
                             <p>
-                                <img src="image/sample_attributes.png" alt="Sample attributes" className="sample_control" />
+                                <CenteredImage 
+                                    src="/nwindows/image/sample_attributes.png" 
+                                    alt="Sample attributes"  />
                             </p>
                             <p>The <M>text_attribute</M> property can take the following values:</p>
 
@@ -302,10 +305,9 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                 <p>Displays a box border around its child element. <M>NBoxElement</M> can have only
                     one child element.</p>
                 <p>
-                    <img
-                        src="image/sample_box.png"
+                    <CenteredImage
+                        src="/nwindows/image/sample_box.png"
                         alt="Sample box"
-                        className="sample_control"
                     />
                 </p>
                 <PropertyList>
@@ -329,10 +331,9 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
             <ClassDescription className="NButtonElement">
                 <p>Displays a button that can be clicked.</p>
                 <p>
-                    <img
-                        src="image/sample_button.png"
+                    <CenteredImage
+                        src="/nwindows/image/sample_button.png"
                         alt="Sample button"
-                        className="sample_control"
                     />
                 </p>
                 <p>
@@ -387,10 +388,10 @@ NButtonElement::create()
             <ClassDescription className="NTextEditElement">
                 <p>Displays a text box that allows editing of text.</p>
                 <p>
-                    <img
-                        src="image/sample_textedit.png"
+                    <CenteredImage
+                        src="/nwindows/image/sample_textedit.png"
                         alt="Sample NTextEditElement"
-                        className="sample_control" />
+                         />
                 </p>
                 <p>
                     The <M>text</M> property of
@@ -471,10 +472,9 @@ void select_end();
             <ClassDescription className="NCheckboxElement">
                 <p>Displays a checkbox control.</p>
                 <p>
-                    <img
-                        src="image/sample_checkbox.png"
+                    <CenteredImage
+                        src="/nwindows/image/sample_checkbox.png"
                         alt="Sample checkbox"
-                        className="sample_control"
                     />
                 </p>
                 <p>Checkmarks are displayed with Unicode characters on xterm-like devices. <M>NCheckboxElement</M>falls back to
@@ -519,10 +519,9 @@ void select_end();
             <ClassDescription className="NRadioGroupElement">
                 <p>Displays a group of radio buttons.</p>
                 <p>
-                    <img
-                        src="image/sample_radiogroup.png"
+                    <CenteredImage
+                        src="/nwindows/image/sample_radiogroup.png"
                         alt="Sample NRadioGroupElement"
-                        className="sample_control"
                     />
                 </p>
                 <p>Checkmarks are display with Unicode characters on xterm-like devices. <M>NRadioGroupElement</M> falls back to using ASCII characters
@@ -583,22 +582,24 @@ void select_end();
             <ClassDescription className="NDropdownElement">
                 <p>A dropdown control that allows selection of values from a list.</p>
                 <p>
-                    <img src="image/sample_dropdown.png" alt="Sample dropdown" className="sample_control" />
+                    <CenteredImage src="/nwindows/image/sample_dropdown.png" alt="Sample dropdown"  />
                 </p>
-                <p>Native items in the dropdown list are <M>NMenuItemElement</M>s. However, the constructor,
-                    the <M>menu_items</M>  property and
-                    the <M>menu_items</M> manipulator all support convenience overloads that allow you to pass in
-                    a <M>std::vector&lt;std::string&gt;</M> instead. These overloads create
-                    an <M>std::vector&lt;NMenuItemElement&gt;</M> with id's that range from 0 to N, corresponding to the position
-                    in the passed in vector.
+                <p><M>NDropdownElement</M> allows users to select from a list items. The list of items 
+                    is provided to <M>NDropdownElement</M> as a <M>std::vector</M> of <M>NMenuItem</M>s.
+                    When an item is selected, the <M>selected</M> property is set to 
+                    the <M>item_id</M> of the selected menu item, and the <M>on_selection_changed</M> event 
+                    is fired.
                 </p>
-                <p>
-                    The reason <M>menu_items</M> is a <M>std::vector&lt;NMenuItemElement&gt;</M> is that it anticipates
-                    customizations (and perhaps future features) in which the dropdown list contains more than just text (submenus,
-                    for example).
+                <p>You only need to set a label and an item_id in each menu item. 
+                    <M>NDropdownElement</M> will focus the currently selected menu item when the 
+                    dropdown opens. However, <M>NDropdownElement</M> does support advanced features 
+                    that <M>NMenuItem</M> provides, such as icons, checkmarks, submenus, and dividers. 
+                    See the <M>NMenuItem</M> documentation for more information, should you improbably decided
+                    that you would like to use these features with an <M>NDropdownElement</M>. 
                 </p>
+
                 <p><M>NDropdownElement</M> does not support scrolling in the dropdown popup, so the size of the <M>menu_items</M> list
-                    should be kept modest..</p>
+                    should be kept modest.</p>
                 <PropertyList>
                     <PropertyEntry type={`std::vector<
   NMenuItem>`} propertyName='NDropdownElement::menu_items'>
@@ -606,8 +607,7 @@ void select_end();
                     </PropertyEntry>
 
                     <PropertyEntry type="int" propertyName='NDropdownElement::selected'>
-                        <div>The <M>item_id</M> of the selected menu item. Defaults to -1 (no selection). In the case
-                            where <M>menu_items</M> was set using a <M>std::vector&lt;std::string&gt;</M>, <M>selected</M> contains the index of the selected item.
+                        <div>The <M>item_id</M> of the selected menu item. Defaults to -1 (no selection). 
                         </div>
                     </PropertyEntry>
 

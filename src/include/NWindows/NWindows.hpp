@@ -1273,10 +1273,6 @@ namespace nwindows
         ) {
             return std::shared_ptr<self>(new self(menu_items, selected));
         }
-        static ptr create(
-            const std::vector<std::string>& menu_items,
-            int selected
-        );
 
 
         bool open() const { return open_; }
@@ -2333,7 +2329,6 @@ namespace nwindows
     public:
         menu_items(const std::vector<NMenuItem>& value) : value(value) {}
         menu_items(std::vector<NMenuItem>&& value) : value(std::move(value)) {}
-        menu_items(const std::vector<std::string>& menu_items_);
 
         template<typename T>
         std::shared_ptr<T> apply(std::shared_ptr<T> element) {

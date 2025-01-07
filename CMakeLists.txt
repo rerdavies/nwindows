@@ -12,3 +12,5 @@ add_subdirectory("src")
 add_subdirectory("examples/hello_world")
 add_subdirectory("examples/hello_world2")
 add_subdirectory("examples/context_edit")
+
+add_subdirectory("docs")

@@ -1,5 +1,5 @@
 import React, { useLayoutEffect } from "react";
-import { DocsTitle, IndexedComponents } from "./DocsNav";
+import { DocsTitle, IndexedComponents, RoutePaths } from "./DocsNav";
 import Code from "./Code";
 import M from "./M";
 
@@ -534,6 +534,37 @@ export class IndexBuilder extends React.Component<IndexBuilderProps, IndexBuilde
     componentWillUnmount(): void {
         EnableIndexCollection(false);
     }
+    make_copy_route_pages() {
+        let text = `#!/bin/bash
+
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <directory>"
+    exit 1
+fi
+
+if [ ! -d "$1" ]; then
+    echo "The argument is not a valid directory."
+    exit 1
+fi
+
+strings=(`+"\\\n";
+
+        let routePaths = RoutePaths();
+
+        for (let routePath of routePaths) {
+            text += "     \"" + routePath + "\"\\\n";
+        }
+
+        text += `)
+
+for str in "$`+`{strings[`+`@`+`]`+`}"; do
+    echo "Processing $str"
+    mkdir -p $1$str
+    cp $1/index.html $1$str/index.html
+done
+`;
+        return text;
+    }
 
     render() {
         return (
@@ -544,6 +575,10 @@ export class IndexBuilder extends React.Component<IndexBuilderProps, IndexBuilde
                         <div>
                             <p><M>SiteIndexData.tsx</M></p>
                             <Code text={this.state.indexText} />
+
+                            <p></p>
+                            <p><M>copy_route_pages.sh</M></p>
+                            <Code text={this.make_copy_route_pages()} />
                         </div>
                     )
                     : (

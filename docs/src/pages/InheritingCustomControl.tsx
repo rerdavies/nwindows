@@ -3,6 +3,7 @@ import { DocsTitle } from '../DocsNav';
 import M from '../M';
 import SectionHead from '../SectionHead';
 import Code, { CodeFragment2 } from '../Code';
+import CenteredImage from '../CenteredImage';
 
 
 
@@ -152,7 +153,7 @@ private:
     NMenuItem("Select All",3)}
 });`}/>
         <p>would produce a text edit field with a context menu.</p> 
-        <img src="image/sample_ContextEditElement.png" alt="ContextEditElement example" />
+        <CenteredImage src="/nwindows/image/sample_ContextEditElement.png" alt="ContextEditElement example" />
         <p>You can find a working version of this code, along with the code that 
             produced the screenshot above, in the <M>examples/ContextEditElement</M> directory 
             of the NWindows source code. (Yes, the menu items actually work.)

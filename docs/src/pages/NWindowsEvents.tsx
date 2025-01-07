@@ -219,7 +219,7 @@ NEvent<void (NMouseEventArgs&event_args)> on_mouse_leave;
                     element tree from there.</p>
                 <p><M>on_clicked</M> is fired on elements whose <M>clickable</M> property is set to <M>true</M> after an
                     appropriate on_mouse_button_pressed/on_mouse_button_released sequence. Handling either of the pressed or on_mouse_button_released
-                    events will prevent the clikc from happening. NWindows also generates on <M>on_click</M> events
+                    events will prevent the click from happening. NWindows also generates on <M>on_click</M> events
                     when the space or enter key is pressed and a clickable element has keyboard focus.
                 </p>
                 <p><M>on_mouse_enter</M> and <M>on_mouse_leave</M> events fire as the mouse cursor enters or
@@ -247,7 +247,7 @@ NEvent<void (NMouseEventArgs&event_args)> on_mouse_leave;
                 <p>The <M>cursor_position</M> is in window coordinates (0,0, is at the top left corner of the
                     containing <M>NWindow</M>). To convert to element-relative coordinates, use</p>
                 <Code text={`NPoint position = screen_to_element(event_args.cursor_position);`} />
-                <p>If the mouse curor is outside the bounds of the current <M>NWindow</M>, <M>cursor_position</M> will
+                <p>If the mouse cursor is outside the bounds of the current <M>NWindow</M>, <M>cursor_position</M> will
                 be set to <M>{"{-1,-1}"}</M>
                 </p> 
             </ClassDescription>

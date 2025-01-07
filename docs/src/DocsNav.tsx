@@ -20,7 +20,7 @@ interface DocsPage {
 
 const HomePage = React.lazy(() => import("./pages/HomePage"));
 const Documentation = React.lazy(() => import("./pages/Documentation"));
-const NWindowsApis = React.lazy(() => import("./Loading")); // import("./pages/NWindowsApis"));
+const NWindowsApis = React.lazy(() => import("./pages/NWindowsApis"));
 const PlatformSupport = React.lazy(() => import("./pages/PlatformSupport"));
 const InstallingNWindows = React.lazy(() => import("./pages/InstallingNWindows"));
 const UsingNWindows = React.lazy(() => import("./pages/UsingNWindows"));
@@ -92,6 +92,17 @@ let docsIndex: DocsPage[] = [
 
 ];
 
+export function RoutePaths() : string[] {
+    let paths: string[] = [];
+    for (let i = 0; i < docsIndex.length; i++) {
+        paths.push(docsIndex[i].route);
+    }
+    paths.push("/search");
+    paths.push("/index_builder");
+    paths.push("/apis");
+
+    return paths;
+}
 
 export function DocsRoutes() {
     return (

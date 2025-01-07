@@ -5251,19 +5251,6 @@ void NDropdownElement::menu_items(const std::vector<std::string>& value)
 }
 
 
-NDropdownElement::ptr NDropdownElement::create(
-    const std::vector<std::string>& items,
-    int selected
-)
-{
-    return NDropdownElement::create(makeMenuItems(items), selected);
-}
-
-menu_items::menu_items(const std::vector<std::string>& menu_items_)
-    :menu_items(makeMenuItems(menu_items_))
-{
-}
-
 bool NWindow::root_window_exists_ = false;
 
 void NWindow::parent(NElement* value)

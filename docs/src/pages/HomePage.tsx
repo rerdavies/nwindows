@@ -3,6 +3,7 @@ import Code from '../Code';
 import { Link } from 'react-router-dom';
 import PageColumn from '../PageColumn';
 import Banner from '../Banner';
+import CenteredImage from '../CenteredImage';
 
 function HomePage() {
 
@@ -19,7 +20,8 @@ function HomePage() {
                     Built on top of the <span className="mono">ncursesw</span> library, <span className="name">NWindows</span> works on both xterm and raw linux terminal windows, and also works over ssh.
                 </p>
 
-                <img src="image/screenshot.png" alt="screenshot" style={{ width: "80%", maxWidth: "600", marginLeft: "auto", marginRight: "auto" }} />
+                <CenteredImage src="/nwindows/image/screenshot.png" alt="screenshot" width="80%" maxWidth="600px" 
+                         />
 
                 <p>Here is a simple example of a <span className="name">NWindows</span> application that demonstrates the use of manipulators to
                     create users interfaces. The program creates a window
@@ -52,8 +54,9 @@ int main(void) {
 }
 `} />}
 
-                <p>which display the following output when executed.</p>
-                <img src="image/hello_world.png" alt="hello world" style={{ maxWidth: "100%", marginLeft: "auto", marginRight: "auto" }} />
+                <p>which displays the following output when executed.</p>
+                <CenteredImage src="/nwindows/image/hello_world.png" alt="hello world" 
+                   />
                 <p>See the <Link to="/documentation">documentation</Link> for instructions on installing, and using <span className="name">NWindows</span>.</p>
 
             </div>
