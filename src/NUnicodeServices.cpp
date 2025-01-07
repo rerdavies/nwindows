@@ -18,12 +18,12 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 /*
-    libicu does major version bumps without regard to whether api changes are major or minor. Documention
+    libicu does major version bumps without regard to whether api changes are major or minor. Documentation
     does, in fact, guarantee binary compatibility for the APIs that we are using. The major version bump
-    creates absolute havoc with .deb packaging, because the major version bumps on roughluy a monthyly basis.
+    creates absolute havoc with .deb packaging, because the major version bumps on roughly a monthly basis.
     This makes it impossible to generate .deb packages that are plausible portable between debian-derived distros.
 
-    The alternative: dynmaically link to the APIs that we are using, referencing non-major-versioned references
+    The alternative: dynamically link to the APIs that we are using, referencing non-major-versioned references
     to the libicu dlls (e.g. libicuuc.lib instead of libicuuc.lib.74). Given how few APIs we are actually using,
     this seems perfectly reasonable. fwiw, .net runtime uses a similar approach.
 
@@ -194,7 +194,7 @@ public:
 
     DynamicIcuLoader()
     {
-#ifndef DISABLE_DUNAMIC_ICU
+#ifndef DISABLE_DYNAMIC_ICU
         load();
 #else
         set_default_fns();
@@ -669,7 +669,7 @@ namespace {
         virtual int Compare(const std::u16string& left, const std::u16string& right) override;
 
     private:
-        CollatorStrength strength = CollatorStrength::Unitialized;
+        CollatorStrength strength = CollatorStrength::Uninitialized;
         UCollator* collator = nullptr;
         std::shared_ptr<LocaleImpl> localeImpl;
 

@@ -24,7 +24,7 @@
 
 namespace nwindows {
     enum class CollatorStrength {
-        Unitialized = -1,
+        Uninitialized = -1,
         Primary = 0,
         Secondary = 1,
         Tertiary = 2,

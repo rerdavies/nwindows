@@ -1,5 +1,5 @@
 #### NWindows TUI Library
-[![Build Status](https://github.com/reravies/nwindows.svg?branch=master)](https://github.com/rerdavies/nwindows)
+<!--[![Build Status](https://github.com/reravies/nwindows.svg?branch=master)](https://github.com/rerdavies/nwindows) -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Documentation](https://img.shields.io/badge/documentation-Developer%20Guide-blue)](https://reravies.github.io/nwindows/)
 [![Documentation](https://img.shields.io/badge/documentation-Examples-blue)](https://reravies.github.io/nwindows/examples)

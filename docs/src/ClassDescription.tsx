@@ -77,12 +77,6 @@ export function PropertyEntry(props: { propertyName: string, type: string, child
 
 export function MethodDescription(props: { method: string, children?: React.ReactNode }) 
 {
-    let methods: React.ReactNode[];
-    if (Array.isArray(props.method)) {
-        methods = props.method;
-    } else {
-        methods = [props.method];
-    }
     
     return (
         <div className="method_description">

@@ -1,8 +1,8 @@
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import M from '../M';
-import ClassDescription, { EnumDefinitionList, MethodDescription, ParameterList, Returns } from '../ClassDescription';
-import Code, { CodeFragment, CodeFragment2 } from '../Code';
+import ClassDescription, { MethodDescription } from '../ClassDescription';
+import Code, { CodeFragment2 } from '../Code';
 import SectionHead from '../SectionHead';
 import { Link } from 'react-router-dom';
 
