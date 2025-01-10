@@ -1,7 +1,7 @@
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import M from '../M';
-import ClassDescription, { MethodDescription } from '../ClassDescription';
+import ClassDescription, { EventDescription } from '../ClassDescription';
 import Code, { CodeFragment2 } from '../Code';
 
 
@@ -10,8 +10,18 @@ function NWindowsEvents() {
     return (
         <DocsPage route="/using/events/mouse">
             <h1>{DocsTitle("/using/events/mouse")}</h1>
-            <ClassDescription className="NElement">
-                <MethodDescription method={`NEvent<void (int button,NClickedEventArgs&event_args)> on_clicked;
+            <ClassDescription name="NElement">
+                <EventDescription 
+                    indexName={[
+                        "NEvent<void (int button,NClickedEventArgs&event_args)> NElement::on_clicked",
+                        "NEvent<void (int button,NMouseEventArgs&event_args)> NElement::on_mouse_button_pressed",
+                        "NEvent<void (int button,NMouseEventArgs&event_args)> NElement::on_mouse_button_released",
+                        "NEvent<void (NMouseEventArgs&event_args)> NElement::on_mouse_move",
+                        "NEvent<void ()>  NElement::on_mouse_lost_capture",
+                        "NEvent<void (NMouseEventArgs&event_args)> NElement::on_mouse_enter",
+                        "NEvent<void (NMouseEventArgs&event_args)> NElement::on_mouse_leave",
+                    ]}
+                method={`NEvent<void (int button,NClickedEventArgs&event_args)> on_clicked;
 NEvent<void (int button,NMouseEventArgs&event_args)> on_mouse_button_pressed;
 NEvent<void (int button,NMouseEventArgs&event_args)> on_mouse_button_released;
 NEvent<void (NMouseEventArgs&event_args)> on_mouse_move;
@@ -58,7 +68,7 @@ NEvent<void (NMouseEventArgs&event_args)> on_mouse_leave;
                     <p>If the mouse cursor is outside the bounds of the current <M>NWindow</M>, <M>cursor_position</M> will
                         be set to <M>{"{-1,-1}"}</M>
                     </p>
-                </MethodDescription>
+                </EventDescription>
             </ClassDescription>
 
         </DocsPage>

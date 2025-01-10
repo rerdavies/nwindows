@@ -1,51 +1,67 @@
 import React from "react";
 import { RegisterIndexEntry } from "./IndexBuilder";
+import { Link } from "react-router-dom";
 
-export default function 
-ClassDescription(props: { 
-    children: React.ReactNode, 
-    className: string, 
-    prefix?: string, 
-    baseClass?: string}) {
+export default function
+    ClassDescription(props: {
+        children: React.ReactNode,
+        name: string,
+        prefix?: string,
+        id_tag?: string,
+        baseClass?: string
+    }) {
+
+    let id_tag = props.id_tag ?? "class";
 
     let prefix = props.prefix || "class";
-    let id = "class__" + props.className;
-    let indexText = (props.prefix??"class") +" " + props.className;
+    let id = id_tag + "__" +  props.name;
+    let indexText = (props.prefix ?? "class") + " " + props.name;
 
-    RegisterIndexEntry(props.className, id,indexText );
+    RegisterIndexEntry(props.name, id, indexText);
     return (
         <div id={id} className="nav_target" >
-            <h3 style={{display: "flex", flexFlow: "row wrap", gap: 1,justifyContent: "space-between", 
-                borderBottom: "1px solid #ccc", borderTop: "1px solid #ccc", marginBottom: 8, paddingRight: 16}}>
-                <div>{prefix} {props.className}</div>
+            <h2 className="class-desc-header" >
+                <div>{prefix} {props.name}</div>
                 {props.baseClass && <div>extends {props.baseClass}</div>}
-            </h3>
-            
+            </h2>
+
             <div style={{ marginLeft: 32, marginRight: 16 }}>
                 {props.children}
             </div>
         </div>
     );
 }
-export function 
-EnumDescription(props: { children: React.ReactNode, name: string, prefix?: string }) {
+export function
+    EnumDescription(props: { children: React.ReactNode, enumName: string, prefix?: string }) {
     return (
-        <ClassDescription className={props.name} prefix={props.prefix? props.prefix: "enum class"} >
+        <ClassDescription name={props.enumName} prefix={props.prefix ? props.prefix : "enum class"} id_tag="enum">
             {props.children}
-            </ClassDescription>
+        </ClassDescription>
     );
 }
+export function
+    StructDescription(props: { children: React.ReactNode, name: string, prefix?: string, baseClass?: string }) {
+    return (
+        <ClassDescription name={props.name}
+            prefix={props.prefix ? props.prefix : "struct"}
+            id_tag="struct"
+            baseClass={props.baseClass} >
+            {props.children}
+        </ClassDescription>
+    );
+}
+
 
 
 export function PropertyList(props: { children?: React.ReactNode }) {
     return (
         <div>
-            <h4 className="property_list_title">Properties</h4>
+            <ClassSectionHead text="Properties" />
             <div className="property_grid" >
                 <div className="property_grid_title">Type</div>
                 <div className="property_grid_title">Property</div>
                 <div className="property_grid_title">Description</div>
-                
+
                 {props.children}
             </div>
         </div>
@@ -74,15 +90,240 @@ export function PropertyEntry(props: { propertyName: string, type: string, child
     );
 }
 
+function methodId(tag: string, name: string) {
+    name = removeParameters(name);
+    let pos = name.indexOf("::");
+    let classNameOnly = "";
+    if (pos >= 0) {
+        classNameOnly = name.substring(0, pos);
+        name = name.substring(pos + 2);
+    }
+    return tag + "__" + classNameOnly + "_" + name;
+}
 
-export function MethodDescription(props: { method: string, children?: React.ReactNode }) 
-{
+function removeParametersAndClass(name: string) {
+    name = removeParameters(name);
+    let pos = name.indexOf("::");
+    if (pos >= 0) {
+        name = name.substring(pos + 2);
+    }
+    return name;
+
+}
+function removeParameters(name: string) {
+    while (true) {
+        let matched = false;
+        if (name.startsWith("static ")) {
+            matched = true;
+            name = name.substring(7);
+        } else if (name.startsWith("virtual ")) {
+            matched = true;
+            name = name.substring(8);
+        }
+        else if (name.startsWith("const ")) {
+            matched = true;
+            name = name.substring(6);
+        } else if (name.startsWith("constexpr ")) {
+            matched = true;
+            name = name.substring(10);
+        }
+        if (!matched) {
+            break;
+        }
+    }
+
+    let pos = name.indexOf(" ");
+    // remove the return type.
+    if (pos < 0) {
+        pos = 0;
+    }
+    while (pos < name.length && name[pos] == " " || name[pos] === '*' || name[pos] === '&') {
+        pos++;
+    }
+    {
+        name = name.substring(pos);
+    }
+    pos = name.indexOf("(");
+    if (pos >= 0) {
+        return name.substring(0, pos);
+    }
+    return name;
+}
+
+export function ClassSectionHead(props: { text: string }) {
+    return (
+        <div>
+            <h3 className="class_section_head">{props.text}</h3>
+            <hr style={{ marginTop: 0, marginBottom: 12 }} />
+        </div>
+    );
+}
+export function EventDescriptions(props: { children?: React.ReactNode }) {
+    return (
+        <div>
+            <ClassSectionHead text="Events" />
+            {props.children}
+        </div>
+    );
+}
+export function FieldDescriptions(props: { children?: React.ReactNode }) {
+    return (
+        <div>
+            <ClassSectionHead text="Fields" />
+            {props.children}
+        </div>
+    );
+}
+
+export function ConstructorDescriptions(props: { children?: React.ReactNode }) {
+    return (
+        <div>
+            <ClassSectionHead text="Constructors" />
+            {props.children}
+        </div>
+    );
+}
+
+export enum LinkType {
+    Define,
+    ClassMethod,
+    Constant,
+    Typedef,
+    Enum,
+    Struct,
+    Class
+}
+
+export function DocsLink(props: { route:string, directId: string, children?: React.ReactNode }) {
+    return (
+        <Link to={props.route} state={{ showElement: props.directId }} >{props.children}</Link>
+    );
+}
+export function ApiLink(props: { linkType: LinkType, name: string,children?: React.ReactNode }) {
+
+    let id = "";
+    let route = "";
+
+
+    switch (props.linkType)
+    {
+        case LinkType.Define:
+            route = "/apis/defines";
+            id =  "define__" + props.name;
+            break;
+        case LinkType.Enum:
+            route = "/apis/defines";
+            id =  "define__" + props.name;
+            break;
+        case LinkType.Struct:
+            route = "/apis/structs";
+            id =  "struct__" + props.name;
+            break;
+        case LinkType.Class:
+            route = "/apis/classes/" + props.name;
+            id =  "class__" + props.name;
+            break;
+        default: 
+            return <span>{props.children}</span>;
+    }
     
     return (
-        <div className="method_description">
+        <Link to={route} id={id} state={{ showElement: id }} >{props.children}<span className="material-icon-inline">api</span></Link>
+    );
+}
 
-            <pre className="mono" style={{paddingLeft: "8px",paddingTop: "12px", paddingBottom: "12px", overflowX: "auto"}}>{props.method}</pre>
-            <div style={{marginLeft: 24}}>
+export function MethodDescriptions(props: { children?: React.ReactNode, title?: string }) {
+    return (
+        <div>
+            <ClassSectionHead text={ props.title??"Methods"} />
+            {props.children}
+        </div>
+    );
+}
+
+export function OperatorDescriptions(props: { children?: React.ReactNode }) {
+    return (
+        <div>
+            <ClassSectionHead text="Operators" />
+            {props.children}
+        </div>
+    );
+}
+
+
+export function EventDescription(props: { indexName: string | string[] | undefined, method: string, children?: React.ReactNode }) {
+    return MethodDescription(
+        {
+            indexName: props.indexName,
+            method: props.method,
+            tag: "event",
+            children: props.children
+        });
+}
+
+export function ConstantDescription(props: { indexName?: string | string[], constant: string, children?: React.ReactNode }) {
+    return MethodDescription(
+        {
+            indexName: props.indexName,
+            method: props.constant,
+            tag: "constant",
+            children: props.children
+        }
+    )
+}
+export function TypedefDescription(props: { indexName?: string | string[], declaration: string, children?: React.ReactNode }) {
+    return MethodDescription(
+        {
+            indexName: props.indexName,
+            method: props.declaration,
+            tag: "typedef",
+            children: props.children
+        }
+    )
+}
+export function UsingDescription(props: { indexName?: string | string[], declaration: string, children?: React.ReactNode }) {
+    return MethodDescription(
+        {
+            indexName: props.indexName,
+            method: props.declaration,
+            tag: "using",
+            children: props.children
+        }
+    )
+}
+
+export function MethodDescription(
+    props: {
+        indexName: string | string[] | undefined,
+        method: string, tag?: string, children?: React.ReactNode
+    },) {
+    let tag = props.tag || "method";
+    let indexName = props.indexName;
+    let id = "";
+    if (indexName) {
+        if (indexName instanceof Array) {
+            let indexArray = indexName as string[];
+            for (let name of indexArray) {
+                if (id.length > 0) {
+                    id += "_";
+                }
+                id += methodId(tag, name);
+            }
+
+            for (let name of indexArray) {
+                RegisterIndexEntry(removeParametersAndClass(name), id, tag + " " + name);
+            }
+        } else {
+            let name = indexName as string;
+            id = methodId(tag, name);
+            RegisterIndexEntry(removeParametersAndClass(name), id, tag + " " + name);
+        }
+    }
+    return (
+        <div className="method_description" id={id.length > 0 ? id : undefined}>
+
+            <pre className="mono" style={{ paddingLeft: "8px", paddingTop: "12px", paddingBottom: "12px", overflowX: "auto" }}>{props.method}</pre>
+            <div style={{ marginLeft: 24 }}>
                 {props.children}
             </div>
         </div>
@@ -111,18 +352,27 @@ export function EnumDefinitionList(props: { children: React.ReactNode }) {
         </div>
     );
 }
-
-export function DefinitionList(props: { children: React.ReactNode }) {
+export function FieldDefinitionList(props: { children: React.ReactNode }) {
     return (
         <div>
-            <div className="parameter_grid" >
+            <div className="property_grid" >
                 {props.children}
             </div>
         </div>
     );
 }
 
-export function Returns(props: {children: React.ReactNode}) {
+export function DefinitionList(props: { children: React.ReactNode, style?: React.CSSProperties }) {
+    return (
+        <div>
+            <div className="parameter_grid" style={props.style} >
+                {props.children}
+            </div>
+        </div>
+    );
+}
+
+export function Returns(props: { children: React.ReactNode }) {
     return (
         <div>
             <h3>Returns</h3>
@@ -130,5 +380,5 @@ export function Returns(props: {children: React.ReactNode}) {
                 {props.children}
             </div>
         </div>
-    );  
+    );
 }

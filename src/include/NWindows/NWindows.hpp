@@ -19,6 +19,11 @@
 
 #include "NWindowsVersionInfo.hpp"
 
+
+#ifndef DEBUG_NELEMENT_LIFECYCLE
+#define DEBUG_NELEMENT_LIFECYCLE 0
+#endif
+
 namespace nwindows
 {
     class NWindow;
@@ -35,7 +40,6 @@ namespace nwindows
     class NWindow;
     class NElement;
 
-    size_t utf8_length(const std::string& text);
 
     using PostHandle = uint64_t;
 
@@ -73,7 +77,7 @@ namespace nwindows
 
     };
 
-    enum class NavDirectionT {
+    enum class NNavDirection {
         Left,
         Right,
         Up,
@@ -94,19 +98,19 @@ namespace nwindows
     struct NMenuItem {
         static constexpr int NO_ITEM_ID = std::numeric_limits<int>::min();
         NMenuItem() {}
-        NMenuItem(const std::string text, int item_id, bool enabled = true)
-            : text(text), item_id(item_id), enabled(enabled) {
+        NMenuItem(const std::string &label, int item_id, bool enabled = true)
+            : label(label), item_id(item_id), enabled(enabled) {
         }
-        NMenuItem(const std::string text, const std::vector<NMenuItem>& submenu, bool enabled = true)
-            : text(text), item_id(NO_ITEM_ID), enabled(enabled), submenu(submenu) {
+        NMenuItem(const std::string& label, const std::vector<NMenuItem>& submenu, bool enabled = true)
+            : label(label), item_id(NO_ITEM_ID), enabled(enabled), submenu(submenu) {
         }
-        NMenuItem(const std::string text, std::vector<NMenuItem>&& submenu, bool enabled = true)
-            : text(text), item_id(NO_ITEM_ID), enabled(enabled), submenu(std::move(submenu)) {
+        NMenuItem(const std::string&& label, std::vector<NMenuItem>&& submenu, bool enabled = true)
+            : label(label), item_id(NO_ITEM_ID), enabled(enabled), submenu(std::move(submenu)) {
         }
 
         static NMenuItem Divider() { return NMenuItem{ "-",NO_ITEM_ID,false }; }
 
-        std::string text;
+        std::string label;
         int item_id = NO_ITEM_ID;
         bool enabled = true;
         bool display_check = false;
@@ -119,7 +123,7 @@ namespace nwindows
             this->checked = checked;
             return *this;
         }
-        bool is_divider() const { return text == "-"; }
+        bool is_divider() const { return label == "-"; }
     };
 
     enum class NOrientation { Horizontal, Vertical };
@@ -149,7 +153,7 @@ namespace nwindows
             return attr == other.attr;
         }
         NColorPair() { attr = COLOR_PAIR(0); }
-        attr_t color_pair() const { return attr; }
+        attr_t attribute() const { return attr; }
     private:
         friend class NWindow;
         explicit NColorPair(attr_t attr) : attr(attr) {}
@@ -157,11 +161,13 @@ namespace nwindows
     };
 
 
-    class NColorPalette {
-    public:
+    struct NColorPalette {
 
         uint32_t Black = 0x000000;
         uint32_t White = 0xC0C0C0;
+        uint32_t DesktopBackground = 0x000000;
+        uint32_t WindowFrameBackground = 0x000000;
+        uint32_t WindowFrameForeground = 0xC0C0C0;
         uint32_t BrightWhite = 0xFFFFFF;
         uint32_t Disabled = 0x808080;
         uint32_t HoverBackground = 0x686868;
@@ -252,6 +258,7 @@ namespace nwindows
 
 
         NRect inset(const NThickness& thickness) const;
+        NRect inflate(const NThickness&thickness) const;
 
         NRect intersect(const NRect& other) const;
         NRect bounds(const NRect& other) const;
@@ -272,7 +279,7 @@ namespace nwindows
         bool handled = false;
     };
     struct NKeyEventArgs : public NEventArgsBase {
-        NKeyEventArgs(NElement* source, wchar_t key) : NEventArgsBase(source), key(key) {}
+        NKeyEventArgs(NElement* source, char32_t key) : NEventArgsBase(source), key(key) {}
         std::shared_ptr<NElement> target;
         char32_t key = 0;
     };
@@ -350,25 +357,28 @@ namespace nwindows
         const std::string& id() { return id_; }
         void id(const std::string& value) { id_ = value; }
 
-        virtual bool is_container() const { return false; }
-
-
-        const NSize& size() { return this->size_; }
-        void size(const NSize& size);
-
-        const NThickness& margin() const { return margin_; }
-        void margin(const NThickness& margin);
-
         int width() const { return width_; }
         virtual void width(int value);
-
-        const NRect& bounds() const { return bounds_; }
 
         int height() const { return height_; }
         virtual void height(int value);
 
+
+        const NSize size() { return NSize(width_,height_); }
+        void size(const NSize& size);
+
+        virtual bool is_container() const { return false; }
+
+
+
+        const NThickness& margin() const { return margin_; }
+        void margin(const NThickness& margin);
+
+        const NRect& bounds() const { return bounds_; }
+
         int actual_width() const { return bounds_.width; }
         int actual_height() const { return bounds_.height; }
+        NSize actual_size() const { return NSize(bounds_.width,bounds_.height); }
 
 
         bool focusable() const { return focusable_; }
@@ -386,9 +396,6 @@ namespace nwindows
 
         bool request_initial_focus() { return request_initial_focus_; }
         virtual void request_initial_focus(bool value) { request_initial_focus_ = value; }
-
-        NSize measured() const { return measured_; }
-        void measured(const NSize& value) { this->measured_ = value; }
 
 
         bool is_default() const { return is_default_; }
@@ -408,7 +415,7 @@ namespace nwindows
         }
 
         NEvent<void(NWindow* window)> on_attached;
-        NEvent<void()> on_detached;
+        NEvent<void()> on_detaching;
         NEvent<void(bool focused)> on_focused;
         NEvent<void(int button, NClickedEventArgs& event_args)>  on_clicked;
         NEvent<void(int button, NMouseEventArgs& event_args)> on_mouse_button_pressed;
@@ -422,8 +429,10 @@ namespace nwindows
         NEvent<void(NKeyCodeEventArgs& event_args)> on_key_code;
 
 #ifdef DEBUG_NELEMENT_LIFECYCLE
-        static uint64_t allocated_element_count() { return g_allocated_element_count_; }
+        static int64_t allocated_element_count();
 #endif
+        NWindow* window() { return window_; }
+        const NWindow* window() const { return window_; }
 
         virtual bool wants_shortcut_key(const std::string& key);
 
@@ -444,12 +453,14 @@ namespace nwindows
         NRect element_to_window(const NRect& rect) const;
         NRect window_to_element(const NRect& rect) const;
 
-        NWindow* window() { return window_; }
-        const NWindow* window() const { return window_; }
-
-
 
     public:
+        NSize measured() const { return measured_; }
+        void measured(const NSize& value) { this->measured_ = value; }
+
+
+
+    protected:
         virtual void render() {}
 
         void move(int x, int y);
@@ -457,6 +468,7 @@ namespace nwindows
         void print(const char* text);
         void print(const std::string& text);
         void print(const std::string& text, int width);
+        void print(const std::string&text, NAlignment alignment, int width);
         void print(const wchar_t* text);
         void print(const std::wstring& text);
         void print(const std::u32string& text);
@@ -512,7 +524,7 @@ namespace nwindows
         virtual void invalidate_render();
 
         virtual void handle_attached(NWindow* window);
-        virtual void handle_detach();
+        virtual void handle_detaching();
 
         bool mouse_entered() const { return mouse_entered_; }
 
@@ -540,9 +552,6 @@ namespace nwindows
         PostHandle keyboard_clicking_timer_ = 0;
         void cancel_keyboard_clicking_timer();
 
-#ifdef DEBUG_NELEMENT_LIFECYCLE
-        static uint64_t g_allocated_element_count_;
-#endif
         bool keyboard_clicking_ = false;
         bool is_default_ = false;
         bool is_cancel_ = false;
@@ -564,7 +573,6 @@ namespace nwindows
         NWindow* window_ = nullptr;
 
         bool layout_valid_ = false;
-        NSize size_;
         NRect bounds_;
         NThickness margin_;
         NSize measured_;
@@ -871,7 +879,7 @@ namespace nwindows
 
     protected:
         void handle_attached(NWindow* window) override;
-        void handle_detach() override;
+        void handle_detaching() override;
         virtual bool handle_key(NKeyEventArgs& event_args) override;
         virtual bool handle_key_code(NKeyCodeEventArgs& event_args) override;
 
@@ -1090,7 +1098,7 @@ namespace nwindows
 
     protected:
         virtual void handle_attached(NWindow* window) override;
-        virtual void handle_detach() override;
+        virtual void handle_detaching() override;
 
     private:
         void update_child_elements();
@@ -1458,8 +1466,8 @@ namespace nwindows
         bool focus(NElement::ptr element);
         NElement::ptr focus() { return focus_.lock(); };
 
-        void navigate_focus(NavDirectionT direction);
-        void navigate_focus(int x, int y, NavDirectionT direction);
+        void navigate_focus(NNavDirection direction);
+        void navigate_focus(int x, int y, NNavDirection direction);
 
 
         using clock_t = std::chrono::steady_clock;
@@ -1492,7 +1500,8 @@ namespace nwindows
         void mouse_capture_release(NElement* element);
 
         const NColorPalette& color_palette() const { return *color_palette_; }
-        void color_palette(NColorPalette* color_palette);
+        void color_palette(const NColorPalette& color_palette);
+        void color_palette(std::shared_ptr<NColorPalette> color_palette);
 
         virtual void close();
         bool is_active_window() { return active_window_ == this; }
@@ -1653,7 +1662,7 @@ namespace nwindows
         std::weak_ptr<NElement> logical_focus_;
 
         void init_color(short index, uint32_t rrggbb);
-        NColorPalette* color_palette_ = nullptr;
+        std::shared_ptr<NColorPalette> color_palette_ = nullptr;
         short nextColorIndex = 1;
         struct AllocatedColorT {
             uint32_t rrggbb;
@@ -1835,6 +1844,7 @@ namespace nwindows
         virtual void handle_cancelled();
 
     private:
+        int measure_prefix(const NMenuItem&menuItem, bool isUnicodeLocale);
         bool was_item_selected_ = false;
 
     };

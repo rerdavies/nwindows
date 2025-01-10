@@ -144,6 +144,40 @@ void NElement::print_menu_text(const std::string& text, int width, bool show_und
     }
 }
 
+void NElement::print(const std::string&text, NAlignment alignment, int width)
+{
+    int textWidth = measure_text(text);
+    int extra = width - textWidth;
+    if (extra < 0) {
+        print(text,width);
+        return;
+    }
+    int left_extra = 0, right_extra = 0;
+    switch (alignment)
+    {
+    case NAlignment::Justify:
+    case NAlignment::Start:
+        right_extra = extra;
+        break;
+    case NAlignment::End:
+        left_extra = extra;
+        break;
+    case NAlignment::Center:
+        left_extra = extra / 2;
+        right_extra = extra - left_extra;
+        break;
+    }
+    if (left_extra > 0)
+    {
+        print(std::string(left_extra, ' '));
+    }
+    print(text);
+    if (right_extra > 0)
+    {
+        print(std::string(right_extra, ' '));
+    }
+}
+
 void NElement::print_menu_text(
     const std::string& text,
     NAlignment alignment,
@@ -310,11 +344,8 @@ bool NRect::operator==(const NRect& other) const
 
 void NElement::size(const NSize& size)
 {
-    if (this->size_ != size)
-    {
-        this->size_ = size;
-        invalidate_layout();
-    }
+    width(size.width);
+    height(size.height);
 }
 
 bool NWindow::handle_window_key(wchar_t key)
@@ -370,7 +401,7 @@ bool NWindow::handle_window_key(wchar_t key)
             break;
 #endif
         case L'\t':
-            navigate_focus(NavDirectionT::Tab);
+            navigate_focus(NNavDirection::Tab);
             event_args.handled = true;
             break;
         case '\n': // ENTER
@@ -425,24 +456,25 @@ bool NWindow::handle_window_key_code(int key)
         case KEY_ENTER:
             this->handle_default_button();
             break;
+        
         case KEY_LEFT:
-            navigate_focus(NavDirectionT::Left);
+            navigate_focus(NNavDirection::Left);
             event_args.handled = true;
             break;
         case KEY_RIGHT:
-            navigate_focus(NavDirectionT::Right);
+            navigate_focus(NNavDirection::Right);
             event_args.handled = true;
             break;
         case KEY_UP:
-            navigate_focus(NavDirectionT::Up);
+            navigate_focus(NNavDirection::Up);
             event_args.handled = true;
             break;
         case KEY_DOWN:
-            navigate_focus(NavDirectionT::Down);
+            navigate_focus(NNavDirection::Down);
             event_args.handled = true;
             break;
         case KEY_BTAB:
-            navigate_focus(NavDirectionT::ReverseTab);
+            navigate_focus(NNavDirection::ReverseTab);
             event_args.handled = true;
             break;
 #if DEBUG // test code, shift window positions with ctrl arrow keys.
@@ -476,11 +508,11 @@ bool NWindow::handle_window_key_code(int key)
 #endif
 
         case KEY_HOME:
-            navigate_focus(NavDirectionT::Home);
+            navigate_focus(NNavDirection::Home);
             event_args.handled = true;
             break;
         case KEY_END:
-            navigate_focus(NavDirectionT::End);
+            navigate_focus(NNavDirection::End);
             event_args.handled = true;
             break;
 
@@ -981,7 +1013,7 @@ void NWindow::set_initial_focus()
         actual_focus(logical_focus);
     }
     else {
-        navigate_focus(0, 0, NavDirectionT::Home);
+        navigate_focus(0, 0, NNavDirection::Home);
     }
 }
 
@@ -1047,12 +1079,16 @@ void NTextElement::color(const std::optional<NColorPair>& value)
 }
 
 
-void NWindow::color_palette(NColorPalette* color_palette)
+void NWindow::color_palette(const NColorPalette& color_palette)
+{
+    this->color_palette(std::make_shared<NColorPalette>(color_palette));
+}
+void NWindow::color_palette(std::shared_ptr<NColorPalette> color_palette)
 {
     color_palette_ = color_palette;
     for (auto child : child_windows_)
     {
-        child->color_palette(color_palette);
+        child->color_palette(color_palette_);
     }
 }
 
@@ -1208,6 +1244,13 @@ void NWindow::init_root_window()
         init_color(COLOR_BLACK, color_palette_->Black);
         init_color(COLOR_WHITE, color_palette_->White);
 
+        if (color_palette_->DesktopBackground != color_palette_->Black) {
+            auto desktopColor = make_color_pair(color_palette_->DesktopBackground, color_palette_->DesktopBackground);
+            wbkgd(root_window_, desktopColor.attribute());
+        }
+
+
+
 
     }
     signal(SIGINT, SIG_IGN); // disable ctl-c handling.
@@ -1259,9 +1302,10 @@ NWindow::NWindow(
     this->measured_ = { -1,-1, }; // flag to indicate that we need to measure on window creation.
     if (colorPalette == nullptr)
     {
-        colorPalette = new NColorPalette();
+        this->color_palette_ = std::make_shared<NColorPalette>();
+    } else {
+        this->color_palette_ = std::make_shared<NColorPalette>(*colorPalette);
     }
-    this->color_palette_ = colorPalette;
 
     this->window_position_ = NRect(x, y, width, height);
     this->width(width);
@@ -1634,7 +1678,7 @@ void NElement::set_window(NWindow* window)
     {
         if (this->window_)
         {
-            handle_detach();
+            handle_detaching();
         }
         this->window_ = window;
         if (this->window_)
@@ -2743,7 +2787,7 @@ void NElement::handle_attached(NWindow* window)
     on_attached.fire(window);
 }
 
-void NElement::handle_detach()
+void NElement::handle_detaching()
 {
     if (mouse_entered_)
     {
@@ -2752,7 +2796,7 @@ void NElement::handle_detach()
         handle_mouse_leave(event_args);
     }
     cancel_keyboard_clicking_timer();
-    on_detached.fire();
+    on_detaching.fire();
 }
 
 NSize NCheckboxElement::measure(const NSize& available)
@@ -2893,7 +2937,7 @@ void NRadioGroupElement::handle_attached(NWindow* window)
     update_child_elements();
 }
 
-void NRadioGroupElement::handle_detach() {
+void NRadioGroupElement::handle_detaching() {
     remove_all_children(); // break any reference loops we may have accidentally introduced.
 }
 
@@ -3079,7 +3123,7 @@ namespace {
     }
 }
 
-void NWindow::navigate_focus(NavDirectionT direction)
+void NWindow::navigate_focus(NNavDirection direction)
 {
     int x = 0;
     int y = 0;
@@ -3092,14 +3136,14 @@ void NWindow::navigate_focus(NavDirectionT direction)
     navigate_focus(x, y, direction);
 }
 
-void NWindow::navigate_focus(int x, int y, NavDirectionT direction)
+void NWindow::navigate_focus(int x, int y, NNavDirection direction)
 {
 
     std::function<nav_compare_fn> is_best;
 
     switch (direction) {
-    case NavDirectionT::ReverseTab:
-    case NavDirectionT::Left:
+    case NNavDirection::ReverseTab:
+    case NNavDirection::Left:
         is_best = [](int xCur, int yCur, int xBest, int yBest, int x0, int y0)
             {
                 if (yCur > y0) return false;
@@ -3113,8 +3157,8 @@ void NWindow::navigate_focus(int x, int y, NavDirectionT direction)
                 return false;
             };
         break;
-    case NavDirectionT::Tab:
-    case NavDirectionT::Right:
+    case NNavDirection::Tab:
+    case NNavDirection::Right:
         is_best = [](int xCur, int yCur, int xBest, int yBest, int x0, int y0)
             {
                 if (yCur < y0) return false;
@@ -3129,7 +3173,7 @@ void NWindow::navigate_focus(int x, int y, NavDirectionT direction)
             };
         break;
 
-    case NavDirectionT::Up:
+    case NNavDirection::Up:
         is_best = [](int xCur, int yCur, int xBest, int yBest, int x0, int y0)
             {
                 if (yCur >= y0) return false;
@@ -3140,7 +3184,7 @@ void NWindow::navigate_focus(int x, int y, NavDirectionT direction)
                 return std::abs(xCur - x0) < std::abs(xBest - x0);
             };
         break;
-    case NavDirectionT::Down:
+    case NNavDirection::Down:
         is_best = [](int xCur, int yCur, int xBest, int yBest, int x0, int y0)
             {
                 if (yCur <= y0) return false;
@@ -3153,7 +3197,7 @@ void NWindow::navigate_focus(int x, int y, NavDirectionT direction)
         break;
 
 
-    case NavDirectionT::Home:
+    case NNavDirection::Home:
         is_best = [](int xCur, int yCur, int xBest, int yBest, int x0, int y0)
             {
                 if (xBest == -1 && yBest == -1) return true;
@@ -3163,7 +3207,7 @@ void NWindow::navigate_focus(int x, int y, NavDirectionT direction)
                 return false;
             };
         break;
-    case NavDirectionT::End:
+    case NNavDirection::End:
         is_best = [](int xCur, int yCur, int xBest, int yBest, int x0, int y0)
             {
                 if (xBest == -1 && yBest == -1) return true;
@@ -3191,12 +3235,12 @@ void NWindow::navigate_focus(int x, int y, NavDirectionT direction)
         searchContext.bestElement->take_focus();
     }
     else {
-        if (direction == NavDirectionT::Tab) {
-            navigate_focus(NavDirectionT::Home);
+        if (direction == NNavDirection::Tab) {
+            navigate_focus(NNavDirection::Home);
         }
-        else if (direction == NavDirectionT::ReverseTab)
+        else if (direction == NNavDirection::ReverseTab)
         {
-            navigate_focus(NavDirectionT::End);
+            navigate_focus(NNavDirection::End);
         }
     }
 }
@@ -3255,20 +3299,22 @@ NSize NWindow::measure(const NSize& available_)
     return result;
 }
 void NWindow::render() {
+    super::render();
+    NColorPair color = this->make_color_pair(color_palette().WindowFrameForeground, color_palette().WindowFrameBackground);
+    color_on(color);
     ::box(curses_window_, 0, 0);
 
     if (title_.length() != 0)
     {
-        int x = std::max(1, (this->bounds().width - measure_text(title_)) / 2);
-        this->move(x, 1);
-        this->print(title_, std::max(0, this->bounds().width - 2));
+        this->move(1, 1);
+        this->print(title_,  NAlignment::Center,std::max(0, this->bounds().width - 2));
         move(0, 2);
         print_acs(0, 2, ACS_LTEE);
         horizontal_line(1, 2, std::max(0, this->bounds().width - 2));
         print_acs(this->bounds().width - 1, 2, ACS_RTEE);
 
     }
-    super::render();
+    color_off(color);
 
 }
 
@@ -3432,20 +3478,24 @@ void NButtonElement::suffix(const std::string& value) {
     }
 }
 
+#if DEBUG_NELEMENT_LIFECYCLE
+#include <atomic>
+static std::atomic<int64_t> g_allocated_element_count_;
 
-#ifdef DEBUG_NELEMENT_LIFECYCLE
-uint64_t NElement::g_allocated_element_count_ = 0;
+/*static*/ int64_t NEelement::allocated_element_count() { return g_allocated_element_count_; }
+
 #endif
+
 
 NElement::NElement(const std::string& elementTag)
     : tag_(elementTag)
 {
-#ifdef DEBUG_NELEMENT_LIFECYCLE
+#if DEBUG_NELEMENT_LIFECYCLE
     ++g_allocated_element_count_;
 #endif
 }
 NElement::~NElement() {
-#ifdef DEBUG_NELEMENT_LIFECYCLE
+#if DEBUG_NELEMENT_LIFECYCLE
     --g_allocated_element_count_;
 #endif
 }
@@ -4275,10 +4325,10 @@ void NTextEditElement::start_blink_timer()
 
 }
 
-void NTextEditElement::handle_detach()
+void NTextEditElement::handle_detaching()
 {
     stop_blink_timer();
-    super::handle_detach();
+    super::handle_detaching();
 }
 void NTextEditElement::on_blink_timer()
 {
@@ -4551,7 +4601,7 @@ NSize NDropdownElement::measure(const NSize& available)
     else {
         for (auto& item : items_)
         {
-            width = std::max(width, measure_menu_text(item.text));
+            width = std::max(width, measure_menu_text(item.label));
         }
         width += measure_text(end_text()) + 1;
     }
@@ -4574,7 +4624,7 @@ void NDropdownElement::render()
     {
         if (item.item_id == selected_ && !item.is_divider())
         {
-            text = item.text;
+            text = item.label;
             break;
         }
     }
@@ -5330,10 +5380,16 @@ NRect NRect::inset(const NThickness& thickness) const
         std::max(0, width - thickness.left - thickness.right),
 
         std::max(0, height - thickness.top - thickness.bottom) };
-    if (result.width == 0 || result.height == 0)
-    {
-        return NRect(0, 0, 0, 0);
-    }
+    return result;
+}
+NRect NRect::inflate(const NThickness& thickness) const
+{
+    NRect result{
+        x - thickness.left,
+        y - thickness.top,
+        std::max(0,width + thickness.left + thickness.right),
+
+        std::max(0,height + thickness.top + thickness.bottom) };
     return result;
 }
 
@@ -5385,15 +5441,15 @@ static std::string checkmark_prefix(bool is_unicode) {
     }
     return ASCII_CHECKMARK_PREFIX;
 }
-static int measure_prefix(NPopupMenuWindow* this_, const NMenuItem& item, bool is_unicode_locale)
+int NPopupMenuWindow::measure_prefix(const NMenuItem& item, bool is_unicode_locale)
 {
     if (item.display_check)
     {
-        return this_->measure_text(checkmark_prefix(is_unicode_locale));
+        return this->measure_text(checkmark_prefix(is_unicode_locale));
     }
     else if (item.icon.length() != 0)
     {
-        return this_->measure_text(item.icon) + 2;
+        return this->measure_text(item.icon) + 2;
     }
     else {
         return 1;
@@ -5418,13 +5474,13 @@ void NPopupMenuWindow::Init(NWindow::ptr parentWindow, const std::vector<NMenuIt
 
     int prefixWidth = 0;
     for (auto& item : menu_items) {
-        prefixWidth = std::max(prefixWidth, measure_prefix(this, item, parentWindow->is_unicode_locale()));
+        prefixWidth = std::max(prefixWidth, measure_prefix(item, parentWindow->is_unicode_locale()));
     }
 
     for (auto& item : menu_items)
     {
         NMenuItemElement::ptr element;
-        if (item.text == "-")
+        if (item.label == "-")
         {
             element = NDividerMenuItemElement::create();
         }
@@ -5456,7 +5512,7 @@ void NPopupMenuWindow::Init(NWindow::ptr parentWindow, const std::vector<NMenuIt
                 );
             }
             else {
-                element = NMenuItemElement::create(item.text, item.item_id);
+                element = NMenuItemElement::create(item.label, item.item_id);
                 element->disabled(!item.enabled);
                 element->on_clicked.subscribe(
                     [this, item_id = item.item_id]
@@ -5539,7 +5595,7 @@ NColorPair NSubmenuMenuItemElement::get_color() {
 }
 
 NSubmenuMenuItemElement::NSubmenuMenuItemElement(const NMenuItem& submenu)
-    : super(submenu.text, NMenuItem::NO_ITEM_ID)
+    : super(submenu.label, NMenuItem::NO_ITEM_ID)
 {
     if (submenu.submenu.size() == 0)
     {
@@ -5807,7 +5863,7 @@ NMessageWindow::ptr NMessageWindow::create(
             text_block_width = DEFAULT_WRAP_WIDTH;
         }
         else {
-            int measured_width = parentWindow->measure_text(message);
+            int measured_width = utf8_wc_length(message);
             if (measured_width + 1 < DEFAULT_WRAP_WIDTH)
             {
                 text_block_width = measured_width + 1;

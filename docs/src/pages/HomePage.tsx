@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import PageColumn from '../PageColumn';
 import Banner from '../Banner';
 import CenteredImage from '../CenteredImage';
+import { ApiLink,LinkType } from '../ClassDescription';
 
 function HomePage() {
 
@@ -60,6 +61,7 @@ int main(void) {
                    />
                 <p>See the <Link to="/documentation">documentation</Link> for instructions on installing, and using <span className="name">NWindows</span>.</p>
 
+                <ApiLink linkType={LinkType.Struct} name="NMouseEventArgs">NMouseEventArgs</ApiLink>
             </div>
         </PageColumn>
     )

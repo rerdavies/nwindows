@@ -72,7 +72,11 @@ function SearchPage() {
                                     return (
                                         <div key={index} style={{marginBottom: 8}}>
                                             <Link to={entry.route} state={{ showElement: entry.elementId }}>
-                                                {entry.route_title} ({entry.text})
+                                            <div>
+                                                <p className="indexTitle">{entry.route_title}</p>
+                                                <p className="indexSubtitle">{entry.text}</p>
+                                            </div>
+                                                
                                             </Link>
                                         </div>
                                     );

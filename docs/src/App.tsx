@@ -25,6 +25,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Box from '@mui/material/Box';
+import { useNavigationTracker  } from './NavigationType';
 
 function App() {
     const navigate = useNavigate();
@@ -33,22 +34,29 @@ function App() {
     const [searchOpen, setSearchOpen] = React.useState(false);
     const [drawerOpen, setDrawerOpen] = React.useState(false);
     const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
-
+    const {startTracking,stopTracking} = useNavigationTracker(()=>{})
     useEffect(() => {
         const handleResize = () => {
             setWindowWidth(window.innerWidth);
         }
         window.addEventListener('resize', handleResize);
+        startTracking();
+
         return () => {
+            stopTracking();
             window.removeEventListener('resize', handleResize);
         }
     })
 
     let isSearchPage = location.pathname === "/search";
-    const compactNav = windowWidth < 600; ``
+    const compactNavBar = windowWidth < 600; 
 
-    const hideNav = windowWidth < 790 && searchOpen;
+    const hideNavBar = windowWidth < 790 && searchOpen;
 
+    const drawerShowGithub = () => {
+        window.open("https://github.com/rerdavies/nwindows/", "_blank");
+        setDrawerOpen(false);
+    }
     const drawerNavigate = (route: string) => {
         navigate(route);
         setDrawerOpen(false);
@@ -81,6 +89,14 @@ function App() {
                         <ListItemText primary="APIs" />
                     </ListItemButton>
                 </ListItem>
+                <ListItem>
+                    <ListItemButton onClick={() => drawerShowGithub()}>
+                        <ListItemIcon>
+                            <GitHubIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="GitHub" />
+                    </ListItemButton>
+                </ListItem>
 
             </List>
         </Box>
@@ -107,15 +123,15 @@ function App() {
 
             <Toolbar style={{ overflowX: "hidden", overflowY: "hidden" }}>
                 <div style={{ flex: "1 1 auto", display: "flex", flexFlow: "row nowrap", alignItems: "center" }}>
-                    {!compactNav ? (<React.Fragment>
-                        <img src={logo} className="app_logo" alt="logo" />
-                        {!hideNav ?
+                    {!compactNavBar ? (<React.Fragment>
+                        {!hideNavBar ?
                             (<React.Fragment>
                                 {/************ REGULAR NAV BAR */}
 
-                                <Button color="inherit" style={{ marginLeft: 8, color: "#FFFFFF", textTransform: "none", borderWidth: 0, fontSize: "1.25em", marginRight: 32, fontWeight: 700 }}
+                                <Button color="inherit" style={{ color: "#FFFFFF", textTransform: "none", borderWidth: 0, fontSize: "1.25em", marginRight: 32, fontWeight: 700 }}
                                     onClick={() => { navigate(""); }}
                                 >
+                                    <img src={logo} className="app_logo" alt="logo" />
                                     NWindows
                                 </Button>
                                 <Button style={{ marginLeft: 8, textTransform: "none", fontSize: "1.25em" }}
@@ -141,15 +157,20 @@ function App() {
                                     return true;
                                 }} />
                         )}
-                        <IconButton onClick={()=>{
-                            window.open("https://github.com/rerdavies/nwindows/","_blank");
-                        }}> 
-                            <GitHubIcon />
-                        </IconButton>
+                        {!hideNavBar && (
+                            <div style={{ color: "#FFF", marginLeft: 8 }}>
+                                <IconButton color="inherit" onClick={() => {
+                                    window.open("https://github.com/rerdavies/nwindows/", "_blank");
+                                }}>
+                                    <GitHubIcon />
+                                </IconButton>
+                            </div>
+                        )}
+
                     </React.Fragment>) :
                         (<React.Fragment>
                             {/************* COMPACT NAV BAR */}
-                            {!hideNav ?
+                            {!hideNavBar ?
                                 (<React.Fragment>
                                     <Button onClick={() => { setDrawerOpen(!drawerOpen); }}>
                                         <img src={logo} className="app_logo" alt="logo"
@@ -167,15 +188,15 @@ function App() {
                                         </Button>
                                     )}
                                     {(location.pathname !== "/" &&
-                                      location.pathname !== "/search" &&
-                                      !location.pathname.startsWith("/apis")) && (
-                                        <Button style={{ marginLeft: 8, textTransform: "none", fontSize: "1.25em" }}
-                                            onClick={() => { navigate("documentation"); }}
-                                            
-                                        >
-                                            Documentation
-                                        </Button>
-                                    )}
+                                        location.pathname !== "/search" &&
+                                        !location.pathname.startsWith("/apis")) && (
+                                            <Button style={{ marginLeft: 8, textTransform: "none", fontSize: "1.25em" }}
+                                                onClick={() => { navigate("documentation"); }}
+
+                                            >
+                                                Documentation
+                                            </Button>
+                                        )}
                                     {location.pathname.startsWith("/apis") && (
                                         <Button style={{ marginLeft: 8, textTransform: "none", fontSize: "1.25em", }}
                                             onClick={() => { navigate("apis"); }}
@@ -183,7 +204,7 @@ function App() {
                                     )}
                                     {location.pathname.startsWith("/search") && (
                                         <Button style={{ marginLeft: 8, textTransform: "none", fontSize: "1.25em", }}
-                                            onClick={() => {  }}
+                                            onClick={() => { }}
                                         >Search</Button>
                                     )}
                                     <div style={{ flex: "1 1 1px" }} />
@@ -200,10 +221,11 @@ function App() {
                                         return true;
                                     }} />
                             )}
+
                         </React.Fragment>
                         )}
                 </div>
-            </Toolbar>
+            </Toolbar >
             <Divider orientation='horizontal' variant="inset" style={{ height: 3 }} />
             <Paper className="app_body">
 

@@ -58,8 +58,10 @@ function NWindowsDispatcher() {
     }
 );`} />
 
-            <ClassDescription className="NWindow" baseClass="NElement">
-                <MethodDescription method={
+            <ClassDescription name="NWindow" baseClass="NElement">
+                <MethodDescription 
+                    indexName={"PostHandle NWindow::post(NWindows::clock_t::duration delay, std::function<void(void)>&& func)"}
+                    method={
                     `PostHandle post(
     NWindows::clock_t::duration delay, 
     std::function<void(void)>&& func);`} >
@@ -67,7 +69,8 @@ function NWindowsDispatcher() {
                         on the main NWindows thread. This method is thread-safe.
                     </p>
                 </MethodDescription>
-                <MethodDescription method={
+                <MethodDescription indexName={
+                    "PostHandle NWindow::post(NWindows::clock_t::time_point when, std::function<void(void)>&& func)"} method={
                     `PostHandle post(
     NWindows::clock_t::time_point when, 
     std::function<void(void)>&& func);`} >
@@ -75,7 +78,7 @@ function NWindowsDispatcher() {
                         on the main NWindows thread. This method is thread-safe.
                     </p>
                 </MethodDescription>
-                <MethodDescription method={
+                <MethodDescription indexName="PostHandle NWindow::post(std::function<void(void)>&& func)" method={
                     `PostHandle post(
     std::function<void(void)>&& func);`} >
                     <p>Post a function to be executed as soon as possible. The function will be executed
@@ -86,7 +89,8 @@ function NWindowsDispatcher() {
                     </p>
                     <p>This method can be called from any thread.</p>
                 </MethodDescription>
-                <MethodDescription method={
+                <MethodDescription indexName="bool cancel_post(PostHandle handle)" 
+                    method={
                     `bool cancel_post(PostHandle handle);`} >
                     <p>Cancel a previous post, whether immediate or delayed. If posted from a 
                         thread other than the main NWindows thread, the function is guaranteed not to 

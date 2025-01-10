@@ -63,7 +63,7 @@ size_t nwindows::utf8_wide_character_width(const std::string& utf8_str, size_t p
     char32_t wide_char = utf8_char32_at(utf8_str, position);
 
     // It's unclear whether windows terminal will support double-width unicode characters. 
-    // If it does, then it is not clear how unicode chacters greater than 0x10000 will be handled here.
+    // If it does, then it is not clear how unicode characters greater than 0x10000 will be handled here.
     // If it does not, then just always return 1. (Try some Korean or Chines characters to test).
 
     static_assert(sizeof(wchar_t) == sizeof(char32_t)); // True on Linux, not on WIN32! 

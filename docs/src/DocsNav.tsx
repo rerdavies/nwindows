@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from "@mui/material/Button";
 import ListIcon from '@mui/icons-material/List';
-import { Link } from 'react-router-dom';
+import { Link} from 'react-router-dom';
 
 import Loading from './Loading'
 import { Route, Routes, useNavigate } from 'react-router-dom'
@@ -11,16 +11,8 @@ import SearchPage from './SearchPage';
 
 
 
-interface DocsPage {
-    route: string;
-    title: string;
-    up: string;
-    source?: string;
-};
-
 const HomePage = React.lazy(() => import("./pages/HomePage"));
 const Documentation = React.lazy(() => import("./pages/Documentation"));
-const NWindowsApis = React.lazy(() => import("./pages/NWindowsApis"));
 const PlatformSupport = React.lazy(() => import("./pages/PlatformSupport"));
 const InstallingNWindows = React.lazy(() => import("./pages/InstallingNWindows"));
 const UsingNWindows = React.lazy(() => import("./pages/UsingNWindows"));
@@ -32,38 +24,70 @@ const KeyboardEvents = React.lazy(() => import("./pages/KeyboardEvents"));
 const MouseEvents = React.lazy(() => import("./pages/MouseEvents"));
 const MiscEvents = React.lazy(() => import("./pages/MiscEvents"));
 const CustomControls = React.lazy(() => import("./pages/CustomControls"));
+const CustomUnicode = React.lazy(() => import("./pages/CustomUnicode"));
+
 const InheritingCustomControl = React.lazy(() => import("./pages/InheritingCustomControl"));
 const ComposedCustomControl = React.lazy(() => import("./pages/ComposedCustomControl"));
 const FullCustomControl = React.lazy(() => import("./pages/FullCustomControl"));
 const NWindowsDispatcher = React.lazy(() => import("./pages/NWindowsDispatcher"));
+const NWindowsApis = React.lazy(() => import("./pages/NWindowsApis"));
+const ApiDefines = React.lazy(() => import("./pages/ApiDefines"));
+const ApiTypedefs = React.lazy(() => import("./pages/ApiTypedefs"));
+const ApiConstants = React.lazy(() => import("./pages/ApiConstants"));
+const ApiEnums = React.lazy(() => import("./pages/ApiEnums"));
+const ApiStructs = React.lazy(() => import("./pages/ApiStructs"));
+const ApiMethods = React.lazy(() => import("./pages/ApiMethods"));
+const ApiClasses = React.lazy(() => import("./pages/ApiClasses"));
+
+const ClassNElement = React.lazy(() => import("./pages/ClassNElement"));
+const ClassNColor = React.lazy(() => import("./pages/ClassNColor"));
+const ClassNColorPair = React.lazy(() => import("./pages/ClassNColorPair"));
+
 const IndexPage = React.lazy(() => import("./pages/IndexPage"));
 
 
 
+interface DocsPage {
+    route: string;
+    title: string;
+    up: string;
+};
+
 
 export interface IndexedComponent {
     route: string;
-    component: ()=> React.LazyExoticComponent<() => JSX.Element>;
+    component: () => React.LazyExoticComponent<() => JSX.Element>;
 
 };
 
 const indexedComponents: IndexedComponent[] = [
-    { route: "/apis", component: ()=> NWindowsApis },
-    { route: "/support", component: ()=> PlatformSupport },
-    { route: "/installing", component: ()=> InstallingNWindows },
-    { route: "/using", component: ()=> UsingNWindows },
-    { route: "/using/hello", component: ()=> HelloNWindows },
-    { route: "/using/elements", component: ()=> NWindowsElements },
-    { route: "/using/windows", component: ()=> NWindowsWindows },
-    { route: "/using/events", component: ()=> NWindowsEvents },
-    { route: "/using/events/keyboard", component: ()=> KeyboardEvents },
-    { route: "/using/events/mouse", component: ()=> MouseEvents },
-    { route: "/using/events/misc", component: ()=> MiscEvents },
-    { route: "/using/custom", component: ()=> CustomControls },
-    { route: "/using/custom/inherit", component: ()=> InheritingCustomControl },
-    { route: "/using/custom/compose", component: ()=> ComposedCustomControl },
-    { route: "/using/custom/full", component: ()=> FullCustomControl },
-    { route: "/using/dispatcher", component: ()=> NWindowsDispatcher },
+    { route: "/support", component: () => PlatformSupport },
+    { route: "/installing", component: () => InstallingNWindows },
+    { route: "/using", component: () => UsingNWindows },
+    { route: "/using/hello", component: () => HelloNWindows },
+    { route: "/using/elements", component: () => NWindowsElements },
+    { route: "/using/windows", component: () => NWindowsWindows },
+    { route: "/using/events", component: () => NWindowsEvents },
+    { route: "/using/events/keyboard", component: () => KeyboardEvents },
+    { route: "/using/events/mouse", component: () => MouseEvents },
+    { route: "/using/events/misc", component: () => MiscEvents },
+    { route: "/using/custom", component: () => CustomControls },
+    { route: "/using/custom/unicode", component: () => CustomUnicode },
+    { route: "/using/custom/inherit", component: () => InheritingCustomControl },
+    { route: "/using/custom/compose", component: () => ComposedCustomControl },
+    { route: "/using/custom/full", component: () => FullCustomControl },
+    { route: "/using/dispatcher", component: () => NWindowsDispatcher },
+    { route: "/apis", component: () => NWindowsApis },
+    { route: "/apis/defines", component: () => ApiDefines },
+    { route: "/apis/constants", component: () => ApiConstants },
+    { route: "/apis/typedefs", component: () => ApiTypedefs },
+    { route: "/apis/enums", component: () => ApiEnums },
+    { route: "/apis/structs", component: () => ApiStructs },
+    { route: "/apis/methods", component: () => ApiMethods },
+    { route: "/apis/classes", component: () => ApiClasses },
+    { route: "/apis/classes/NElement", component: () => ClassNElement },
+    { route: "/apis/classes/NColor", component: () => ClassNColor },
+    { route: "/apis/classes/NColorPair", component: () => ClassNColorPair },
 ];
 
 export function IndexedComponents() {
@@ -84,24 +108,52 @@ let docsIndex: DocsPage[] = [
     { route: "/using/events/mouse", title: "3.4.2 - Mouse Events", up: "/using/events", },
     { route: "/using/events/misc", title: "3.4.3 - Miscellaneous Events", up: "/using/events", },
     { route: "/using/custom", title: "3.5 - Implementing Custom Controls", up: "/using", },
-    { route: "/using/custom/inherit", title: "3.5.1 - Inheriting from Existing Elements", up: "/using/custom", },
-    { route: "/using/custom/compose", title: "3.5.2 - Compound Elements", up: "/using/custom", },
-    { route: "/using/custom/full", title: "3.5.3 - Fully-Custom Elements", up: "/using/custom", },
+    { route: "/using/custom/unicode", title: "3.5.1 - Unicode Support", up: "/using/custom", }, 
+    { route: "/using/custom/inherit", title: "3.5.2 - Inheriting from Existing Elements", up: "/using/custom", },
+    { route: "/using/custom/compose", title: "3.5.3 - Compound Elements", up: "/using/custom", },
+    { route: "/using/custom/full", title: "3.5.4 - Fully-Custom Elements", up: "/using/custom", },
     { route: "/using/dispatcher", title: "3.6 - The NWindows Dispatcher", up: "/using", },
+    { route: "/apis", title: "4.0 - NWindows API Reference", up: "/documentation", },
+    { route: "/apis/defines", title: "4.1 - Defines", up: "/apis", },
+    { route: "/apis/constants", title: "4.2 - Constants", up: "/apis", },
+    { route: "/apis/typedefs", title: "4.3 - Type Definitions", up: "/apis", },
+    { route: "/apis/enums", title: "4.4 - Enums", up: "/apis", },
+    { route: "/apis/structs", title: "4.5 - Structs", up: "/apis", },
+    { route: "/apis/methods", title: "4.6 - Methods", up: "/apis", },
+    { route: "/apis/classes", title: "4.7 - Classes", up: "/apis", },
+    { route: "/apis/classes/NColor", title: "4.7.1 - NColor", up: "/apis/classes" },
+    { route: "/apis/classes/NColorPair", title: "4.7.2 - NColorPair", up: "/apis/classes" },
+    { route: "/apis/classes/NElement", title: "4.7.3 - NElement", up: "/apis/classes" },
     { route: "/index", title: "Index", up: "/documentation", },
 
 ];
 
-export function RoutePaths() : string[] {
+export function RoutePaths(): string[] {
     let paths: string[] = [];
     for (let i = 0; i < docsIndex.length; i++) {
         paths.push(docsIndex[i].route);
     }
     paths.push("/search");
-    paths.push("/index_builder");
-    paths.push("/apis");
 
     return paths;
+}
+
+function IndexPageRoutes() {
+    return (
+        <React.Fragment>
+            {
+                indexedComponents.map((comp) => {
+                    let t = { component: comp.component() };
+                    return (<Route path={comp.route} element={
+                        <React.Suspense fallback={<Loading />}>
+
+                            <t.component />
+                        </React.Suspense>} />);
+                }
+                )
+            }
+        </React.Fragment>
+    );
 }
 
 export function DocsRoutes() {
@@ -115,6 +167,9 @@ export function DocsRoutes() {
                     </React.Suspense>
 
                 } />
+            {
+                IndexPageRoutes()
+            }
             <Route path="documentation" element=
                 {
                     <React.Suspense fallback={<Loading />}>
@@ -129,11 +184,6 @@ export function DocsRoutes() {
                     </React.Suspense>
 
                 } />
-            <Route path="apis" element={
-                <React.Suspense fallback={<Loading />}>
-                        <NWindowsApis />
-                </React.Suspense>
-            } />
             <Route path="support" element={
                 <React.Suspense fallback={<Loading />}>
                     <PlatformSupport />
@@ -141,79 +191,122 @@ export function DocsRoutes() {
             } />
             <Route path="installing" element={
                 <React.Suspense fallback={<Loading />}>
-                        <InstallingNWindows />
+                    <InstallingNWindows />
                 </React.Suspense>
             } />
             <Route path="using" element={
                 <React.Suspense fallback={<Loading />}>
-                        <UsingNWindows />
+                    <UsingNWindows />
                 </React.Suspense>
             } />
             <Route path="using/hello" element={
                 <React.Suspense fallback={<Loading />}>
-                        <HelloNWindows />
+                    <HelloNWindows />
                 </React.Suspense>
             } />
             <Route path="using/elements" element={
                 <React.Suspense fallback={<Loading />}>
-                        <NWindowsElements />
+                    <NWindowsElements />
                 </React.Suspense>
             } />
             <Route path="using/windows" element={
                 <React.Suspense fallback={<Loading />}>
-                        <NWindowsWindows />
+                    <NWindowsWindows />
                 </React.Suspense>
             } />
             <Route path="using/events" element={
                 <React.Suspense fallback={<Loading />}>
-                        <NWindowsEvents />
+                    <NWindowsEvents />
                 </React.Suspense>
             } />
             <Route path="using/events/keyboard" element={
                 <React.Suspense fallback={<Loading />}>
-                        <KeyboardEvents />
+                    <KeyboardEvents />
                 </React.Suspense>
             } />
             <Route path="using/events/mouse" element={
                 <React.Suspense fallback={<Loading />}>
-                        <MouseEvents />
+                    <MouseEvents />
                 </React.Suspense>
             } />
             <Route path="using/events/misc" element={
                 <React.Suspense fallback={<Loading />}>
-                        <MiscEvents />
+                    <MiscEvents />
                 </React.Suspense>
             } />
             <Route path="using/custom" element={
                 <React.Suspense fallback={<Loading />}>
-                        <CustomControls />
+                    <CustomControls />
                 </React.Suspense>
             } />
             <Route path="using/custom/inherit" element={
                 <React.Suspense fallback={<Loading />}>
-                        <InheritingCustomControl />
+                    <InheritingCustomControl />
                 </React.Suspense>
             } />
             <Route path="using/custom/compose" element={
                 <React.Suspense fallback={<Loading />}>
-                        <ComposedCustomControl />
+                    <ComposedCustomControl />
                 </React.Suspense>
             } />
             <Route path="using/custom/full" element={
                 <React.Suspense fallback={<Loading />}>
-                        <FullCustomControl />
+                    <FullCustomControl />
                 </React.Suspense>
             } />
             <Route path="using/dispatcher" element={
                 <React.Suspense fallback={<Loading />}>
-                        <NWindowsDispatcher />
+                    <NWindowsDispatcher />
                 </React.Suspense>
             } />
 
-            <Route path="search" element = {
+            <Route path="apis" element={
+                <React.Suspense fallback={<Loading />}>
+                    <NWindowsApis />
+                </React.Suspense>
+            } />
+
+            <Route path="apis/defines" element={
+                <React.Suspense fallback={<Loading />}>
+                    <ApiDefines />
+                </React.Suspense>
+            } />
+            <Route path="apis/constants" element={
+                <React.Suspense fallback={<Loading />}>
+                    <ApiConstants />
+                </React.Suspense>
+            } />
+            <Route path="apis/typedefs" element={
+                <React.Suspense fallback={<Loading />}>
+                    <ApiTypedefs />
+                </React.Suspense>
+            } />
+            <Route path="apis/enums" element={
+                <React.Suspense fallback={<Loading />}>
+                    <ApiEnums />
+                </React.Suspense>
+            } />
+            <Route path="apis/methods" element={
+                <React.Suspense fallback={<Loading />}>
+                    <ApiMethods />
+                </React.Suspense>
+            } />
+            <Route path="apis/structs" element={
+                <React.Suspense fallback={<Loading />}>
+                    <ApiStructs />
+                </React.Suspense>
+            } />
+            <Route path="apis/classes" element={
+                <React.Suspense fallback={<Loading />}>
+                    <ApiClasses />
+                </React.Suspense>
+            } />
+
+
+            <Route path="search" element={
                 <SearchPage />
             } />
-            <Route path="index_builder" element= {
+            <Route path="index_builder" element={
                 <IndexBuilder />
             } />
 
@@ -228,7 +321,7 @@ interface DocsTree {
 
 
 function RenderTree(tree: DocsTree) {
-    
+
     return (
         <div>
             {tree.children.map((node) => {
@@ -247,7 +340,8 @@ function RenderTree(tree: DocsTree) {
         </div>
     );
 }
-export function NavTree() {
+
+function buildDocsTree() {
     let root: DocsTree = { page: docsIndex[0], children: [] };
     var index: { [id: string]: DocsTree; } = {};
     index[root.page.route] = root;
@@ -259,7 +353,49 @@ export function NavTree() {
         let parent = index[page.up];
         parent.children.push(treeItem);
     }
+    return root;
+
+}
+export function NavTree() {
+    let root: DocsTree = buildDocsTree();
     return RenderTree(root);
+}
+
+function findDocsNode(route: string, tree: DocsTree): DocsTree | undefined {
+    if (tree.page.route === route) {
+        return tree;
+    }
+    for (let child of tree.children) {
+        if (child.page.route === route) {
+            return child;
+        }
+    }
+    for (let child of tree.children) {
+        let result = findDocsNode(route, child);
+        if (result) {
+            return result;
+        }
+    }
+    return undefined;
+}
+
+export function ApiNavTree() {
+    let root: DocsTree = buildDocsTree();
+    let apiTree = findDocsNode("/apis", root);
+    if (!apiTree) {
+        return (<div> #ERROR: MISSING ROUTE</div>);
+    }
+    return RenderTree(apiTree);
+
+}
+export function ClassesNavTree() {
+    let root: DocsTree = buildDocsTree();
+    let apiTree = findDocsNode("/apis/classes", root);
+    if (!apiTree) {
+        return (<div> #ERROR: MISSING ROUTE</div>);
+    }
+    return RenderTree(apiTree);
+
 }
 
 export function DocsTitle(route: string) {
@@ -275,13 +411,12 @@ export function DocsTitle(route: string) {
 
 export function DocsLink(route: string) {
     let isIndex = route === "/index";
-    if (isIndex) 
-    { 
+    if (isIndex) {
         return (
-            <p style={{marginTop: 32}}>
-            <Link to={route}
-                
-            >{DocsTitle(route)}</Link></p>
+            <p style={{ marginTop: 32 }}>
+                <Link to={route}
+
+                >{DocsTitle(route)}</Link></p>
         );
 
     } else {

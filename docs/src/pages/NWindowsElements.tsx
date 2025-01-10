@@ -1,7 +1,7 @@
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import M from '../M';
-import ClassDescription, { PropertyEntry, PropertyList, EnumDefinitionList } from '../ClassDescription';
+import ClassDescription, { EnumDescription, PropertyEntry, PropertyList, EnumDefinitionList } from '../ClassDescription';
 import Code from '../Code';
 import SectionHead from '../SectionHead';
 import CenteredImage from '../CenteredImage';
@@ -99,7 +99,7 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                 which are available on all NWindows elements.</p>
 
 
-            <ClassDescription className="NElement">
+            <ClassDescription name="NElement">
                 <p>The common base class for all NWindows elements.</p>
                 <PropertyList>
 
@@ -113,12 +113,30 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                             element will adjust to fit the height of its content at layout time.</div>
                     </PropertyEntry>
 
+                    <PropertyEntry type="NSize" propertyName='NElement::size'>
+                        <div>Controls the height of the element. If set to <M>AUTO_SIZE</M>, the height of the
+                            element will adjust to fit the height of its content at layout time.</div>
+                    </PropertyEntry>
 
                     <PropertyEntry type="NRect" propertyName='NElement::margin'>
                         <div>Controls the amount of blank space display outside the element. The <M>width</M> and <M>height</M> of
                             the element do not include space allocated for margins. Defaults to <M>NRect(0,0,0,0)</M></div>
                     </PropertyEntry>
 
+                    <PropertyEntry type="int" propertyName="NElement::actual_width">
+                        (Read only). The actual layout width of the element. Not valid until layout has completed.
+                    </PropertyEntry>
+                    <PropertyEntry type="int" propertyName="NElement::actual_height">
+                        (Read only). The actual layout height of the element. Not valid until layout has completed.
+                    </PropertyEntry>
+                    <PropertyEntry type="NSize" propertyName="NElement::actual_size">
+                        (Read only). The actual layout width and height of the element. Not valid until layout has completed.
+                    </PropertyEntry>
+
+                    <PropertyEntry type="NRect" propertyName="NElement:bounds">
+                        (Read only). The actual position of the element inside the window in window coordinates. Only valid 
+                        after layout has completed.
+                    </PropertyEntry>
                     <PropertyEntry type="bool" propertyName='NElement::disabled'>
                         <div>Present on all objects, but Only has effect for input controls elements. Has no effect for elements of other types.
                             Setting disabled to true will gray out the control to which it is applied. Discussion of effects on event handling
@@ -130,7 +148,7 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
 
             <SectionHead text="Layout Elements" />
 
-            <ClassDescription className="NVerticalStackElement">
+            <ClassDescription name="NVerticalStackElement">
                 <p>
                     The <M>NVerticalStackElement</M> stacks child elements vertically.
                 </p>
@@ -171,7 +189,7 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                 </PropertyList>
 
             </ClassDescription>
-            <ClassDescription className="NHorizontalStackElement">
+            <ClassDescription name="NHorizontalStackElement">
                 <p>
                     The <M>NHorizontalStackElement</M> stacks child elements horizontally.
                 </p>
@@ -215,7 +233,7 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
 
             <SectionHead text="Rendering Elements" />
 
-            <ClassDescription className="NTextElement">
+            <ClassDescription name="NTextElement">
                 <p>
                     The <M>NTextElement</M> displays text.
                 </p>
@@ -247,14 +265,12 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                         <div>
                             <p>Modifies how text is displayed.
                             </p>
-                            <p>
                                 <CenteredImage 
                                     src="/nwindows/image/sample_attributes.png" 
                                     alt="Sample attributes"  />
-                            </p>
                             <p>The <M>text_attribute</M> property can take the following values:</p>
 
-                            <ClassDescription className="NAttribute" prefix="enum class">
+                            <EnumDescription enumName="NAttribute" prefix="enum class">
                                 <EnumDefinitionList>
                                     <div>Normal</div>
                                     <div>Normal text.</div>
@@ -290,7 +306,7 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                                     <div>Don't use.</div>
                                 </EnumDefinitionList>
 
-                            </ClassDescription>
+                            </EnumDescription>
                             <p>
                                 Support
                                 for each of these attributes varies by terminal type, and depends entirely on the capabilities
@@ -301,7 +317,7 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                 </PropertyList>
             </ClassDescription>
 
-            <ClassDescription className="NBoxElement">
+            <ClassDescription name="NBoxElement">
                 <p>Displays a box border around its child element. <M>NBoxElement</M> can have only
                     one child element.</p>
                 <p>
@@ -328,7 +344,7 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
 
             <SectionHead text="Input Elements" />
 
-            <ClassDescription className="NButtonElement">
+            <ClassDescription name="NButtonElement">
                 <p>Displays a button that can be clicked.</p>
                 <p>
                     <CenteredImage
@@ -385,7 +401,7 @@ NButtonElement::create()
                 </PropertyList>
             </ClassDescription>
 
-            <ClassDescription className="NTextEditElement">
+            <ClassDescription name="NTextEditElement">
                 <p>Displays a text box that allows editing of text.</p>
                 <p>
                     <CenteredImage
@@ -469,7 +485,7 @@ void select_end();
                     </div>
                 </PropertyList>
             </ClassDescription>
-            <ClassDescription className="NCheckboxElement">
+            <ClassDescription name="NCheckboxElement">
                 <p>Displays a checkbox control.</p>
                 <p>
                     <CenteredImage
@@ -516,7 +532,7 @@ void select_end();
                 </PropertyList>
 
             </ClassDescription>
-            <ClassDescription className="NRadioGroupElement">
+            <ClassDescription name="NRadioGroupElement">
                 <p>Displays a group of radio buttons.</p>
                 <p>
                     <CenteredImage
@@ -579,7 +595,7 @@ void select_end();
 
                 </PropertyList>
             </ClassDescription>
-            <ClassDescription className="NDropdownElement">
+            <ClassDescription name="NDropdownElement">
                 <p>A dropdown control that allows selection of values from a list.</p>
                 <p>
                     <CenteredImage src="/nwindows/image/sample_dropdown.png" alt="Sample dropdown"  />
@@ -617,7 +633,7 @@ void select_end();
                 </PropertyList>
             </ClassDescription>
 
-            <ClassDescription className="NMenuElement" baseClass="NButtonBaseElement">
+            <ClassDescription name="NMenuElement" baseClass="NButtonBaseElement">
                 <p><M>NMenuElement</M> menu header for a single menu item, displays a popup menu 
                 when clicked, or when the hot key is pressed. Submenus are supported, as are menu items 
                 with checkmarks, or with icons. 

@@ -1,7 +1,7 @@
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import M from '../M';
-import ClassDescription, { MethodDescription } from '../ClassDescription';
+import ClassDescription, { EventDescription } from '../ClassDescription';
 import { CodeFragment2 } from '../Code';
 
 
@@ -12,9 +12,13 @@ function KeyboardEvents() {
 
             <h1>{DocsTitle("/using/events/keyboard")}</h1>
 
-            <ClassDescription className="NElement">
+            <ClassDescription name="NElement">
 
-                <MethodDescription method={
+                <EventDescription indexName={[
+                    "NEvent<void (NKeyEventArgs&event_args)> NElement::on_key",
+                    "NEvent<void (NKeyCodeEventArgs&event_args)> NElement::on_key_code"
+                ]} 
+                method={
                     `NEvent<void (NKeyEventArgs&event_args)> on_key;
 NEvent<void (NKeyCodeEventArgs&event_args)> on_key_code;
 `
@@ -103,7 +107,7 @@ NEvent<void (NKeyCodeEventArgs&event_args)> on_key_code;
                         Windows ports of the ncurses libraries. So just press the keys and see what you get.</p>
 
                     <p>Key code event routing is the same as for key event routing.</p>
-                </MethodDescription>
+                </EventDescription>
             </ClassDescription>
         </DocsPage>
     );

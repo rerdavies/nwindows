@@ -8,9 +8,10 @@ import ErrorBoundary from './ErrorBoundary.tsx';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter basename='nwindows'> {/* HashRouter */}
-      <ErrorBoundary>
-        <App />
-      </ErrorBoundary>
+
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
     </BrowserRouter>
   </StrictMode>
 )

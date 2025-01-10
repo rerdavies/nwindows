@@ -111,7 +111,7 @@ h1 {
 
 
 .property_grid_cell {
-
+    min-width: 0px;
 }
 .property_grid_cell_pre {
   white-space: pre;
@@ -132,6 +132,9 @@ h1 {
 }
 
 .method_description {
+  scroll-margin-top: 32px;
+  scroll-margin-bottom: 32px;
+
   margin-bottom: 32px;
 }
 
@@ -147,12 +150,25 @@ h1 {
 } 
 .indexLinks {
   margin-left: 24px;
+  margin-bottom: 8px;
 }
 .indexLink {
   margin-top: 0px;
-  margin-bottom: 0px; 
+  margin-bottom: 12px; 
 }
 
+.indexTitle {
+  margin-top: 0px;
+  margin-bottom: 0px; 
+  font-size: 0.9em;
+  opacity: 0.6;
+}
+.indexSubtitle {
+  margin-top: 0px;
+  margin-bottom: 0px; 
+  font-size: 0.9em;
+  opacity: 0.6;
+}
 .nav_target {
   scroll-margin-top: 32px;
   scroll-margin-bottom: 32px;
@@ -246,4 +262,33 @@ h1 {
   background: #F88;
   border-bottom: 1px solid #888;
   font-family: Roboto, Helvetica, Arial, sans-serif
+}
+
+.section_head {
+  scroll-margin-top: 48px;
+  scroll-margin-bottom: 32px;
+}
+.class_section_head {
+  margin-top: 8px;
+  margin-bottom: 0px;
+
+  scroll-margin-top: 32px;
+  scroll-margin-bottom: 32px;
+
+}
+.class-desc-header {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 8px;
+  justify-content: space-between;
+  border-bottom: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+  margin-bottom: 8px;
+  padding-right: 16px;
+  margin-top: 32px;
+}
+
+.material-icon-inline {
+  font-family: "Material Icons";
+  font-weight: 500;
 }

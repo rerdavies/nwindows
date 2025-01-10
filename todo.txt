@@ -1,6 +1,5 @@
-- Github documentation build.
-- Test github pages routing.
-
+- Generic discussion of unicode support. 
+- event declarators are not indexed properly.
 - Add creation methods in NElement section.
 - Add principle events in NElement section.
 - Add NPopupWindow events in NWindow section.

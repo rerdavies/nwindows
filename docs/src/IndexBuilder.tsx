@@ -41,12 +41,12 @@ function SetRegisterIndexPageRoute(route: string) {
 }
 
 export function RegisterIndexEntry(
-    name: string,
+    searchName: string,
     elementId: string,
     text?: string) {
     if (collectIndexEntries) {
         let indexEntry = new RegisteredIndexEntry(
-            name,
+            searchName,
             registerIndexPageRoute,
             elementId,
             text ? text : ""

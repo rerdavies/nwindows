@@ -1,7 +1,7 @@
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import M from '../M';
-import ClassDescription, { MethodDescription } from '../ClassDescription';
+import ClassDescription, { MethodDescription, EventDescription, EnumDefinitionList, EnumDescription } from '../ClassDescription';
 import SectionHead from '../SectionHead';
 import Code, { CodeFragment2 } from '../Code';
 
@@ -12,24 +12,35 @@ function FullCustomControl() {
 
 
             <h1>{DocsTitle("/using/custom/full")}</h1>
-            <p>A slightly more complicated option is to implement a full custom element from scratch. This section 
+            <p>A slightly more complicated option is to implement a full custom element from scratch. This section
                 covers what you need to know in order to write a custom NWindows element.</p>
             <SectionHead text='Lifecycles' />
             <p><M>NElement</M>s really only have one lifecycle state (other than construction and deletion). They are either attached to
                 an <M>NWindow</M> or they are not.</p>
             <p><M>NElement</M> provides the following methods to deal with this.</p>
-            <MethodDescription method={`virtual void handle_attached(NWindow* window);
-virtual void handle_detach();
+            <MethodDescription
+                indexName={[
+                    "void NElement::handle_attached(NWindow* window)",
+                    "void NElement::handle_detaching()"
+                ]}
+                method={`virtual void handle_attached(NWindow* window);
+virtual void handle_detaching();
 `} />
             <p>along with their corresponding observable events</p>
-            <MethodDescription method={`NEvent<void(NWindow*)> on_attach;
-NEvent<void(void)> void on_detach;
+            <EventDescription
+                indexName={[
+                    "NEvent<void(NWindow*)> NElement::on_attached",
+                    "NEvent<void(void)> void NElement::on_detaching"
+
+                ]}
+                method={`NEvent<void(NWindow*)> on_attached;
+NEvent<void(void)> void on_detaching;
 `} />
 
 
             <p>When an <M>NElement</M> is attached to an <M>NWindow</M>, <M>handle_attached</M> is called,
-                which then fires an <M>on_attached</M> event. And when it is detached from an <M>MWindow</M>, <M>handle_on_detached</M> is
-                called, which then fires the <M>on_detached</M> event. If you override these methods, make sure you call the superclass's
+                which then fires an <M>on_attached</M> event. And when it is detached from an <M>MWindow</M>, <M>handle_on_detaching</M> is
+                called, which then fires the <M>on_detaching</M> event. If you override these methods, make sure you call the superclass's
                 implementation, since the events are fired in <M>NElement::handle_attached</M> and <M>Nelement::handle_detached</M>.
             </p><p>Elements are attached to an <M>NWindow</M> either during creation of their parent <M>NWindow</M>, or because they, or
                 one of their parents have been added to a live visual tree using <M>NContainerElement::add_child</M>. A window can be detached either because the element, or one of its parent
@@ -38,7 +49,7 @@ NEvent<void(void)> void on_detach;
                 all references to them are released. As a result, when and where <M>NElements</M> in the visual tree are deleted may be a bit unpredictable. The most
                 common scenario where this comes into play when firing events, which studiously take <M>shared_ptr</M> references on participating
                 elements while firing the event. This is done so that event handlers have to worry much less about use-after-free problems when
-                closing windows, or making structural changes to the visual tree. <M>handle_attach</M> and <M>handle_detach</M>, on the other
+                closing windows, or making structural changes to the visual tree. <M>handle_attach</M> and <M>handle_detaching</M>, on the other
                 hand, are entirely predictable. The are called immediately during processing of an <M>add_child</M> or <M>remove_child</M> call,
                 or during creation of an element's parent window, or during processing of an <M>NWindow::close</M> call.
             </p>
@@ -69,11 +80,11 @@ virtual void on_attach(NWindow*) override {
     super:on_attach();
     NWindow::ptr window = this->window();
     // find on of our child elements.
-    NTextElement::ptr textElement = find_element_by_id("text_control");
+    NTextElement::ptr textElement = get_element_by_id<NTextElement>("text_control");
     NElement::ptr thisElement = this->shared_from_this();
 
     this->on_mouse_move.subscribe(
-        [thisElement](int button, NMouseMoveEvent& event_args) mutable {
+        [thisElement,textElement](int button, NMouseMoveEvent& event_args) mutable {
             /* DO SOMETHING */
         }
     
@@ -116,7 +127,7 @@ virtual void on_attach(NWindow*) override {
                 it's probably best to inherit from <M>NButtonBaseElement</M>, which provides a starting point for
                 dealing with mouse clicks, and rendering of hover, pressed, and focus states.</p>
 
-            <SectionHead text='Layout' />
+            <SectionHead text='Layout' id="section__Layout" />
             <p>Layout is performed in the main event loop. Elements can request a new layout pass by
                 calling <M>NElement::invalidate_layout()</M> which sets a flag in the
                 element's parent <M>NWindow</M> (if it has one), asking the window to perform a layout pass for all components
@@ -124,17 +135,49 @@ virtual void on_attach(NWindow*) override {
                 to  <M>invalidate_layout</M> are therefore coalesced, and result in one and only one layout pass.
             </p>
             <p>To participate in layout, a custom element will have to override and implement two methods:</p>
-            <MethodDescription method={`virtual NSize measure(const NSize& available);
+            <MethodDescription
+                indexName={"NSize NElement::measure(const NSize& available)"}
+                method={`virtual NSize measure(const NSize& available);
 virtual void arrange(const NRect& bounds);`} />
-            <p>These methods are called during the layout pass. <M>measure</M> is called first, and <M>arrange</M> is called
-                after all elements have been measured. <M>measure</M> should return the size that the element would like to be,
-                given the available space. <M>arrange</M> should position and size the element and its children.</p>
+
+            <p>These methods are called during the layout pass of the element tree. The layout pass occurs in two phases. 
+                During the measure phase, <M>measure</M> is called to determine the desired size of each element in the tree. 
+                Once sizes are determined, <M>arrange</M> is called on each element in the visual tree to determine the final 
+                position of each element.</p>
+            <p>When measuring, either or both of <M>available.width</M> and <M>available.height</M> may be set to <M>AUTO_SIZE</M>.
+                if that's the case, implementations of <M>measure</M> should return a width or height that reflects the desired size
+                of the element if it were unconstrained. The width and height of the returned value of <M>measure</M> must <i>not</i> be
+                <M>AUTO_SIZE</M>, and must not be less than zero. Container elements are responsible for calling <M>measure</M> on 
+                each of their child elements, with available space appropriately adjusted. The <M>available</M> argument contains 
+                the space available to the element with margins already applied. <M>NContainerElement</M> implementations of <M>measure</M> 
+                must deal with margins of their child elements by subtracting the margins of the child from the space available to the 
+                child before calling the child's arrange method, and then adding the child's margins back onto the value return from 
+                the child's <M>measure</M> method. <M>NContainerElement</M> provides a <M>measure_child_with_margins</M> method 
+                to subtract and re-add a child's margins when measuring.</p>
+
+            <p>The <M>arrange</M> method
+                is called on each element in the visual tree, starting at the root and working in toward the 
+                leaves. <M>NContainerElement</M>s are responsible for calling <M>arrange</M> on each of their 
+                children. The <M>bounds</M> argument has margins already applied, and determines the final layout position 
+                of the client area of the element. The <M>bounds</M> argument is in window coordinates &mdash; (0,0) is at the top-left 
+                corner of the owning <M>NWindow</M>. <M>NContainerElement</M> implementations of <M>arrange</M> are expected to arrange their
+                children within those bounds as they sees fit. Container implementations of <M>arrange </M> are responsible for 
+                subtracting the margins of child elements before calling <M>arrange</M> on the child element. The bounds argument of 
+                each call to a child's <M>arrange</M> method must be contained entirely within the bounds argument of the container element. 
+                If the child doesn't fit at all, it the width and height of the bounds argument supplied to the child should be 
+                set to zero. Implementations of <M>arrange</M> must call the <M>arrange</M> method of their superclass, 
+                since <M>NElement::arrange</M> sets private properties that control the position of the element when rendering.
+            </p>
+            <p>When calling <M>measure</M> on a child element, container implementations of <M>measure</M> may set the <M>NElement::measured</M>
+            property of child elements to the result return by the <M>measure</M> call so that the measured result can be retrieved in their <M>arrange</M> implementation.
+            reserved specifically for this use, and no other.
+            </p>
+
             <p>When implementing <M>measure</M> and <M>arrange</M>, the element should not change its state or the state of any of
-                its child elements. If an element absolutely
-                must change it's state during a layout pass, it may call <M>NElement::invalidate_layout()</M>, after which the
+                its child elements. If an element absolutely must change it's state during a layout pass, it may call <M>NElement::invalidate_layout()</M>, after which the
                 current layout pass will complete, and layout will be restarted once control returns to the event loop.
                 However, calling <M>NElement::invalidate_layout</M> during a layout pass is strongly discouraged, as it may lead
-                to unexpected performance problems.
+                to unexpected performance problems, or even infinite loops in the layout pass.
             </p>
             <p>Implementing <M>measure</M> for elements that don't have children is fairly straightforward. It should look
                 something like this:</p>
@@ -152,6 +195,10 @@ virtual void arrange(const NRect& bounds);`} />
     {
         result.width = 0;
     }
+    if (available.height != AUTO_SIZE && available.height < result.height)
+    {
+        result.height = available.height;
+    }    
     return result;
 }`} />
             <p>The only thing worth noting here is the use of the method <M>NElement::measure_text</M>. The size
@@ -259,7 +306,9 @@ virtual void arrange(const NRect& bounds);`} />
                 render pass. Calling <M>NElement::invalidate_render()</M> also invalidates the rendering of all child
                 elements, causing them to be redrawn as well on the next render pass.</p>
             <p>To participate in rendering, a custom element will have to override and implement the following method:</p>
-            <MethodDescription method={`virtual void render() {}`} />
+            <MethodDescription
+                indexName="void render()"
+                method={`virtual void render()`} />
             <p>The <M>render</M> method should render content specific to the element itself. <M>NWindow</M> will take care of
                 walking the visual tree and
                 calling the <M>render</M> method of child elements. Note that <M>render()</M> will only be called if the
@@ -270,27 +319,36 @@ virtual void arrange(const NRect& bounds);`} />
             <p><M>NElement</M> provides the following methods for drawing content on the screen. Coordinates, when specified, are
                 in element coordinates &mdash; (0,0) is at the top-left corner of the element, inside its margins.
             </p>
-            <ClassDescription className="NElement">
-                <MethodDescription method={
-                    `void move(int x, int y);`} >
+            <ClassDescription name="NElement">
+                <MethodDescription
+                    indexName={"void NElement::move(int x, int y)"}
+                    method={
+                        `void move(int x, int y);`} >
                     <p>Move the cursor to the specified location. Coordinate are in element space &mdash; (0,0) is located
                         at the top-left corner of the element, inside its margins.
                     </p>
                 </MethodDescription>
-                <MethodDescription method={
-                    `int measure_text(const std::string&text);`} >
+                <MethodDescription
+                    indexName={"int NElement::measure_text(const std::string&text)"}
+                    method={
+                        `int measure_text(const std::string&text);`} >
                     <p>Returns the number columns on the display terminal by which the cursor would advance if the
                         string were printed. The character encoding of the string is assumed to be UTF-8. Individual
                         Unicode characters may occupy zero, one or two columns on the display terminal. "😄" and "字" are
                         examples of characters that occupy two columns on the display terminal. Unicode composing accents
-                        are examples of characters that occupy zero columns on the display terminal. The return value takes 
+                        are examples of characters that occupy zero columns on the display terminal. The return value takes
                         all of these factors into account.
                     </p>
                 </MethodDescription>
 
 
-                <MethodDescription method={
-                    `void print(const char* text);
+                <MethodDescription
+                    indexName={[
+                        "void NElement::print(const char* text)",
+                        "void NElement::print(const std::string& text)"
+                    ]}
+                    method={
+                        `void print(const char* text);
 void print(const std::string& text);`} >
                     <p>Print text at the current cursor position, advancing the cursor by the number of columns that <M>measure_text</M> would
                         return. Individual characters are mapped by NWindows to characters actually supported by the display terminal. xterm-like
@@ -300,8 +358,10 @@ void print(const std::string& text);`} >
                     <p>Individual text </p>
                 </MethodDescription>
 
-                <MethodDescription method={
-                    `void print(const std::string& text, int width);`} >
+                <MethodDescription
+                    indexName={"void NElement::print(const std::string& text, int width)"}
+                    method={
+                        `void print(const std::string& text, int width);`} >
                     <p>Print text at the current cursor position. <M>width</M> specifies the maximum length of text to display &mdash; more
                         specifically, the maximum number of columns the cursor can be advanced. Anything extra is discarded. Text is not
                         padded if it is shorter than the specified width. Note that individual Unicode characters may occupy zero, one or
@@ -310,45 +370,62 @@ void print(const std::string& text);`} >
                     </p>
                 </MethodDescription>
 
-                <MethodDescription method={
-                    `void box(
+                <MethodDescription
+                    indexName={"void NElement::print(const std::string& text, NAlignment alignment, int width)"}
+                    method={
+                        `void box(
     const NRect &rect, 
-    const std::optional<NColorPair>& colorPair = std::nullopt);`} >
+    const std::optional<NColorPair>&
+         colorPair = std::nullopt);`} >
                     <p>Display a box on screen. Line drawing characters will be used if they are available on the current display terminal; otherwise
                         NWindows will fall back to drawing boxes with ASCII characters. The optional <M>colorPair</M> argument specifies the
                         color pair to use when drawing the box.
                     </p>
                 </MethodDescription>
 
-                <MethodDescription method={
-                    `void horizontal_line(int x, int y, int width);
+                <MethodDescription
+                    indexName={[
+                        "void NElement::horizontal_line(int x, int y, int width)",
+                        "void NElement::vertical_line(int x, int y, int height)"
+                    ]}
+                    method={
+                        `void horizontal_line(int x, int y, int width);
 void vertical_line(int x, int y, int height);`} >
                     <p>Draw a vertical or horizontal line at the specified location. Coordinates are element coordinates. Uses line-drawing characters
                         if availalbe, and falls back to ASCII rendering otherwise.
                     </p>
                 </MethodDescription>
 
-                <MethodDescription method={
-                    `void print_acs(int x, int y, int acs_character);`} >
+                <MethodDescription
+                    indexName={"void NElement::print_acs(int x, int y, int acs_character)"}
+                    method={
+                        `void print_acs(int x, int y, int acs_character);`} >
                     <p>Print a character from the <M>ncurses</M> alternate character set. Typically, these are box drawing characters. For example,
                         the following code displays the top-left corner of a box:
                     </p>
                     <Code text={`print_acs(0,0,ACS_ULCORNER);`} />
                     <p>see the ACS_* literals in <M>ncurses.h</M> for a complete lists of alternate-character-set characters.</p>
-                    <p>Prefer this method for ACS line-drawing characters, because <M>ncurses</M> provides fallback 
-                    behavior for terminal devices that don't have line-drawing characters. 
-                    Prefer <M>print()</M> using Unicode characters otherwise.</p>
+                    <p>Prefer this method for ACS line-drawing characters, because <M>ncurses</M> provides fallback
+                        behavior for terminal devices that don't have line-drawing characters.
+                        Prefer <M>print()</M> using Unicode characters otherwise.</p>
                 </MethodDescription>
 
-                <MethodDescription method={
-                    `int measure_menu_item(const std::string& text);`} >
+                <MethodDescription
+                    indexName={"int NElement::measure_menu_item(const std::string& text)"}
+                    method={
+                        `int measure_menu_item(const std::string& text);`} >
                     <p>In menu item text, the '_' character indicates that the character which follows is a shortcut key.</p>
                     <p>Returns the number of columns that the menu item would occupy on the display terminal if it were printed.
                         The same as <M>measure_text</M>, but with special handling for the '_' character.</p>
                     int measure_menu_item(const std::string& text);
                 </MethodDescription>
-                <MethodDescription method={
-                    `void print_menu_item(
+                <MethodDescription
+                    indexName={[
+                        "void NElement::print_menu_item(const std::string& text, int width, bool show_underline = true)",
+                        "void NElement::print_menu_item(const std::string& text, NAlignment alignment, int width, bool show_underline = true)"
+                    ]}
+                    method={
+                        `void print_menu_item(
     const std::string& text, 
     int width, 
     bool show_underline = true);
@@ -368,8 +445,13 @@ void print_menu_item(
                     </p>
                 </MethodDescription>
 
-                <MethodDescription method={
-                    `bool is_menu_item_shortcut_key(
+                <MethodDescription
+                    indexName={[
+                        "bool NElement::is_menu_item_shortcut_key(char32_t c, const std::string& text)",
+                        "bool NElement::is_menu_item_shortcut_key(const std::string& utf8key, const std::string& text)"
+                    ]}
+                    method={
+                        `bool is_menu_item_shortcut_key(
     char32_t c, 
     const std::string &text) const;
 bool is_menu_item_shortcut_key(
@@ -379,22 +461,68 @@ bool is_menu_item_shortcut_key(
                     <p>Returns true if the supplied text has a menu item shortcut (a character marked by '_') which
                         matches the character <M>c</M>. The comparison is done using a case-insensitive comparison appropriate for
                         the current locale. </p>
-                    <p>If <M>utf8key</M> is supplied as an argument, the string must contain a single 
-                    Unicode codepoint (which many consist of multiple UTF-8 encoded bytes) </p>
+                    <p>If <M>utf8key</M> is supplied as an argument, the string must contain a single
+                        Unicode codepoint (which many consist of multiple UTF-8 encoded bytes) </p>
                 </MethodDescription>
-                <MethodDescription method={
+                <MethodDescription indexName={[
+                    "void NElement::attribute_on(NAttribute attr)",
+                    "void NElement::attribute_off(NAttribute attr)"
+                ]} method={
                     `void attribute_on(NAttribute attr);
 void attribute_off(NAttribute attr);
 `} >
                     <p>Turn the specified attribute on or off. Attributes are used to change the appearance of text.
                         The following attributes are supported:</p>
+                    <EnumDescription enumName="NAttribute" prefix="enum class">
+                        <EnumDefinitionList>
+                            <div>Normal</div>
+                            <div>Normal text.</div>
+
+                            <div>Underline</div>
+                            <div>Underlined text.</div>
+
+                            <div>Bold</div>
+                            <div>Bold text.</div>
+
+                            <div>Reverse</div>
+                            <div>Reverse text</div>
+
+                            <div>Standout</div>
+                            <div>Best highlighted mode of the terminal</div>
+
+                            <div>Dim</div>
+                            <div>Half-bright text.</div>
+
+                            <div>Invisible</div>
+                            <div>Invisible text.</div>
+
+                            <div>Protected</div>
+                            <div>Protected text.</div>
+
+                            <div>Blink</div>
+                            <div>Blinking. Doesn't work on xterm-like devices.</div>
+
+                            <div>AltChar</div>
+                            <div>Don't use. Use <M>print_acs</M> instead.</div>
+
+                            <div>CharText</div>
+                            <div>Don't use.</div>
+                        </EnumDefinitionList>
+
+                    </EnumDescription>
+
                     <p>If you turn an attribute on, you <i>must</i> turn it off before you return from <M>render()</M>.</p>
                 </MethodDescription>
-                <MethodDescription method={
-                    `void color_on(NColorPair colorPair);
+                <MethodDescription
+                    indexName={[
+                        "void NElement::color_on(NColorPair colorPair)",
+                        "void NElement::color_off(NColorPair colorPair)"
+                    ]}
+                    method={
+                        `void color_on(NColorPair colorPair);
 void color_off(NColorPair colorPair);
 `} >
-                    <p>Turn the specified color pair on or off. Subsequent text display calls will 
+                    <p>Turn the specified color pair on or off. Subsequent text display calls will
                         display text using the foreground and background colors specified in the <M>NColorPair</M>.
                         Color pairs are created using the <M>NWindow::make_color_pair</M> method.
                         There must be a matching call to <M>color_off</M> for every call to <M>color_on</M> when you return from <M>render()</M>.

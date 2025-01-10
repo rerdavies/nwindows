@@ -40,7 +40,7 @@ function NWindowsWindows() {
             <p><M>NWindow</M>s inherit from <M>NElement</M>, but only do so in order to participate
                 in <M>NElement</M> event routing. It would be a serious (and promptly fatal) error to try to add
                 an <M>NWindow</M> as a child of another <M>NElement</M>.</p>
-            <ClassDescription className="NWindow" baseClass="NElement">
+            <ClassDescription name="NWindow" baseClass="NElement">
                 <p>
                     <M>NWindow</M> is the type of window you will use most often. It can be either a root-level window
                     or a child window, depending on how it is constructed.
@@ -51,13 +51,17 @@ function NWindowsWindows() {
                 </p>
 
                 <h3>create Methods</h3>
-                <MethodDescription method={
-                    `static NWindow::ptr create()
+                <MethodDescription indexName={[
+                        `static NWindow::ptr NWindow::create(int width, int height, NColorPalette* colorPalette = nullptr)`,
+                        `static NWindow::ptr NWindow::create(int x, int y, int width, int height, NColorPalette* colorPalette = nullptr)`
+                ]}
+                method={
+                    `static NWindow::ptr create(
     int width, int height,
     NColorPalette* colorPalette = nullptr);
 
 static NWindow::ptr create(
-    int x, int x,
+    int x, int y,
     int width, int height,
     NColorPalette* colorPalette = nullptr);`
                 }
@@ -89,7 +93,12 @@ static NWindow::ptr create(
                     </ParameterList>
                     <p>These two <M>create</M> overrides create a top-level <M>NWindow</M>s. You can only create one top-level window.</p>
                 </MethodDescription>
-                <MethodDescription method={
+                <MethodDescription 
+                    indexName={[
+                        "static NWindow::ptr NWindow::create(NWindow::ptr parent_window, int width, int height)",
+                        "static NWindow::ptr NWindow::create(NWindow::ptr parent_window, int x, int y,int width, int height)",
+                    ]}
+                    method={
                     `static NWindow::ptr create(
     NWindow::ptr parent_window,
     int width, int height);
@@ -133,14 +142,16 @@ static NWindow::ptr create(
 
                 </MethodDescription>
                 <h3>Methods required to display and run a window.</h3>
-                <MethodDescription method={`void run();`
+                <MethodDescription 
+                    indexName="void NWindow::run()"
+                    method={`void run();`
                 }>
                     <p>The <M>run</M> method displays the window and starts the event loop. The window will
                         remain visible until the <M>close</M> method on the top-level window is called. Once the
                         top level window has been closed, <M>run()</M> will exit the message loop and return.</p>
                     <p><M>run()</M> can only be called (and only needs to be called) on a top-level <M>NWindow</M>.</p>
                 </MethodDescription>
-                <MethodDescription method={`void close();`
+                <MethodDescription indexName="void NWindow::close()" method={`void close();`
                 }>
                     <p>Closes the window. If the window is a top level window, The <M>run()</M> message loop will
                         be exited, and <M>run()</M> will return shortly thereafter. If the window is a child window,
@@ -165,7 +176,7 @@ static NWindow::ptr create(
                 </PropertyList>
 
             </ClassDescription>
-            <ClassDescription className="NPopupWindow" baseClass="NWindow">
+            <ClassDescription name="NPopupWindow" baseClass="NWindow">
                 <p><M>NPopupWindow</M> inherits directly from <M>NWindow</M>, so it <i>is</i> an <M>NWindow</M>,
                     and behave like an <M>NWindow</M> in all respects save for how it is positioned on the screen.</p>
                 <p>An <M>MPopupWindow</M> positions itself relative to an <i>anchor</i> rectangle. Typically,
@@ -175,12 +186,14 @@ static NWindow::ptr create(
                     and menu systems, which NWindows does not currently provide directly.</p>
 
                 <h3>create Methods</h3>
-                <MethodDescription method={
-                    `static NPopupWindow::ptr create(
+                <MethodDescription
+                    indexName={`static NPopupWindow::ptr create(NWindow::ptr parentWindow, const NRect& anchor, NAttachment attachment);`}
+                    method={
+                        `static NPopupWindow::ptr create(
     NWindow::ptr parentWindow,
     const NRect& anchor,
     NAttachment attachment);`
-                }
+                    }
                 >
                     <ParameterList>
                         <div>parentWindow</div>
@@ -204,31 +217,32 @@ static NWindow::ptr create(
                         following code fragment converts an element's layout bounds (which are in window coordinates) to screen coordinates:</p>
                     <Code text={`NRect anchor = this->window_to_screen(this->bounds());`} />
                     <p>The <M>attachment</M> argument can take the following values:</p>
-                    <EnumDescription name="NAttachment">
+                    <EnumDescription
+                        enumName="NAttachment">
                         <EnumDefinitionList>
-                            <div><M>TopStart<br />TopLeft</M></div>
+                            <div>TopStart<br />TopLeft</div>
                             <div>The new window will be positioned so that its bottom left corner is immediately above the top left corner of the anchor rectangle. </div>
 
-                            <div><M>TopEnd<br />TopRight</M></div>
+                            <div>TopEnd<br />TopRight</div>
                             <div>The new window will be positioned so that its bottom right corner is immediately above the top right corner of the anchor rectangle. </div>
 
-                            <div><M>BottomStart<br />BottomLeft</M></div>
+                            <div>BottomStart<br />BottomLeft</div>
                             <div>The new window will be positioned so that its top left corner is immediately below the bottom left corner of the anchor rectangle. </div>
 
-                            <div><M>BottomEnd<br />BottomRight</M></div>
+                            <div>BottomEnd<br />BottomRight</div>
                             <div>The new window will be positioned so that its top right corner is immediately below the bottom right corner of the anchor rectangle. </div>
 
-                            <div><M>CenterOnAnchor</M></div>
+                            <div>CenterOnAnchor</div>
                             <div>The new window will be positioned so that its centered over the anchor rectangle. If <M>anchor</M> is set to <M>NWindow::actual_window_position()</M>,
                                 the new window will be centered in the parent window.</div>
 
 
-                            <div><M>ContextMenu</M></div>
+                            <div>ContextMenu</div>
                             <div>The new window will be positioned appropriately for a context menu. The anchor rectangle is assumed to be either a cursor position
                                 if (the context menu is being opened in response to a right-click event), or the bounding rectangle of the control that is opening the
                                 context menu (if the context menu is being opened in response to a keyboard event).
                             </div>
-                            <div><M>Submenu</M></div>
+                            <div>Submenu</div>
                             <div>The new window will be positioned appropriately for a sub-menu. The anchor rectangle is assumed to the
                                 bounding box of the menu item from which the submenu was opened.
                             </div>
@@ -258,7 +272,7 @@ static NWindow::ptr create(
                 </MethodDescription>
 
             </ClassDescription>
-            <ClassDescription className="NPopupMenuWindow" baseClass="NPopupWindow">
+            <ClassDescription name="NPopupMenuWindow" baseClass="NPopupWindow">
                 ...
             </ClassDescription>
         </DocsPage >

@@ -57,7 +57,16 @@ export default function IndexPage() {
                                             entry.indexReferences.map((ref, index) => {
                                                 let label = ref.route_title;
                                                 if (ref.text.length > 0) {
-                                                    label += " (" + ref.text + ")";
+                                                    return (
+                                                        <p key={index} className="indexLink" >
+                                                            <Link to={ref.route} state={{ showElement: ref.elementId }}>
+                                                            <div><p className="indexTitle">{label}</p></div>
+                                                            <div><p className="indexSubtitle">{ref.text}</p></div>
+                                                            </Link>
+                                                        </p>
+                                                    )
+                                                    label = "<div>" + label + "<br/>" + ref.text + "</div>";
+
                                                 }
                                                 return (
                                                     <p key={index} className="indexLink" >

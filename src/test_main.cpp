@@ -750,7 +750,11 @@ static void edit_text_test_window(NWindow::ptr parentWindow = nullptr)
 }
 void test_window()
 {
-    NWindow::ptr window = NWindow::create(60, AUTO_SIZE);
+
+    NColorPalette palette;
+    palette.DesktopBackground = 0x600060;
+
+    NWindow::ptr window = NWindow::create(60, AUTO_SIZE,&palette);
 
 
     window
@@ -846,7 +850,7 @@ int main(void)
 {
     test_window();
 
-#ifdef DEBUG_NELEMENT_LIFECYCLE
+#if DEBUG_NELEMENT_LIFECYCLE
     // Make sure that all elements have been deleted.
     if (NElement::allocated_element_count() != 0)
     {

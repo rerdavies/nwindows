@@ -14,11 +14,12 @@ export default function NEvent() {
             <p>The <M>NEvent&lt;&gt;</M> class is the foundation of event notification in NWindows. All event
                 notifications in  NWindows occur through <M>NEvent&lt;&gt;</M></p>
 
-            <ClassDescription prefix="" className="template<typename T> class NEvent<T>" >
-                <p>A valid <M>NEvent&lt;T&gt;</M> must match the form:</p>
+            <ClassDescription prefix="" name="template<typename T> class NEvent<T>" >
+                <p>A valid <M>NEvent&lt;T&gt;</M> must match the specialization:</p>
                 <CodeFragment2 text={`template <ARGS...>
 class NEvent<void(ARGS...)>;`} />
-                <p>i.e. the template argument must be the signature of a function returning void.</p>
+                <p>i.e. the template argument must be the signature of a function returning void, taking zero 
+                    or more arguments.</p>
 
                 <p>The template argument to NEvent is a function signature that defines what the function
                     signature of event notification handlers should be. Subscribers to the event must add a
@@ -41,7 +42,12 @@ on_clicked.fire(0,event_args);
 `} />
 
                 <h3>Methods</h3>
-                <MethodDescription method={
+                <MethodDescription 
+                    indexName={[
+                        "EventHandle NEvent::subscribe(const std::function<void(ARGS...)> &callback);",
+                        "EventHandle subscribe(std::function<void(ARGS...)>&& callback;"                       
+                    ]}
+                method={
 `EventHandle subscribe(const std::function<void(ARGS...)> &callback);",
 EventHandle subscribe(std::function<void(ARGS...)>&& callback;`}
                 >
@@ -54,7 +60,9 @@ EventHandle subscribe(std::function<void(ARGS...)>&& callback;`}
                         <div>A handle that can subsequently be used to cancel the event.</div>
                     </Returns>
                 </MethodDescription>
-                <MethodDescription method={`void unsubscribe(EventHandle handle);`}
+                <MethodDescription 
+                    indexName="void NEvent::unsubscribe(EventHandle handle)"
+                    method={`void unsubscribe(EventHandle handle);`}
                 >
                     <p>Unsubscribes a lambda from the event.</p>
                     <ParameterList>
@@ -62,6 +70,17 @@ EventHandle subscribe(std::function<void(ARGS...)>&& callback;`}
                         <div>The event handle returned by the <M>subscribe</M> method.</div>
                     </ParameterList>
                 </MethodDescription>
+                <MethodDescription 
+                    indexName="void NEvent::fire(Args...)"
+                    method={`void fire(Args...);`}
+                >
+                    <p>Fire the event, calling each subscriber with the provided arguments.</p>
+                    <ParameterList>
+                        <div>handle</div>
+                        <div>The event handle returned by the <M>subscribe</M> method.</div>
+                    </ParameterList>
+                </MethodDescription>
+
 
             </ClassDescription>
         </DocsPage>

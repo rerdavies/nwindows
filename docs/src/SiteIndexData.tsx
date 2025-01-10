@@ -18,6 +18,20 @@ const indexData = new IndexData([
             "property NVerticalStackElement::alignment", 
             "property__NVerticalStackElement_alignment"),
     ]),
+    new IndexEntry("attribute_off", [
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "method void NElement::attribute_off(NAttribute attr)", 
+            "method__NElement_attribute_on_method__NElement_attribute_off"),
+    ]),
+    new IndexEntry("attribute_on", [
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "method void NElement::attribute_on(NAttribute attr)", 
+            "method__NElement_attribute_on_method__NElement_attribute_off"),
+    ]),
     new IndexEntry("checked", [
         new IndexReference(
             "/using/elements", 
@@ -48,6 +62,20 @@ const indexData = new IndexData([
             "3.2 - NWindows Elements", 
             "property NTextElement::color", 
             "property__NTextElement_color"),
+    ]),
+    new IndexEntry("color_off", [
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "method void NElement::color_off(NColorPair colorPair)", 
+            "method__NElement_color_on_method__NElement_color_off"),
+    ]),
+    new IndexEntry("color_on", [
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "method void NElement::color_on(NColorPair colorPair)", 
+            "method__NElement_color_on_method__NElement_color_off"),
     ]),
     new IndexEntry("column_gap", [
         new IndexReference(
@@ -100,12 +128,45 @@ const indexData = new IndexData([
             "property NRadioGroupElement::disabled", 
             "property__NRadioGroupElement_disabled"),
     ]),
+    new IndexEntry("handle_attached", [
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "method void NElement::handle_attached(NWindow* window)", 
+            "method__NElement_handle_attached_method__NElement_handle_detaching"),
+    ]),
+    new IndexEntry("handle_detaching", [
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "method void NElement::handle_detaching()", 
+            "method__NElement_handle_attached_method__NElement_handle_detaching"),
+    ]),
     new IndexEntry("height", [
         new IndexReference(
             "/using/elements", 
             "3.2 - NWindows Elements", 
             "property NElement::height", 
             "property__NElement_height"),
+    ]),
+    new IndexEntry("horizontal_line", [
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "method void NElement::horizontal_line(int x, int y, int width)", 
+            "method__NElement_horizontal_line_method__NElement_vertical_line"),
+    ]),
+    new IndexEntry("is_menu_item_shortcut_key", [
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "method bool NElement::is_menu_item_shortcut_key(char32_t c, const std::string& text)", 
+            "method__NElement_is_menu_item_shortcut_key_method__NElement_is_menu_item_shortcut_key"),
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "method bool NElement::is_menu_item_shortcut_key(const std::string& utf8key, const std::string& text)", 
+            "method__NElement_is_menu_item_shortcut_key_method__NElement_is_menu_item_shortcut_key"),
     ]),
     new IndexEntry("label", [
         new IndexReference(
@@ -145,12 +206,33 @@ const indexData = new IndexData([
             "property NElement::margin", 
             "property__NElement_margin"),
     ]),
+    new IndexEntry("measure_menu_item", [
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "method int NElement::measure_menu_item(const std::string& text)", 
+            "method__NElement_measure_menu_item"),
+    ]),
+    new IndexEntry("measure_text", [
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "method int NElement::measure_text(const std::string&text)", 
+            "method__NElement_measure_text"),
+    ]),
     new IndexEntry("menu_items", [
         new IndexReference(
             "/using/elements", 
             "3.2 - NWindows Elements", 
             "property NDropdownElement::menu_items", 
             "property__NDropdownElement_menu_items"),
+    ]),
+    new IndexEntry("move", [
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "method void NElement::move(int x, int y)", 
+            "method__NElement_move"),
     ]),
     new IndexEntry("NAttachment", [
         new IndexReference(
@@ -326,6 +408,20 @@ const indexData = new IndexData([
             "class NWindow", 
             "class__NWindow"),
     ]),
+    new IndexEntry("on_attached", [
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "event NEvent<void(NWindow*)> NElement::on_attached", 
+            "event__NElement_on_attached_event__void NElement_on_detaching"),
+    ]),
+    new IndexEntry("on_detaching", [
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "event NEvent<void(void)> void NElement::on_detaching", 
+            "event__NElement_on_attached_event__void NElement_on_detaching"),
+    ]),
     new IndexEntry("open", [
         new IndexReference(
             "/using/elements", 
@@ -346,6 +442,47 @@ const indexData = new IndexData([
             "3.2 - NWindows Elements", 
             "property NButtonElement::prefix", 
             "property__NButtonElement_prefix"),
+    ]),
+    new IndexEntry("print", [
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "method void NElement::print(const char* text)", 
+            "method__NElement_print_method__NElement_print"),
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "method void NElement::print(const std::string& text, int width)", 
+            "method__NElement_print"),
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "method void NElement::print(const std::string& text, NAlignment alignment, int width)", 
+            "method__NElement_print"),
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "method void NElement::print(const std::string& text)", 
+            "method__NElement_print_method__NElement_print"),
+    ]),
+    new IndexEntry("print_acs", [
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "method void NElement::print_acs(int x, int y, int acs_character)", 
+            "method__NElement_print_acs"),
+    ]),
+    new IndexEntry("print_menu_item", [
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "method void NElement::print_menu_item(const std::string& text, int width, bool show_underline = true)", 
+            "method__NElement_print_menu_item_method__NElement_print_menu_item"),
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "method void NElement::print_menu_item(const std::string& text, NAlignment alignment, int width, bool show_underline = true)", 
+            "method__NElement_print_menu_item_method__NElement_print_menu_item"),
     ]),
     new IndexEntry("row_gap", [
         new IndexReference(
@@ -424,6 +561,13 @@ const indexData = new IndexData([
             "3.2 - NWindows Elements", 
             "property NRadioGroupElement::value", 
             "property__NRadioGroupElement_value"),
+    ]),
+    new IndexEntry("vertical_line", [
+        new IndexReference(
+            "/using/custom/full", 
+            "3.5.3 - Fully-Custom Elements", 
+            "method void NElement::vertical_line(int x, int y, int height)", 
+            "method__NElement_horizontal_line_method__NElement_vertical_line"),
     ]),
     new IndexEntry("width", [
         new IndexReference(
