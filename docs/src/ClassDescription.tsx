@@ -37,7 +37,7 @@ export default function
     let id_tag = props.id_tag ?? "class";
 
     let prefix = props.prefix || "class";
-    let id = id_tag + "__" +  props.name;
+    let id = id_tag + "__" + props.name;
     let indexText = (props.prefix ?? "class") + " " + props.name;
 
     RegisterIndexEntry(props.name, id, indexText);
@@ -217,48 +217,48 @@ export enum LinkType {
     Class
 }
 
-export function DocsLink(props: { route:string, directId: string, children?: React.ReactNode }) {
+export function DocsLink(props: { route: string, directId: string, children?: React.ReactNode }) {
     return (
         <Link to={props.route} state={{ showElement: props.directId }} >{props.children}</Link>
     );
 }
-export function ApiLink(props: { linkType: LinkType, name: string,children?: React.ReactNode }) {
+export function ApiLink(props: { linkType: LinkType, name: string, children?: React.ReactNode }) {
 
     let id = "";
     let route = "";
 
 
-    switch (props.linkType)
-    {
+    switch (props.linkType) {
         case LinkType.Define:
             route = "/apis/defines";
-            id =  "define__" + props.name;
+            id = "define__" + props.name;
             break;
         case LinkType.Enum:
             route = "/apis/defines";
-            id =  "define__" + props.name;
+            id = "define__" + props.name;
             break;
         case LinkType.Struct:
             route = "/apis/structs";
-            id =  "struct__" + props.name;
+            id = "struct__" + props.name;
             break;
         case LinkType.Class:
             route = "/apis/classes/" + props.name;
-            id =  "class__" + props.name;
+            id = "class__" + props.name;
             break;
-        default: 
+        default:
             return <span>{props.children}</span>;
     }
-    
+
     return (
         <Link to={route} id={id} state={{ showElement: id }} >{props.children}<span className="material-icon-inline">api</span></Link>
     );
 }
 
+
 export function MethodDescriptions(props: { children?: React.ReactNode, title?: string }) {
     return (
         <div>
-            <ClassSectionHead text={ props.title??"Methods"} />
+            <ClassSectionHead text={props.title ?? "Methods"} />
             {props.children}
         </div>
     );
@@ -313,6 +313,19 @@ export function UsingDescription(props: { indexName?: string | string[], declara
             children: props.children
         }
     )
+}
+
+
+// Same presentation as MethodDescription methods, but no indexing, just inline child 
+// content.
+export function MethodCode(props: { text: string }) {
+    return (
+        <div className="method_description" >
+            <pre className="mono" style={{ paddingLeft: "8px", paddingTop: "12px", paddingBottom: "12px", overflowX: "auto" }}
+            >{props.text}</pre>
+        </div>
+    );
+
 }
 
 export function MethodDescription(

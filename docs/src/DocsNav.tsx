@@ -24,13 +24,14 @@
 import React from 'react';
 import Button from "@mui/material/Button";
 import ListIcon from '@mui/icons-material/List';
-import { Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import Loading from './Loading'
 import { Route, Routes, useNavigate } from 'react-router-dom'
 import NotFound from './NotFound';
 import { IndexBuilder } from './IndexBuilder';
 import SearchPage from './SearchPage';
+import { CppFunctionParserTest } from './CppFunctionParser';
 
 
 
@@ -131,7 +132,7 @@ let docsIndex: DocsPage[] = [
     { route: "/using/events/mouse", title: "3.4.2 - Mouse Events", up: "/using/events", },
     { route: "/using/events/misc", title: "3.4.3 - Miscellaneous Events", up: "/using/events", },
     { route: "/using/custom", title: "3.5 - Implementing Custom Controls", up: "/using", },
-    { route: "/using/custom/unicode", title: "3.5.1 - Unicode Support", up: "/using/custom", }, 
+    { route: "/using/custom/unicode", title: "3.5.1 - Unicode Support", up: "/using/custom", },
     { route: "/using/custom/inherit", title: "3.5.2 - Inheriting from Existing Elements", up: "/using/custom", },
     { route: "/using/custom/compose", title: "3.5.3 - Compound Elements", up: "/using/custom", },
     { route: "/using/custom/full", title: "3.5.4 - Fully-Custom Elements", up: "/using/custom", },
@@ -193,13 +194,6 @@ export function DocsRoutes() {
             {
                 IndexPageRoutes()
             }
-            <Route path="documentation" element=
-                {
-                    <React.Suspense fallback={<Loading />}>
-                        <Documentation />
-                    </React.Suspense>
-
-                } />
             <Route path="index" element=
                 {
                     <React.Suspense fallback={<Loading />}>
@@ -207,124 +201,6 @@ export function DocsRoutes() {
                     </React.Suspense>
 
                 } />
-            <Route path="support" element={
-                <React.Suspense fallback={<Loading />}>
-                    <PlatformSupport />
-                </React.Suspense>
-            } />
-            <Route path="installing" element={
-                <React.Suspense fallback={<Loading />}>
-                    <InstallingNWindows />
-                </React.Suspense>
-            } />
-            <Route path="using" element={
-                <React.Suspense fallback={<Loading />}>
-                    <UsingNWindows />
-                </React.Suspense>
-            } />
-            <Route path="using/hello" element={
-                <React.Suspense fallback={<Loading />}>
-                    <HelloNWindows />
-                </React.Suspense>
-            } />
-            <Route path="using/elements" element={
-                <React.Suspense fallback={<Loading />}>
-                    <NWindowsElements />
-                </React.Suspense>
-            } />
-            <Route path="using/windows" element={
-                <React.Suspense fallback={<Loading />}>
-                    <NWindowsWindows />
-                </React.Suspense>
-            } />
-            <Route path="using/events" element={
-                <React.Suspense fallback={<Loading />}>
-                    <NWindowsEvents />
-                </React.Suspense>
-            } />
-            <Route path="using/events/keyboard" element={
-                <React.Suspense fallback={<Loading />}>
-                    <KeyboardEvents />
-                </React.Suspense>
-            } />
-            <Route path="using/events/mouse" element={
-                <React.Suspense fallback={<Loading />}>
-                    <MouseEvents />
-                </React.Suspense>
-            } />
-            <Route path="using/events/misc" element={
-                <React.Suspense fallback={<Loading />}>
-                    <MiscEvents />
-                </React.Suspense>
-            } />
-            <Route path="using/custom" element={
-                <React.Suspense fallback={<Loading />}>
-                    <CustomControls />
-                </React.Suspense>
-            } />
-            <Route path="using/custom/inherit" element={
-                <React.Suspense fallback={<Loading />}>
-                    <InheritingCustomControl />
-                </React.Suspense>
-            } />
-            <Route path="using/custom/compose" element={
-                <React.Suspense fallback={<Loading />}>
-                    <ComposedCustomControl />
-                </React.Suspense>
-            } />
-            <Route path="using/custom/full" element={
-                <React.Suspense fallback={<Loading />}>
-                    <FullCustomControl />
-                </React.Suspense>
-            } />
-            <Route path="using/dispatcher" element={
-                <React.Suspense fallback={<Loading />}>
-                    <NWindowsDispatcher />
-                </React.Suspense>
-            } />
-
-            <Route path="apis" element={
-                <React.Suspense fallback={<Loading />}>
-                    <NWindowsApis />
-                </React.Suspense>
-            } />
-
-            <Route path="apis/defines" element={
-                <React.Suspense fallback={<Loading />}>
-                    <ApiDefines />
-                </React.Suspense>
-            } />
-            <Route path="apis/constants" element={
-                <React.Suspense fallback={<Loading />}>
-                    <ApiConstants />
-                </React.Suspense>
-            } />
-            <Route path="apis/typedefs" element={
-                <React.Suspense fallback={<Loading />}>
-                    <ApiTypedefs />
-                </React.Suspense>
-            } />
-            <Route path="apis/enums" element={
-                <React.Suspense fallback={<Loading />}>
-                    <ApiEnums />
-                </React.Suspense>
-            } />
-            <Route path="apis/methods" element={
-                <React.Suspense fallback={<Loading />}>
-                    <ApiMethods />
-                </React.Suspense>
-            } />
-            <Route path="apis/structs" element={
-                <React.Suspense fallback={<Loading />}>
-                    <ApiStructs />
-                </React.Suspense>
-            } />
-            <Route path="apis/classes" element={
-                <React.Suspense fallback={<Loading />}>
-                    <ApiClasses />
-                </React.Suspense>
-            } />
-
 
             <Route path="search" element={
                 <SearchPage />
@@ -332,6 +208,10 @@ export function DocsRoutes() {
             <Route path="index_builder" element={
                 <IndexBuilder />
             } />
+            <Route path="cpp_function_parser_test" element={
+                <CppFunctionParserTest />
+            } />
+
 
             <Route path="*" element={<NotFound />} />
         </Routes>

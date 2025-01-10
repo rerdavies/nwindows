@@ -21,9 +21,9 @@
  *   SOFTWARE.
  */
 
-import {CopyBlock, CodeBlock, dracula,atomOneLight} from 'react-code-blocks'
+import {CopyBlock, CodeBlock, dracula,github} from 'react-code-blocks'
 
-const whiteTheme = atomOneLight;
+const whiteTheme = github;
 
 
 function  Code (props: {text: string, style?: React.CSSProperties, showLines?: boolean, white?: boolean}) {

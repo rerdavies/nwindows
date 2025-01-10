@@ -321,7 +321,7 @@ virtual void arrange(const NRect& bounds);`} />
 }
 `} />
 
-            <SectionHead text='Rendering' />
+            <SectionHead text='Rendering' id="section__Rendering" />
             <p>An element can request that its contents be re-rendered by calling <M>NElement::invalidate_render()</M>.
                 Rendering does not occur immediately; instead, a flag is set that will cause a render pass once control
                 returns to the main event loop.
@@ -434,9 +434,9 @@ void vertical_line(int x, int y, int height);`} >
                 </MethodDescription>
 
                 <MethodDescription
-                    indexName={"int NElement::measure_menu_item(const std::string& text)"}
+                    indexName={"int NElement::measure_menu_text(const std::string& text)"}
                     method={
-                        `int measure_menu_item(const std::string& text);`} >
+                        `int measure_menu_text(const std::string& text);`} >
                     <p>In menu item text, the '_' character indicates that the character which follows is a shortcut key.</p>
                     <p>Returns the number of columns that the menu item would occupy on the display terminal if it were printed.
                         The same as <M>measure_text</M>, but with special handling for the '_' character.</p>
@@ -444,8 +444,8 @@ void vertical_line(int x, int y, int height);`} >
                 </MethodDescription>
                 <MethodDescription
                     indexName={[
-                        "void NElement::print_menu_item(const std::string& text, int width, bool show_underline = true)",
-                        "void NElement::print_menu_item(const std::string& text, NAlignment alignment, int width, bool show_underline = true)"
+                        "void NElement::print_menu_item(const std::string& text, int max_display_width, bool show_underline = true)",
+                        "void NElement::print_menu_item(const std::string& text, NAlignment alignment, int display_width, bool show_underline = true)"
                     ]}
                     method={
                         `void print_menu_item(
@@ -460,11 +460,12 @@ void print_menu_item(
                     <p>Prints the supplied text as a  menu item. The '_' character indicates that the character which
                         follows is a shortcut key. The shortcut character will either be underlined or not, depending on
                         the value of <M>show_underline</M></p>
-                    <p><M>width</M> specifies the number of columns to write to the screen. If the measure of the text
-                        is less than width, the displayed text will be padded with spaces. If the measure of the text is
+                    <p><M>max_display_width</M> specifies the maximum number of display columns of text to write to the screen. 
+                        If the measure of the text is less than width, the displayed text will be padded with spaces. If the measure of the text is
                         greater than <M>width</M>, displayed text will be truncated.
                         <p>If <M>alignment</M> is specified, padding will be applied as required to align the text at the
-                            start, center or end of the specified <M>width</M>.</p>
+                            start, center or end of the specified <M>display_width</M>. If <M>text</M> requires more than <M>display_width</M> columns, 
+                            the text will be truncated when displayed.</p>
                     </p>
                 </MethodDescription>
 
@@ -485,8 +486,35 @@ bool is_menu_item_shortcut_key(
                         matches the character <M>c</M>. The comparison is done using a case-insensitive comparison appropriate for
                         the current locale. </p>
                     <p>If <M>utf8key</M> is supplied as an argument, the string must contain a single
-                        Unicode codepoint (which many consist of multiple UTF-8 encoded bytes) </p>
+                        currently Unicode codepoint (which may consist of multiple UTF-8 encoded bytes) </p>
+                    <p>The recommended implementation for custom elements that wish to handle shortcut keys is to 
+                        override <M>NElement::wants_shortcut_key</M>, which provides  a <M>std::string</M> instead of intercepting 
+                        keyboard events and using the <M>char32_t</M> key provided in the keyboard event arguments. Future versions of 
+                        <M>NWindows</M> may allow a single Unicode character followed by a possible modifier sequence or composing-accent
+                        sequence, depending on actual internationalization requirements. Please log a problem report if you need this 
+                        feature.</p>
                 </MethodDescription>
+
+                <MethodDescription indexName={["virtual bool NElement::wants_shortcut_key(const std::string& key)"]}
+                    method={`virtual bool wants_shortcut_key(const std::string& key);`} >
+                    <p>An element can override this method in order to handle shortcut keys.  Return <M>true</M> to have the parent <M>NWindow</M> fire a 
+                        synthetic <M>on_click</M> event on the element. The default <M>NElement</M>implementation 
+                        returns false. 
+                    </p>
+                    <p>The following conditions must be true to get Nwindows to call this method.
+                        <ul>
+                        <   li>The element's parent window must be the currently-active window. </li>
+                            <li>The element, or one of its children must have the current keyboard focus.</li>
+                            <li>The element's <M>clickable</M> property must be true.</li>
+                            <li>The element's <M>enabled</M> property must be true.</li>
+                        </ul>
+                    </p>
+                    <p>The provided <M>key</M> currently contains the UTF-8 byte sequence for a single Unicode codepoint. However, 
+                    future versions of <M>NWindows</M> may provide a single codepoint followed by a Unicode modifier sequence or 
+                    combining-accent sequence should that prove to be necessary to properly support international locales. Please file a problem 
+                    report if you require this feature. </p>
+                </MethodDescription>
+
                 <MethodDescription indexName={[
                     "void NElement::attribute_on(NAttribute attr)",
                     "void NElement::attribute_off(NAttribute attr)"

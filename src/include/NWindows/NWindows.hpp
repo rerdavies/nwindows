@@ -407,6 +407,8 @@ namespace nwindows
         bool focusable() const { return focusable_; }
         virtual void focusable(bool value) { focusable_ = value; }
 
+        bool mouse_entered() const { return mouse_entered_; }
+
         bool take_focus();
         bool focused() const;
 
@@ -488,32 +490,30 @@ namespace nwindows
 
         void move(int x, int y);
 
+        int measure_text(const std::string& text);
+
         void print(const char* text);
         void print(const std::string& text);
-        void print(const std::string& text, int width);
-        void print(const std::string&text, NAlignment alignment, int width);
-        void print(const wchar_t* text);
-        void print(const std::wstring& text);
-        void print(const std::u32string& text);
+        void print(const std::string& text, int max_display_width);
+        void print(const std::string&text, NAlignment alignment, int display_width);
         void print_acs(int x, int y, int alternate_character);
 
+        void box(const NRect& rect, const std::optional<NColorPair>& colorPair = std::nullopt);
         void horizontal_line(int x, int y, int width);
         void vertical_line(int x, int y, int height);
 
-        int measure_text(const std::string& text);
         int measure_menu_text(const std::string& text);
         void print_menu_text(const std::string& text);
-        void print_menu_text(const std::string& text, int width, bool show_underline = true);
+        void print_menu_text(const std::string& text, int max_display_width, bool show_underline = true);
         void print_menu_text(
             const std::string& text,
             NAlignment alignment,
-            int width,
+            int display_width,
             bool show_underline = true);
         bool is_menu_item_shortcut_key(const char32_t c, const std::string& text);
         bool is_menu_item_shortcut_key(const std::string& utf8key, const std::string& text);
 
 
-        void box(const NRect& rect, const std::optional<NColorPair>& colorPair = std::nullopt);
 
         void attribute_on(NAttribute attr);
         void attribute_off(NAttribute attr);
@@ -521,6 +521,10 @@ namespace nwindows
         void color_on(NColorPair colorPair);
         void color_off(NColorPair colorPair);
 
+
+        void print(const wchar_t* text);
+        void print(const std::wstring& text);
+        void print(const std::u32string& text);
 
 
     protected:
@@ -549,7 +553,6 @@ namespace nwindows
         virtual void handle_attached(NWindow* window);
         virtual void handle_detaching();
 
-        bool mouse_entered() const { return mouse_entered_; }
 
         virtual NElement::ptr find_child_element(const std::function<bool(NElement&)>& predicate);
 

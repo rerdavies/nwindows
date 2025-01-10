@@ -167,12 +167,12 @@ void NElement::print_menu_text(const std::string& text, int width, bool show_und
     }
 }
 
-void NElement::print(const std::string&text, NAlignment alignment, int width)
+void NElement::print(const std::string&text, NAlignment alignment, int display_columns)
 {
     int textWidth = measure_text(text);
-    int extra = width - textWidth;
+    int extra = display_columns - textWidth;
     if (extra < 0) {
-        print(text,width);
+        print(text,display_columns);
         return;
     }
     int left_extra = 0, right_extra = 0;
@@ -204,15 +204,15 @@ void NElement::print(const std::string&text, NAlignment alignment, int width)
 void NElement::print_menu_text(
     const std::string& text,
     NAlignment alignment,
-    int width,
+    int display_columns,
     bool show_underline)
 {
     int textWidth = measure_menu_text(text);
-    if (textWidth > width)
+    if (textWidth > display_columns)
     {
-        textWidth = width; // text will be truncated by the print_menu_text function.
+        textWidth = display_columns; // text will be truncated by the print_menu_text function.
     }
-    int extra = width - textWidth;
+    int extra = display_columns - textWidth;
     int left_extra = 0, right_extra = 0;
     switch (alignment)
     {
@@ -5417,9 +5417,9 @@ NRect NRect::inflate(const NThickness& thickness) const
 }
 
 
-void NElement::print(const std::string& text, int width)
+void NElement::print(const std::string& text, int max_display_width)
 {
-    std::string textToPrint = utf8_wc_substr(text, 0, width);
+    std::string textToPrint = utf8_wc_substr(text, 0, max_display_width);
     print(textToPrint);
 }
 
