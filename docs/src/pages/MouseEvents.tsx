@@ -44,13 +44,34 @@ function NWindowsEvents() {
                         "NEvent<void (NMouseEventArgs&event_args)> NElement::on_mouse_enter",
                         "NEvent<void (NMouseEventArgs&event_args)> NElement::on_mouse_leave",
                     ]}
-                method={`NEvent<void (int button,NClickedEventArgs&event_args)> on_clicked;
-NEvent<void (int button,NMouseEventArgs&event_args)> on_mouse_button_pressed;
-NEvent<void (int button,NMouseEventArgs&event_args)> on_mouse_button_released;
-NEvent<void (NMouseEventArgs&event_args)> on_mouse_move;
-NEvent<void ()>  on_mouse_lost_capture;
-NEvent<void (NMouseEventArgs&event_args)> on_mouse_enter;
-NEvent<void (NMouseEventArgs&event_args)> on_mouse_leave;
+                event={`NEvent<
+    void (int button,NClickedEventArgs&event_args)
+> on_clicked;
+
+NEvent<
+    void (int button,NMouseEventArgs&event_args)
+> on_mouse_button_pressed;
+
+NEvent<
+    void (int button, NMouseEventArgs&event_args)
+> on_mouse_button_released;
+ 
+NEvent<
+    void (NMouseEventArgs&event_args)
+> on_mouse_move;
+
+NEvent<
+    void ()
+>  on_mouse_lost_capture;
+
+NEvent<
+    void (NMouseEventArgs&event_args)
+> on_mouse_enter;
+ 
+NEvent<
+    void (NMouseEventArgs&event_args)
+> on_mouse_leave;
+ 
 `} >
                     <p><M>on_mouse_move</M> only fires on elements that have captured the mouse
                         using <M>NWindow::mouse_capture(NElement*)</M>.

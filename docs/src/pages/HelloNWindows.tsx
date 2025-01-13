@@ -26,14 +26,16 @@ import Code from '../Code';
 import DocsPage from '../DocsPage';
 import M from '../M';
 import Name from '../Name';
+import { DocsTitle } from '../DocsNav';
 
 
 
 function UsingNWindows() {
+    let myRoute = "/using/hello";
     return (
-        <DocsPage route="/using/hello">
+        <DocsPage route={myRoute}>
             <div>
-                <h1>3.1 - Hello NWindows - General Principles</h1>
+                <h1>{DocsTitle(myRoute)}</h1>
                 <p>
                     This section describes how to create a simple NWindows program that displays
                     a window with a button that closes the window when clicked.
@@ -160,7 +162,7 @@ window->title("Hello");
                     Finer details of the layout and rendering passes will be discussed in a later section.
                 </p>
                 <p>
-                    Back to discussing line 13... <M>NVerticalStackElement</M> and <M>NHorizonalStackElement</M> are the principle elements used
+                    Back to discussing line 13... <M>NVerticalStackElement</M> and <M>NHorizontalStackElement</M> are the principle elements used
                     to control layout of NWindows elements. The width and height of stack elements can be set using the <M>NElement::width()</M> and
                     <M>NElement::height()</M> properties and corresponding manipulators. Like <M>NWindow</M>, the stack elements will size themselves
                     to fit their children if their width and/or height height are set to <M>AUTO_SIZE</M>.

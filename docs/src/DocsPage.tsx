@@ -41,6 +41,8 @@ function DocsPage(props: { children: React.ReactNode, route: string}) {
                 let element = document.getElementById(navRef);
                 if (element) {
                     element.scrollIntoView();
+                } else {
+                    console.error("Element not found: " + navRef);
                 }
             },[]);
         }

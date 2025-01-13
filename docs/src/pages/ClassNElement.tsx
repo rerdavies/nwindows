@@ -30,13 +30,14 @@ import ClassDescription, {
     DefinitionList
 
 } from '../ClassDescription';
-import M from '../M';
+import M, {ML} from '../M';
 import Code, { CodeFragment2 } from '../Code';
 
 function ClassNElement() {
 
     return (
         <DocsPage route="/apis/classes/NElement">
+
             <h1>{DocsTitle("/apis/classes/NElement")}</h1>
             <ClassDescription name="NElement" >
                 <p><M>NElement</M> is the base class for all NWindows elements and windows. NElement and classes
@@ -49,7 +50,11 @@ function ClassNElement() {
                 </UsingDescription>
 
                 <ClassSectionHead text="Protected Constructors" />
-                <MethodDescription indexName={"NElement::NElement(const std::string&tagName)"} method="const std::string&tagName()" >
+
+                <MethodDescription indexName={"NElement::NElement(const std::string&tagName)"} method="NElement(const std::string&tagName)" >
+                </MethodDescription>
+
+                <MethodDescription indexName={"NElement::NElement(const std::string&tagName)"} method="NElement(const std::string&tagName)" >
                     <p>Sets the tag name of the element. Each NWindows class has a unique tag by
                         by which its type can be identified.
                     </p>
@@ -208,13 +213,33 @@ function ClassNElement() {
                         "NEvent<void (NMouseEventArgs&event_args)> NElement::on_mouse_enter",
                         "NEvent<void (NMouseEventArgs&event_args)> NElement::on_mouse_leave",
                     ]}
-                    method={`NEvent<void (int button,NClickedEventArgs&event_args)> on_clicked;
-NEvent<void (int button,NMouseEventArgs&event_args)> on_mouse_button_pressed;
-NEvent<void (int button,NMouseEventArgs&event_args)> on_mouse_button_released;
-NEvent<void (NMouseEventArgs&event_args)> on_mouse_move;
-NEvent<void ()>  on_mouse_lost_capture;
-NEvent<void (NMouseEventArgs&event_args)> on_mouse_enter;
-NEvent<void (NMouseEventArgs&event_args)> on_mouse_leave;
+                    event={`NEvent<
+    void (int button,NClickedEventArgs&event_args)
+> on_clicked;
+
+NEvent<
+    void (int button,NMouseEventArgs&event_args)
+> on_mouse_button_pressed;
+
+NEvent<
+    void (int button,NMouseEventArgs&event_args)
+> on_mouse_button_released;
+
+NEvent<
+    void (NMouseEventArgs&event_args)
+> on_mouse_move;
+
+NEvent<
+    void ()
+>  on_mouse_lost_capture;
+
+NEvent<
+    void (NMouseEventArgs&event_args)
+> on_mouse_enter;
+
+NEvent<void (
+    NMouseEventArgs&event_args)
+> on_mouse_leave;
 `} >
                     <p><M>on_mouse_move</M> only fires on elements that have captured the mouse
                         using <M>NWindow::mouse_capture(NElement*)</M>.
@@ -230,8 +255,8 @@ NEvent<void (NMouseEventArgs&event_args)> on_mouse_leave;
                     <p><M>on_mouse_enter</M> and <M>on_mouse_leave</M> events fire as the mouse cursor enters or
                         leaves the layout bounds of an element. The events are non-cancellable.</p>
 
-                    <p>Each event provides an  <ApiLink linkType={LinkType.Struct} name="NMouseEventArgs"><M>NMouseEventArgs</M></ApiLink> argument,
-                        which provides the current <M>cursor_position</M> along with member variables that define the current state
+                    <p>Each event provides an  <ML name="NMouseEventArgs"/> argument,
+                        which provides the current <ML target="NMouseEventArgs::cursor_position" name="cursor_position"/> along with member variables that define the current state
                         of mouse buttons, and the shift, alt and ctrl keys.</p>
                     <p>The <M>cursor_position</M> is in window coordinates (0,0, is at the top left corner of the
                         containing <M>NWindow</M>). To convert to element-relative coordinates, use</p>
@@ -244,7 +269,7 @@ NEvent<void (NMouseEventArgs&event_args)> on_mouse_leave;
                     "NEvent<void (NKeyEventArgs&event_args)> NElement::on_key",
                     "NEvent<void (NKeyCodeEventArgs&event_args)> NElement::on_key_code"
                 ]}
-                    method={
+                    event={
                         `NEvent<void (NKeyEventArgs&event_args)> on_key;
 NEvent<void (NKeyCodeEventArgs&event_args)> on_key_code;
 `
@@ -330,7 +355,7 @@ virtual void arrange(const NRect& bounds);`}>
                 </MethodDescription>
                 <MethodDescription indexName="void NElement::render()" method="virtual void render()" >
                     <p>Called to render the element. The element should render its own content only,
-                        and not the content of its children. The elent should render itself with the
+                        and not the content of its children. The element should render itself with the
                         confines of its layout bounds.  The space in which an element should render its contents
                         (in element coordinates) is  determined by the rectangle which encloses (0,0), actual_width()
                         and actual_height(). The element must not render outside of this rectangle.
@@ -363,9 +388,11 @@ std::shared_ptr<T> get_element_by_id(const std::string& id)`}>
                     "NElement::ptr NElement::get_element_at(const NPoint&pt)"]}
                     method={`NElement::ptr get_element_at(int x, int y);
 NElement::ptr get_element_at(const NPoint&pt);`}>
+                    <p>
                     Get the topmost child element of the current element whose bounds contains the point (x,y). Returns an empty pointer
-                    if no element is found at the point. The point is in window coordinates. To search the entire visual
-                    tree call <M>window()-&gt;get_element_at(x,y)</M>.
+                    if no element is found at the point. The point is specified in window coordinates. To search the entire visual
+                    tree call</p>
+                    <Code white text={'window()->get_element_at(x,y)'} />
                 </MethodDescription>
                 <MethodDescription indexName="bool NElement::take_focus()" method="bool take_focus()" >
                     <p>Attempt to take keyboard focus. Returns <M>true</M> if the element successfully takes focus.</p>
@@ -737,7 +764,7 @@ find_child_element(
                         represents the left mouse button. But callers can choose to simulate a right mouse button click (button=2), or a middle
                         mouse button/mouse wheel click (mouse button=1), or a fourth-button click (button=3) as well.</p>
                     <p>The method first focuses the target element. If this actual fails (either because the element is not focusable, or
-                        because it is disabled, no further processing takes plance, and <M>simulate_keyboard_click</M> returns false,
+                        because it is disabled), no further processing takes place, and <M>simulate_keyboard_click</M> returns false,
                         indicating that the click was not handled.
                     </p>
                     <p>The method then calls <M>handle_mouse_button_pressed</M>  immediately, followed by an <M>handle_mouse_button_released</M> event, so that

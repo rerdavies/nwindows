@@ -157,7 +157,7 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                     </PropertyEntry>
 
                     <PropertyEntry type="NRect" propertyName="NElement:bounds">
-                        (Read only). The actual position of the element inside the window in window coordinates. Only valid 
+                        (Read only). The actual position of the element inside the window in window coordinates. Only valid
                         after layout has completed.
                     </PropertyEntry>
                     <PropertyEntry type="bool" propertyName='NElement::disabled'>
@@ -288,9 +288,9 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                         <div>
                             <p>Modifies how text is displayed.
                             </p>
-                                <CenteredImage 
-                                    src="/nwindows/image/sample_attributes.png" 
-                                    alt="Sample attributes"  />
+                            <CenteredImage
+                                src="/nwindows/image/sample_attributes.png"
+                                alt="Sample attributes" />
                             <p>The <M>text_attribute</M> property can take the following values:</p>
 
                             <EnumDescription enumName="NAttribute" prefix="enum class">
@@ -343,12 +343,10 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
             <ClassDescription name="NBoxElement">
                 <p>Displays a box border around its child element. <M>NBoxElement</M> can have only
                     one child element.</p>
-                <p>
-                    <CenteredImage
-                        src="/nwindows/image/sample_box.png"
-                        alt="Sample box"
-                    />
-                </p>
+                <CenteredImage
+                    src="/nwindows/image/sample_box.png"
+                    alt="Sample box"
+                />
                 <PropertyList>
                     <PropertyEntry type="std::string" propertyName='NBoxElement::title'>
                         <div>Optionally, displays a title on the borders of the box. Defaults to "" (no title).</div>
@@ -369,12 +367,10 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
 
             <ClassDescription name="NButtonElement">
                 <p>Displays a button that can be clicked.</p>
-                <p>
-                    <CenteredImage
-                        src="/nwindows/image/sample_button.png"
-                        alt="Sample button"
-                    />
-                </p>
+                <CenteredImage
+                    src="/nwindows/image/sample_button.png"
+                    alt="Sample button"
+                />
                 <p>
                     If <M>width</M> is <M>AUTO_SIZE</M>, the
                     button wraps the label of the button tightly. Generally, it's a good idea to
@@ -426,12 +422,10 @@ NButtonElement::create()
 
             <ClassDescription name="NTextEditElement">
                 <p>Displays a text box that allows editing of text.</p>
-                <p>
-                    <CenteredImage
-                        src="/nwindows/image/sample_textedit.png"
-                        alt="Sample NTextEditElement"
-                         />
-                </p>
+                <CenteredImage
+                    src="/nwindows/image/sample_textedit.png"
+                    alt="Sample NTextEditElement"
+                />
                 <p>
                     The <M>text</M> property of
                     the <M>NTextEditElement</M> is the text displayed in the text box. While editing,
@@ -510,12 +504,10 @@ void select_end();
             </ClassDescription>
             <ClassDescription name="NCheckboxElement">
                 <p>Displays a checkbox control.</p>
-                <p>
-                    <CenteredImage
-                        src="/nwindows/image/sample_checkbox.png"
-                        alt="Sample checkbox"
-                    />
-                </p>
+                <CenteredImage
+                    src="/nwindows/image/sample_checkbox.png"
+                    alt="Sample checkbox"
+                />
                 <p>Checkmarks are displayed with Unicode characters on xterm-like devices. <M>NCheckboxElement</M>falls back to
                     using ASCII characters on terminals that do not have full Unicode support.
                 </p>
@@ -557,12 +549,10 @@ void select_end();
             </ClassDescription>
             <ClassDescription name="NRadioGroupElement">
                 <p>Displays a group of radio buttons.</p>
-                <p>
-                    <CenteredImage
-                        src="/nwindows/image/sample_radiogroup.png"
-                        alt="Sample NRadioGroupElement"
-                    />
-                </p>
+                <CenteredImage
+                    src="/nwindows/image/sample_radiogroup.png"
+                    alt="Sample NRadioGroupElement"
+                />
                 <p>Checkmarks are display with Unicode characters on xterm-like devices. <M>NRadioGroupElement</M> falls back to using ASCII characters
                     on terminals that do not have full Unicode support.
                 </p>
@@ -620,21 +610,19 @@ void select_end();
             </ClassDescription>
             <ClassDescription name="NDropdownElement">
                 <p>A dropdown control that allows selection of values from a list.</p>
-                <p>
-                    <CenteredImage src="/nwindows/image/sample_dropdown.png" alt="Sample dropdown"  />
-                </p>
-                <p><M>NDropdownElement</M> allows users to select from a list items. The list of items 
+                <CenteredImage src="/nwindows/image/sample_dropdown.png" alt="Sample dropdown" />
+                <p><M>NDropdownElement</M> allows users to select from a list items. The list of items
                     is provided to <M>NDropdownElement</M> as a <M>std::vector</M> of <M>NMenuItem</M>s.
-                    When an item is selected, the <M>selected</M> property is set to 
-                    the <M>item_id</M> of the selected menu item, and the <M>on_selection_changed</M> event 
+                    When an item is selected, the <M>selected</M> property is set to
+                    the <M>item_id</M> of the selected menu item, and the <M>on_selection_changed</M> event
                     is fired.
                 </p>
-                <p>You only need to set a label and an item_id in each menu item. 
-                    <M>NDropdownElement</M> will focus the currently selected menu item when the 
-                    dropdown opens. However, <M>NDropdownElement</M> does support advanced features 
-                    that <M>NMenuItem</M> provides, such as icons, checkmarks, submenus, and dividers. 
+                <p>You only need to set a label and an item_id in each menu item.
+                    <M>NDropdownElement</M> will focus the currently selected menu item when the
+                    dropdown opens. However, <M>NDropdownElement</M> does support advanced features
+                    that <M>NMenuItem</M> provides, such as icons, checkmarks, submenus, and dividers.
                     See the <M>NMenuItem</M> documentation for more information, should you improbably decided
-                    that you would like to use these features with an <M>NDropdownElement</M>. 
+                    that you would like to use these features with an <M>NDropdownElement</M>.
                 </p>
 
                 <p><M>NDropdownElement</M> does not support scrolling in the dropdown popup, so the size of the <M>menu_items</M> list
@@ -646,7 +634,7 @@ void select_end();
                     </PropertyEntry>
 
                     <PropertyEntry type="int" propertyName='NDropdownElement::selected'>
-                        <div>The <M>item_id</M> of the selected menu item. Defaults to -1 (no selection). 
+                        <div>The <M>item_id</M> of the selected menu item. Defaults to -1 (no selection).
                         </div>
                     </PropertyEntry>
 
@@ -657,26 +645,26 @@ void select_end();
             </ClassDescription>
 
             <ClassDescription name="NMenuElement" baseClass="NButtonBaseElement">
-                <p><M>NMenuElement</M> menu header for a single menu item, displays a popup menu 
-                when clicked, or when the hot key is pressed. Submenus are supported, as are menu items 
-                with checkmarks, or with icons. 
+                <p><M>NMenuElement</M> menu header for a single menu item, displays a popup menu
+                    when clicked, or when the hot key is pressed. Submenus are supported, as are menu items
+                    with checkmarks, or with icons.
                 </p>
-            <PropertyList>
-                <PropertyEntry type="std::string" propertyName='NMenuElement::label'>
-                    <div>The text to display for the menu item. If there is a '_' character 
-                        in the label, the following character is treated as a hot key. See <M>NButtonElement</M> for a detailed discussion of how   
-                        hot keys are handled.</div>
-                </PropertyEntry>
-                <PropertyEntry type="bool" propertyName='NMenuElement::disabled'>
-                    <div>(Inherited from NElement). When true, the menu item is disabled, and grayed out.</div>
-                </PropertyEntry>
+                <PropertyList>
+                    <PropertyEntry type="std::string" propertyName='NMenuElement::label'>
+                        <div>The text to display for the menu item. If there is a '_' character
+                            in the label, the following character is treated as a hot key. See <M>NButtonElement</M> for a detailed discussion of how
+                            hot keys are handled.</div>
+                    </PropertyEntry>
+                    <PropertyEntry type="bool" propertyName='NMenuElement::disabled'>
+                        <div>(Inherited from NElement). When true, the menu item is disabled, and grayed out.</div>
+                    </PropertyEntry>
 
-                <PropertyEntry type="bool" propertyName='NMenuElement::open'>
-                    <div>Whether the menu popup is being displayed or not. Setting <M>open</M>
-                       to <M>true</M> will display the menu popup, and setting it to <M>false</M> will close the menu popup.
-                       </div>
-                </PropertyEntry>
-            </PropertyList>
+                    <PropertyEntry type="bool" propertyName='NMenuElement::open'>
+                        <div>Whether the menu popup is being displayed or not. Setting <M>open</M>
+                            to <M>true</M> will display the menu popup, and setting it to <M>false</M> will close the menu popup.
+                        </div>
+                    </PropertyEntry>
+                </PropertyList>
             </ClassDescription>
 
             <SectionHead text="Building-Block Elements" />

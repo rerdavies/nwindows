@@ -17,6 +17,7 @@ add_library(nwindows
     include/NWindows/NUtf8.hpp
     include/NWindows/NEvent.hpp
     include/NWindows/NUnicodeServices.hpp
+    PrivateElements.hpp
     NWindows.cpp
     NUnicodeServices.cpp
     NUnicodeServices.cpp

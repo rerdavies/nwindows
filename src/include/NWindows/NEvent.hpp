@@ -25,10 +25,11 @@
 #include <vector>
 #include <functional>
 #include <algorithm>
+#include <cstdint>
 
 
 namespace nwindows {
-    using NEventHandle = size_t;
+    using NEventHandle = uint64_t;
 
     template <typename T> 
     class NEvent 

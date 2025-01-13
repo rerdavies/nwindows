@@ -24,10 +24,11 @@
 import React from "react";
 import { RegisterIndexEntry } from "./IndexBuilder";
 import { Link } from "react-router-dom";
+import {IL} from "./M"; 
 
 export default function
     ClassDescription(props: {
-        children: React.ReactNode,
+        children?: React.ReactNode,
         name: string,
         prefix?: string,
         id_tag?: string,
@@ -45,7 +46,7 @@ export default function
         <div id={id} className="nav_target" >
             <h2 className="class-desc-header" >
                 <div>{prefix} {props.name}</div>
-                {props.baseClass && <div>extends {props.baseClass}</div>}
+                {props.baseClass && <div style={{opacity: 0.6,marginLeft: 32 }}>extends {props.baseClass}</div>}
             </h2>
 
             <div style={{ marginLeft: 32, marginRight: 16 }}>
@@ -91,6 +92,28 @@ export function PropertyList(props: { children?: React.ReactNode }) {
     );
 }
 
+export function FieldEntry(props: { name: string, type: string, children?: React.ReactNode }) {
+    let pos = props.name.indexOf("::");
+    let id = undefined;
+    let classNameOnly = "";
+    let propertyOnly = props.name;
+    if (pos >= 0) {
+        classNameOnly = props.name.substring(0, pos);
+        propertyOnly = props.name.substring(pos + 2);
+        id = "field__" + classNameOnly + "_" + propertyOnly;
+    }
+    if (id) {
+        RegisterIndexEntry(propertyOnly, id, "field " + props.name);
+    }
+    return (
+        <React.Fragment>
+            <div className="property_grid_cell_pre"><IL name={props.type}/></div>
+            <div className="property_grid_cell_pre" id={id}>{propertyOnly}</div>
+            <div className="property_grid_cell">{props.children}</div>
+        </React.Fragment>
+    );
+}
+
 export function PropertyEntry(props: { propertyName: string, type: string, children?: React.ReactNode }) {
     let pos = props.propertyName.indexOf("::");
     let id = undefined;
@@ -106,7 +129,7 @@ export function PropertyEntry(props: { propertyName: string, type: string, child
     }
     return (
         <React.Fragment>
-            <div className="property_grid_cell_pre">{props.type}</div>
+            <div className="property_grid_cell_pre"><IL name={props.type}/></div>
             <div className="property_grid_cell_pre" id={id}>{propertyOnly}</div>
             <div className="property_grid_cell">{props.children}</div>
         </React.Fragment>
@@ -133,44 +156,42 @@ function removeParametersAndClass(name: string) {
     return name;
 
 }
+
+let eventRegexp = /\s(\w*\:\:\w*)$/;
+
+let paramRegexp = /(\w+\:\:\w+(?:[+-=!<>T]+)?)(?:\(.*\))(?:\s*const\s*$)?/;
+let methodParamRegexp = /(\w+)(?:\(.*\))(?:\s*const\s*$)?/;
+let directIndexRegexp = /^(\w+\:\:\w+)$/;
+let defineRegexp =  /^(\w+)$/;
+let constRegexp =  /\s(\w+)$/;
+
 function removeParameters(name: string) {
-    while (true) {
-        let matched = false;
-        if (name.startsWith("static ")) {
-            matched = true;
-            name = name.substring(7);
-        } else if (name.startsWith("virtual ")) {
-            matched = true;
-            name = name.substring(8);
-        }
-        else if (name.startsWith("const ")) {
-            matched = true;
-            name = name.substring(6);
-        } else if (name.startsWith("constexpr ")) {
-            matched = true;
-            name = name.substring(10);
-        }
-        if (!matched) {
-            break;
-        }
+    let match = name.match(eventRegexp);
+    if (match) {
+        return match[1];
+    }
+    match = name.match(paramRegexp);
+    if (match) {
+        return match[1];
+    }
+    match = name.match(methodParamRegexp);
+    if (match) {
+        return match[1];
+    }
+    match = name.match(directIndexRegexp);
+    if (match) {
+        return name;
+    }
+    match = name.match(defineRegexp);
+    if (match) {
+        return name;
+    }
+    match = name.match(constRegexp);
+    if (match) {
+        return match[1];
     }
 
-    let pos = name.indexOf(" ");
-    // remove the return type.
-    if (pos < 0) {
-        pos = 0;
-    }
-    while (pos < name.length && name[pos] == " " || name[pos] === '*' || name[pos] === '&') {
-        pos++;
-    }
-    {
-        name = name.substring(pos);
-    }
-    pos = name.indexOf("(");
-    if (pos >= 0) {
-        return name.substring(0, pos);
-    }
-    return name;
+    throw new Error("Unable to match name: " + name);
 }
 
 export function ClassSectionHead(props: { text: string }) {
@@ -274,11 +295,11 @@ export function OperatorDescriptions(props: { children?: React.ReactNode }) {
 }
 
 
-export function EventDescription(props: { indexName: string | string[] | undefined, method: string, children?: React.ReactNode }) {
+export function EventDescription(props: { indexName: string | string[] | undefined, event: string, children?: React.ReactNode }) {
     return MethodDescription(
         {
             indexName: props.indexName,
-            method: props.method,
+            method: props.event,
             tag: "event",
             children: props.children
         });
@@ -336,18 +357,31 @@ export function MethodDescription(
     let tag = props.tag || "method";
     let indexName = props.indexName;
     let id = "";
+    let extraTargetLinks: React.ReactNode[] = [];
     if (indexName) {
+        let ids = new Set<string>();
+
         if (indexName instanceof Array) {
             let indexArray = indexName as string[];
             for (let name of indexArray) {
-                if (id.length > 0) {
-                    id += "_";
-                }
-                id += methodId(tag, name);
+                let thisId = methodId(tag, name);
+                ids.add(thisId);
+                RegisterIndexEntry(removeParametersAndClass(name), thisId, tag + " " + name);
+
             }
 
-            for (let name of indexArray) {
-                RegisterIndexEntry(removeParametersAndClass(name), id, tag + " " + name);
+            let first = true;
+            for (let thisId of ids) {
+                if (first) 
+                {
+                    id = thisId;
+                    first = false;
+                } else {
+                    extraTargetLinks.push((
+                        <div id={thisId} key={thisId} style={{width: 0, height: 0}} >
+                        </div>
+                    ));
+                }
             }
         } else {
             let name = indexName as string;
@@ -358,6 +392,7 @@ export function MethodDescription(
     return (
         <div className="method_description" id={id.length > 0 ? id : undefined}>
 
+            {extraTargetLinks}
             <pre className="mono" style={{ paddingLeft: "8px", paddingTop: "12px", paddingBottom: "12px", overflowX: "auto" }}>{props.method}</pre>
             <div style={{ marginLeft: 24 }}>
                 {props.children}

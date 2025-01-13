@@ -41,7 +41,7 @@ function KeyboardEvents() {
                     "NEvent<void (NKeyEventArgs&event_args)> NElement::on_key",
                     "NEvent<void (NKeyCodeEventArgs&event_args)> NElement::on_key_code"
                 ]} 
-                method={
+                event={
                     `NEvent<void (NKeyEventArgs&event_args)> on_key;
 NEvent<void (NKeyCodeEventArgs&event_args)> on_key_code;
 `

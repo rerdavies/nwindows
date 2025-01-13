@@ -48,6 +48,18 @@ button:focus, button:focus-visible {
   color: #333;
   background: #D0D0D0
 }
+.index_link {
+  text-decoration: normal;
+  cursor: pointer;
+}
+.index_link::after {
+  content: "🔗";
+  font-size: 0.8em;
+  margin-left: 0px;
+}
+.index_link:hover {
+  text-decoration: underline;
+}
 
 
 .name {
@@ -281,11 +293,13 @@ h1 {
   flex-flow: row wrap;
   gap: 8px;
   justify-content: space-between;
+  align-items: baseline;
   border-bottom: 1px solid #ccc;
   border-top: 1px solid #ccc;
   margin-bottom: 8px;
   padding-right: 16px;
   margin-top: 32px;
+  line-height: 1;
 }
 
 .material-icon-inline {

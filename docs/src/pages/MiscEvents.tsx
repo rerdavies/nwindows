@@ -35,7 +35,7 @@ function NWindowsEvents() {
             <ClassDescription name="NElement">
                 <EventDescription indexName={["NEvent<void(NWindow*window)> NElement::on_attached",
                     "NEvent<void()> NElement::on_detaching"]}
-                    method={`NEvent<void(NWindow*window)> on_attached;
+                    event={`NEvent<void(NWindow*window)> on_attached;
 NEvent<void()> on_detaching;
 `} >
                     <p>
@@ -50,13 +50,13 @@ NEvent<void()> on_detaching;
                         occurs when an element is removed from the visual tree of a running window, or when the owning <M>NWindow</M> is closed.
                     </p>
                 </EventDescription>
-                <EventDescription indexName={'NEvent<void (bool focused)> NElement::on_focused'} method='NEvent<void (bool focused)> on_focused;' >
+                <EventDescription indexName={'NEvent<void (bool focused)> NElement::on_focused'} event='NEvent<void (bool focused)> on_focused;' >
                     The <M>focused</M> event fires when the <M>NElement</M> receives or loses input focus.
                 </EventDescription>
             </ClassDescription>
 
             <ClassDescription name="NCheckboxElement">
-                <EventDescription indexName="NEvent<void (bool checked)> NCheckboxElement::on_checked_changed" method={`NEvent<void (bool checked)> on_checked_changed;
+                <EventDescription indexName="NEvent<void (bool checked)> NCheckboxElement::on_checked_changed" event={`NEvent<void (bool checked)> on_checked_changed;
 `} >
                     <p>The <M>on_checked_changed</M> event fires when the <M>NCheckboxElement</M> changes its <M>checked</M> property.</p>
                 </EventDescription>
@@ -64,24 +64,24 @@ NEvent<void()> on_detaching;
 
             <ClassDescription name="NRadioGroupElement">
                 <EventDescription indexName="NEvent<void (int value)> NRadioGroupElement::on_value_changed"
-                    method={`NEvent<void (int value)> on_value_changed;`} >
+                    event={`NEvent<void (int value)> on_value_changed;`} >
                     <p>The <M>on_value_changed</M> event fires when the <M>NRadioGroupElement</M> changes its <M>value</M> property.</p>
                 </EventDescription>
             </ClassDescription>
 
             <ClassDescription name="NDropdownElement">
-                <EventDescription indexName="NEvent<void (int value)> NDropdownElement::on_value_changed" method={`NEvent<void (int value)> on_value_changed;`} >
+                <EventDescription indexName="NEvent<void (int value)> NDropdownElement::on_value_changed" event={`NEvent<void (int value)> on_value_changed;`} >
                     <p>The <M>on_selected_changed</M> event fires when the <M>NDropdownElement</M> changes its <M>selected</M> property.</p>
                 </EventDescription>
             </ClassDescription>
 
             <ClassDescription name="NTextEditElement">
                 <EventDescription indexName="NEvent<void(const std::string&)> NTextEditElement::on_text_changed"
-                 method={`NEvent<void(const std::string&)> on_text_changed;`} >
+                 event={`NEvent<void(const std::string&)> on_text_changed;`} >
                     <p>The <M>on_selected_changed</M> event fires when the <M>NTextEditElement</M> changes its <M>selected</M> property.</p>
                 </EventDescription>
                 <EventDescription indexName="NEvent<void(const NTextSelection&selection)> NTextEditElement::on_selection_changed"
-                method={`NEvent<void(const NTextSelection&selection)> on_selection_changed;`} >
+                event={`NEvent<void(const NTextSelection&selection)> on_selection_changed;`} >
                     <p>The <M>on_selected_changed</M> event fires when the <M>NTextEditElement</M> changes its <M>selection</M> property.</p>
                 </EventDescription>
 
@@ -91,7 +91,7 @@ NEvent<void()> on_detaching;
 
 
             <ClassDescription name="NWindow">
-                <EventDescription indexName="NEvent<void (NElement::ptr focusElement)> on_focus_changed" method={`NEvent<void (NElement::ptr focusElement)> on_focus_changed;`} >
+                <EventDescription indexName="NEvent<void (NElement::ptr focusElement)> NWindow::on_focus_changed" event={`NEvent<void (NElement::ptr focusElement)> on_focus_changed;`} >
                     <p>The <M>on_focus_changed</M> event fires when the <M>NWindow</M>'s focus object changes.</p>
                 </EventDescription>
             </ClassDescription>

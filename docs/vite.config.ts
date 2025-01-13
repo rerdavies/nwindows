@@ -7,7 +7,7 @@ export default defineConfig({
   base: '/nwindows',
   build: {
     chunkSizeWarningLimit: 1024,
-    outDir: '../build/docs', 
-    emptyOutDir: true, // also necessary
+    //outDir: './dist', 
+    //emptyOutDir: true, // also necessary
   }
 })

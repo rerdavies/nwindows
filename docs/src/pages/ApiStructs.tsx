@@ -25,9 +25,9 @@ import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import {
     ClassSectionHead, ConstantDescription, MethodDescription, MethodDescriptions, StructDescription,
-    FieldDefinitionList, FieldDescriptions, OperatorDescriptions, ConstructorDescriptions
+    FieldDefinitionList, FieldDescriptions, FieldEntry, OperatorDescriptions, ConstructorDescriptions
 } from '../ClassDescription';
-import M from '../M';
+import M, {ML} from '../M';
 
 function ApiStructs() {
 
@@ -80,18 +80,18 @@ function ApiStructs() {
                         <div>{`std::shared_ptr
 <NElement>`}</div>
                         <div>source</div>
-                        <div>The source of the event. (Inherited from <M>NEventArgsBase</M>)</div>
+                        <div>The source of the event. (Inherited from <ML name="NEventArgsBase" />)</div>
 
                         <div>{`std::shared_ptr
 <NWindow>`}</div>
                         <div>window</div>
                         <div>The <M>NWindow</M> to which the source is attached. (Inherited
-                            from <M>NEventArgsBase</M>)</div>
+                            from <ML name="NEventArgsBase" />)</div>
 
                         <div>bool</div>
                         <div>handled</div>
                         <div>Set <M>handled</M> to true to prevent further processing of the event. (Inherited
-                            from <M>NEventArgsBase</M>.
+                            from <ML name="NEventArgsBase" />.
                         </div>
 
                     </FieldDefinitionList>
@@ -164,25 +164,26 @@ function ApiStructs() {
 
             <StructDescription name="NEventArgsBase">
                 <p>The common base class of NWindows input events.</p>
-                <ClassSectionHead text="Constructors" />
+                <ClassSectionHead text="Protected Constructors" />
                 <MethodDescription indexName="NEventArgsBase::NEventArgsBase(NElement* source)"
                     method="NEventArgsBase::NEventArgsBase(NElement* source)"
                 ></MethodDescription>
                 <FieldDescriptions>
                     <FieldDefinitionList>
-                        <div>std::shared_ptr&lt;NElement&gt;</div>
-                        <div>source</div>
+                        <FieldEntry type={`NElement::ptr`} name="NEventArgsBase::source" >
                         <div>The source of the event.</div>
+                        </FieldEntry>
 
-                        <div>std::shared_ptr&lt;NWindow&gt;</div>
-                        <div>window</div>
-                        <div>The window that the source element is attached to.</div>
-
-                        <div>bool</div>
-                        <div>handled</div>
-                        <div>Whether the event has been handled. For cancellable events,
-                            set <M>handled</M> to true to prevent further processing.
+                        <FieldEntry type={`NWindow::ptr`} name="NEventArgsBase::window" >
+                            <div>The window that the source element is attached to.
                         </div>
+                        </FieldEntry>
+
+                        <FieldEntry type="bool" name="NEventArgsBase::handled" >
+                            <div>Whether the event has been handled. For cancellable events,
+                                set <M>handled</M> to true to prevent further processing.
+                            </div>
+                        </FieldEntry>
                     </FieldDefinitionList>
                 </FieldDescriptions>
             </StructDescription>
@@ -194,34 +195,31 @@ function ApiStructs() {
                     </MethodDescription>
                     <FieldDescriptions>
                         <FieldDefinitionList>
-                            <div>{`std::shared_ptr
-<NElement>`}</div>
-                            <div>target</div>
+                            <FieldEntry type={`NElement::ptr`} name="NElement::target" >
                             <div>The element that has focus in the current window. May be a child of the current
                                 element if the event is bubbling. May be empty if the event is fired on
                                 an <M>NWindow</M> and no element has focus.
                             </div>
+                            </FieldEntry>
 
-                            <div>char32_t</div>
-                            <div>key</div>
-                            <div>The Unicode codepoint of the key that was pressed.</div>
+                            <FieldEntry type={`char32_t`} name="NKeyEventArgs::key" >
+                                <div>The Unicode codepoint of the key that was pressed.</div>
+                            </FieldEntry>
 
-                            <div>{`std::shared_ptr
-<NElement>`}</div>
-                            <div>source</div>
-                            <div>The source of the event. (Inherited from <M>NEventArgsBase</M>)</div>
+                            <FieldEntry type={`NElement::ptr`} name="NKeyEventArgs::source" >
+                                <div>The source of the event. (Inherited from <ML name="NEventArgsBase" />)</div>
+                            </FieldEntry>
 
-                            <div>{`std::shared_ptr
-<NWindow>`}</div>
-                            <div>window</div>
-                            <div>The <M>NWindow</M> to which the source is attached. (Inherited
-                                from <M>NEventArgsBase</M>)</div>
+                            <FieldEntry type={`NWindow::ptr`} name="NKeyEventArgs::window" >
+                                <div>The <M>NWindow</M> to which the source is attached. (Inherited
+                                    from <ML name="NEventArgsBase" />)</div>
+                            </FieldEntry>
 
-                            <div>bool</div>
-                            <div>handled</div>
-                            <div>Set <M>handled</M> to true to prevent further processing of the event. (Inherited
-                                from <M>NEventArgsBase</M>.
-                            </div>
+                            <FieldEntry type="bool" name="NKeyEventArgs::handled" >
+                                <div>Set <M>handled</M> to true to prevent further processing of the event. (Inherited
+                                    from <ML name="NEventArgsBase" />.
+                                </div>
+                            </FieldEntry>
 
                         </FieldDefinitionList>
                     </FieldDescriptions>
@@ -337,60 +335,64 @@ function ApiStructs() {
                 </ConstructorDescriptions>
                 <FieldDescriptions>
                     <FieldDefinitionList>
-                        <div>std::shared_ptr&lt;NElement&gt;</div>
-                        <div>target</div>
-                        <div>If the mouse has been captured, the element which has mouse capture; otherwise, the
-                            topmost element at the current mouse position. May be a child element of the
-                            the current element if the event is bubbling.
-                        </div>
+                        <FieldEntry type={`NElement::ptr`} name="MouseEventArgs::target" >
+                            <div>If the mouse has been captured, the element which has mouse capture; otherwise, the
+                                topmost element at the current mouse position. May be a child element of the
+                                the current element if the event is bubbling.
+                            </div>
+                        </FieldEntry>
 
-                        <div>NPoint</div>
-                        <div>cursor_position</div>
-                        <div>The current position of the mouse cursor in window coordinates. (0,0) is at the top_left
-                            corner of the current <M>NWindow</M>. If the mouse position is outside the current <M>NWindow</M>,
-                            the position is set to (-1,-1). Convert to element coordinates
-                            using <M>NElement::window_to_element</M>.
-                        </div>
-                        <div>bool</div>
-                        <div>button0_pressed</div>
-                        <div>Whether the left mouse button is pressed.</div>
-                        <div>bool</div>
-                        <div>button1_pressed</div>
-                        <div>Whether the middle mouse button is pressed.</div>
+                        <FieldEntry type={`NElement::ptr`}
+                            name="MouseEventArgs::source" >
+                            <div>The source of the event. (Inherited from <ML name="NEventArgsBase" />)</div>
+                        </FieldEntry>
 
-                        <div>bool</div>
-                        <div>button2_pressed</div>
-                        <div>Whether the right mouse button is pressed.</div>
-                        <div>bool</div>
-                        <div>button3_pressed</div>
-                        <div>Whether the fourth mouse button is pressed.</div>
+                        <FieldEntry type={`NWindow::ptr`}
+                            name="MouseEventArgs::window" >
+                            <div>The <M>NWindow</M> to which the source is attached. (Inherited
+                                from <ML name="NEventArgsBase" />)</div>
 
-                        <div>bool</div>
-                        <div>shift</div>
-                        <div>Whether the shift key was pressed when the event fired.</div>
-                        <div>bool</div>
-                        <div>alt</div>
-                        <div>Whether the alt key was pressed when the event fired.</div>
-                        <div>bool</div>
-                        <div>ctrl</div>
-                        <div>Whether the ctrl key was pressed when the event fired.</div>
-
-                        <div>{`std::shared_ptr
-<NElement>`}</div>
-                        <div>source</div>
-                        <div>The source of the event. (Inherited from <M>NEventArgsBase</M>)</div>
-
-                        <div>{`std::shared_ptr
-<NWindow>`}</div>
-                        <div>window</div>
-                        <div>The <M>NWindow</M> to which the source is attached. (Inherited
-                            from <M>NEventArgsBase</M>)</div>
-
+                        </FieldEntry>
                         <div>bool</div>
                         <div>handled</div>
                         <div>Set <M>handled</M> to true to prevent further processing of the event. (Inherited
-                            from <M>NEventArgsBase</M>.
+                            from <ML name="NEventArgsBase" />.
                         </div>
+
+
+                        <FieldEntry type="NPoint" name="MouseEventArgs::cursor_position" >
+                            <div>The current position of the mouse cursor in window coordinates. (0,0) is at the top_left
+                                corner of the current <M>NWindow</M>. If the mouse position is outside the current <M>NWindow</M>,
+                                the position is set to (-1,-1). Convert to element coordinates
+                                using <M>NElement::window_to_element</M>.
+                            </div>
+                        </FieldEntry>
+                        <FieldEntry type="bool" name="MouseEventArgs::button0_pressed" >
+                            <div>Whether the left mouse button is pressed.</div>
+                        </FieldEntry>
+                        <FieldEntry type="bool" name="MouseEventArgs::button1_pressed" >
+                            <div>Whether the middle mouse button is pressed.</div>
+                        </FieldEntry>
+
+                        <FieldEntry type="bool" name="MouseEventArgs::button2_pressed" >
+                            <div>Whether the right mouse button is pressed.</div>
+                        </FieldEntry>
+
+                        <FieldEntry type="bool" name="MouseEventArgs::button3_pressed" >
+                            <div>Whether the fourth mouse button is pressed.</div>
+                        </FieldEntry>
+
+                        <FieldEntry type="bool" name="MouseEventArgs::shift" >
+                            <div>Whether the shift key was pressed when the event fired.</div>
+                        </FieldEntry>
+                        <FieldEntry type="bool" name="MouseEventArgs::alt" >
+                            <div>Whether the alt key was pressed when the event fired.</div>
+                        </FieldEntry>
+
+                        <FieldEntry type="bool" name="MouseEventArgs::ctrl" >
+                            <div>Whether the ctrl key was pressed when the event fired.</div>
+                        </FieldEntry>
+
 
                     </FieldDefinitionList>
                 </FieldDescriptions>
@@ -416,12 +418,16 @@ function ApiStructs() {
                     </FieldDefinitionList>
                 </FieldDescriptions>
                 <OperatorDescriptions>
-                    <MethodDescription indexName="bool NPoint::operator==(const NPoint& other)" method="bool operator==(const NPoint& other)" >
+                    <MethodDescription indexName="bool NPoint::operator==(const NPoint& other) const" method="bool operator==(const NPoint& other) const" >
                     </MethodDescription>
                     <MethodDescription indexName="NPoint NPoint::operator+(const NPoint& other) const" method="NPoint operator+(const NPoint& other) const" >
                     </MethodDescription>
                     <MethodDescription indexName="NPoint NPoint::operator-(const NPoint& other) const" method="NPoint operator-(const NPoint& other) const" >
                     </MethodDescription>
+                    <MethodDescription indexName="NPoint NPoint::operator-() const" method="NPoint operator-() const" >
+                        <p>returns <M>NPoint(-this-&gt;x,-this-&gt;y)</M>.</p>
+                    </MethodDescription>
+
                 </OperatorDescriptions>
             </StructDescription>
 
@@ -478,7 +484,7 @@ function ApiStructs() {
                         and width or height would become less than zero, they are set to zero.
                     </MethodDescription>
                     <MethodDescription indexName="NRect NRect::intersect(const NRect& other) const" method="NRect intersect(const NRect& other) const" >
-                        Returns the intersection of this rectangle with another rectangle. Return NRect(0,0,0,0) if the
+                        Returns the intersection of this rectangle with another rectangle. Returns NRect(0,0,0,0) if the
                         rectangles do not intersect.
                     </MethodDescription>
                     <MethodDescription indexName="NRect NRect::bounds(const NRect& other) const" method="NRect bounds(const NRect& other) const" >
@@ -490,10 +496,10 @@ function ApiStructs() {
                     <MethodDescription indexName="bool NRect::operator==(const NRect& other) const" method="bool operator==(const NRect& other) const" >
                     </MethodDescription>
                     <MethodDescription indexName="NRect NRect::operator+(const NPoint& point) const" method="NRect operator+(const NPoint& point) const" >
-                        Return the current rectangle moved by the specified point.
+                        Return the current rectangle translated by the specified point.
                     </MethodDescription>
                     <MethodDescription indexName="NRect NRect::operator-(const NPoint& point) const" method="NRect operator-(const NPoint& point) const" >
-                        Return the current rectangle moved in the opposite direction of the specified point.
+                        Return the current rectangle translated  by <M>-point</M>.
                     </MethodDescription>
 
                 </OperatorDescriptions>
@@ -537,19 +543,19 @@ function ApiStructs() {
                     <FieldDefinitionList>
                         <div>int</div>
                         <div>left</div>
-                        <div>The left thickness.</div>
+                        <div>Thickness of the left edge.</div>
 
                         <div>int</div>
                         <div>top</div>
-                        <div>The top thickness.</div>
+                        <div>Thickness of the top edge.</div>
 
                         <div>int</div>
                         <div>right</div>
-                        <div>The right thickness.</div>
+                        <div>Thickness of the right edge.</div>
 
                         <div>int</div>
                         <div>bottom</div>
-                        <div>The bottom thickness.</div>
+                        <div>Thickness of the bottom edge.</div>
                     </FieldDefinitionList>
                 </FieldDescriptions>
                 <OperatorDescriptions>

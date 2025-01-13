@@ -22,6 +22,7 @@
  */
 
 #include "NWindows/NWindows.hpp"
+#include "PrivateElements.hpp"
 #include "Finally.hpp"
 #include <iostream>
 #include <ncurses.h>
@@ -39,6 +40,7 @@
 #include "NWindows/NUnicodeServices.hpp"
 
 using namespace nwindows;
+using namespace nwindows::private_elements;
 
 static std::string menu_item_shortcut(const std::string& text)
 {
@@ -302,7 +304,7 @@ void NElement::margin(const NThickness& margin)
     }
 }
 
-void NContainerElement::add_child(NElement::ptr& child)
+void NContainerElement::add_child(const NElement::ptr& child)
 {
     if (child->parent())
     {
@@ -340,19 +342,34 @@ void NContainerElement::remove_all_children()
     invalidate_layout();
 }
 
-void NContainerElement::remove_child(NElement::ptr& child)
+void NContainerElement::remove_child(NElement::ptr child)
 {
     for (auto i = children_.begin(); i != children_.end(); ++i)
     {
         if ((*i).get() == child.get())
         {
-            children_.erase(i);
-            child->parent(nullptr);
+            invalidate_layout();
             child->set_window(nullptr);
+            child->parent(nullptr);
+            children_.erase(i); // may child or this
             break;
         }
     }
-    invalidate_layout();
+}
+
+void NContainerElement::remove_child(NElement* child)
+{
+    for (auto i = children_.begin(); i != children_.end(); ++i)
+    {
+        if ((*i).get() == child)
+        {
+            invalidate_layout();
+            child->set_window(nullptr);
+            child->parent(nullptr);
+            children_.erase(i); // may delete things!
+            break;
+        }
+    }
 }
 
 bool NThickness::operator==(const NThickness& other) const
@@ -2905,8 +2922,12 @@ bool NCheckboxElement::handle_clicked(int button, NClickedEventArgs& event_args)
 }
 
 
-NRadioGroupElement::NRadioGroupElement(NOrientation orientation, const std::vector<std::string>& labels, int value)
-    : NContainerElement("RadioGroup")
+NRadioGroupElement::NRadioGroupElement(
+    NOrientation orientation, 
+    const std::vector<std::string>& labels, 
+    int value,
+    const std::string&tagName)
+    : NContainerElement(tagName)
     , orientation_(orientation)
     , labels_(labels)
     , value_(value)
@@ -2950,7 +2971,7 @@ void NRadioGroupElement::value(int v)
         {
             radio_buttons_[i]->checked(i == value_);
         }
-        on_value_changed.fire(shared_from_this(), v);
+        on_value_changed.fire(shared_from_this<NRadioGroupElement>(), v);
     }
 }
 
@@ -5021,7 +5042,7 @@ void NTextSelection::delete_character_at(int utf8Index)
     }
 }
 
-void NWindow::add_child(NElement::ptr& child) {
+void NWindow::add_child(const NElement::ptr& child) {
     if (children().size() != 0)
     {
         throw std::runtime_error("An NWindow can only have one child.");
@@ -5224,7 +5245,7 @@ void NWindow::mouse_capture_release(NElement* element)
 
 
 
-void NBoxElement::add_child(NElement::ptr& child)
+void NBoxElement::add_child(const NElement::ptr& child)
 {
     if (children().size() != 0)
     {

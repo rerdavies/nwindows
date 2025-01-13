@@ -208,7 +208,7 @@ namespace nwindows
         NPoint(int x, int y) : x(x), y(y) {}
         int x, y;
 
-        bool operator==(const NPoint& other) {
+        bool operator==(const NPoint& other) const {
             return x == other.x && y == other.y;
         }
         NPoint operator+(const NPoint& other) const {
@@ -217,6 +217,7 @@ namespace nwindows
         NPoint operator-(const NPoint& other) const {
             return NPoint(x - other.x, y - other.y);
         }
+        NPoint operator-() const { return NPoint(-x,-y); }
     };
     struct NThickness
     {
@@ -672,10 +673,11 @@ namespace nwindows
 
         virtual bool is_container() const { return true; }
 
-        std::vector<NElement::ptr>& Children() { return children_; }
-        const std::vector<NElement::ptr>& Children() const { return children_; }
+        // Do not add or remove children directly.  Use add_child and remove_child.
+        std::vector<NElement::ptr>& children() { return children_; }
+        const std::vector<NElement::ptr>& children() const { return children_; }
 
-        virtual void add_child(NElement::ptr& child);
+        virtual void add_child(const NElement::ptr& child);
         virtual void add_child(NElement::ptr&& child);
 
         template <typename T>
@@ -684,7 +686,8 @@ namespace nwindows
                 add_child(child);
             }
         }
-        void remove_child(NElement::ptr& child);
+        void remove_child(NElement::ptr child);
+        void remove_child(NElement* child);
         void remove_all_children();
 
         virtual NSize measure(const NSize& available) override;
@@ -694,15 +697,11 @@ namespace nwindows
         virtual NElement::ptr get_element_at(int x, int y) override;
         NElement::ptr get_element_at(const NPoint& pt) { return get_element_at(pt.x, pt.y); }
 
-        std::vector<NElement::ptr>& children() { return children_; }
-        const std::vector<NElement::ptr>& children() const { return children_; }
-
-
         virtual NElement::ptr find_child_element(const std::function<bool(NElement&)>& predicate) override;
         virtual void for_each_element(const std::function<void(NElement&)>& callback) override;
 
         virtual void invalidate_render() override;
-
+ 
     protected:
         virtual void render_outer() override;
 
@@ -732,7 +731,7 @@ namespace nwindows
         const std::string title() { return title_; }
         void title(const std::string& value);
 
-        virtual void add_child(NElement::ptr& child) override;
+        virtual void add_child(const NElement::ptr& child) override;
         virtual void add_child(NElement::ptr&& child) override;
 
     public:
@@ -748,8 +747,7 @@ namespace nwindows
     class NVerticalStackElement : public NContainerElement
     {
     protected:
-        NVerticalStackElement() : NContainerElement("VerticalStack") {}
-        NVerticalStackElement(const std::string& tag) : NContainerElement(tag) {}
+        NVerticalStackElement(const std::string& tag = "VerticalStack") : NContainerElement(tag) {}
 
     public:
         using super = NContainerElement;
@@ -759,12 +757,14 @@ namespace nwindows
         static ptr create() { return std::shared_ptr<self>(new NVerticalStackElement()); }
 
         virtual ~NVerticalStackElement() {}
-        virtual NSize measure(const NSize& available) override;
-        virtual void arrange(const NRect& rect) override;
         int row_gap() { return row_gap_; }
         void row_gap(int value);
         NAlignment alignment() const { return alignment_; }
         void alignment(NAlignment value);
+
+    public:
+        virtual NSize measure(const NSize& available) override;
+        virtual void arrange(const NRect& rect) override;
 
     private:
         NAlignment alignment_ = NAlignment::Start;
@@ -1056,14 +1056,15 @@ namespace nwindows
 
         virtual ~NHorizontalStackElement() {}
 
-
-        virtual NSize measure(const NSize& available) override;
-        virtual void arrange(const NRect& rect) override;
         int column_gap() { return column_gap_; }
         void column_gap(int value);
 
         void alignment(NAlignment value);
         NAlignment alignment() const { return alignment_; }
+
+    public:
+        virtual NSize measure(const NSize& available) override;
+        virtual void arrange(const NRect& rect) override;
 
     private:
         NAlignment alignment_ = NAlignment::Start;
@@ -1071,8 +1072,13 @@ namespace nwindows
     };
 
     class NRadioGroupElement : public NContainerElement {
-    private:
-        NRadioGroupElement(NOrientation orientation, const std::vector<std::string>& labels, int value);
+    protected:
+        NRadioGroupElement(
+            NOrientation orientation, 
+            const std::vector<std::string>& labels, 
+            int value,
+            const std::string&tagName="RadioGroup"
+            );
 
     public:
 
@@ -1093,6 +1099,7 @@ namespace nwindows
                 std::vector<std::string>(),
                 0));
         }
+        // Properties
         void orientation(NOrientation value);
         NOrientation orientation() const { return orientation_; }
 
@@ -1105,22 +1112,25 @@ namespace nwindows
         void row_gap(int row_gap_);
         int row_gap() const { return row_gap_; }
 
-
-        virtual void width(int value) override;
-        int width() const { return super::width(); }
-
-        NEvent<void(NElement::ptr source, int value)> on_value_changed;
         int value() const { return value_; }
         virtual void value(int v);
 
+        virtual void disabled(bool value) override;
+        virtual bool disabled() const { return super::disabled(); }
+
+        // Events
+
+        NEvent<void(NRadioGroupElement::ptr source, int value)> on_value_changed;
+
+        // Customizability.
         std::string checked_text() const;
         void checked_text(const std::string& value);
         std::string unchecked_text() const;
         void unchecked_text(const std::string& value);
 
-
-        virtual void disabled(bool value) override;
-        virtual bool disabled() const { return super::disabled(); }
+        // implementation.
+        virtual void width(int value) override;
+        int width() const { return super::width(); }
 
     protected:
         virtual void handle_attached(NWindow* window) override;
@@ -1143,91 +1153,6 @@ namespace nwindows
         std::vector<std::string> labels_;
         int value_ = 0;
 
-    };
-
-    class NMenuItemElement : public NButtonBaseElement {
-
-    protected:
-        NMenuItemElement(const std::string& text, int item_id);
-        NMenuItemElement(const std::string& tagName);
-    public:
-        virtual ~NMenuItemElement() {}
-        using self = NMenuItemElement;
-        using super = NButtonBaseElement;
-        using ptr = std::shared_ptr<self>;
-
-        static ptr create(const std::string& text, int id) {
-            return std::shared_ptr<self>(new self(text, id));
-        }
-
-
-        NEvent<void(NElement::ptr source, int item_id)> on_item_selected;
-        NEvent<void(NElement::ptr source)> on_cancelled;
-        std::string text() const { return text_; }
-        void text(const std::string& value) { text_ = value; invalidate_layout(); }
-
-        // the icon area, typically.
-        std::string prefix() const { return prefix_; }
-        void prefix(const std::string& value) { prefix_ = value; invalidate_layout(); }
-
-        // the flyout icon, typically.
-        std::string suffix() const { return suffix_; }
-        void suffix(const std::string& value) { suffix_ = value; invalidate_layout(); }
-
-        int item_id() const { return item_id_; }
-
-        virtual bool wants_shortcut_key(const std::string& key) override;
-
-    protected:
-        virtual void render() override;
-        virtual NSize measure(const NSize& available) override;
-    private:
-        std::string prefix_ = " ";
-        std::string text_ = " ";
-        std::string suffix_;
-        int item_id_;
-    };
-    class NSubmenuMenuItemElement : public NMenuItemElement {
-    private:
-        NSubmenuMenuItemElement(const NMenuItem& submenuItem);
-    public:
-        static ptr create(const NMenuItem& submenu) { return std::shared_ptr<self>(new self(submenu)); }
-
-        using self = NSubmenuMenuItemElement;
-        using super = NMenuItemElement;
-        using ptr = std::shared_ptr<self>;
-
-        NEvent<void(NElement::ptr source)> on_opened;
-        NEvent<void(NElement::ptr source)> on_closed;
-
-        bool open() const { return open_; }
-        void open(bool value);
-
-    protected:
-        virtual bool handle_clicked(int button, NClickedEventArgs& eventArgs) override;
-        virtual void handle_attached(NWindow* window) override;
-    private:
-        std::shared_ptr<NPopupMenuWindow> popup_window_;
-        std::vector<NMenuItem> submenu_;
-        bool open_ = false;
-        virtual NColorPair get_color() override;
-
-    };
-
-    class NDividerMenuItemElement : public NMenuItemElement {
-    private:
-        NDividerMenuItemElement();
-    public:
-        using self = NDividerMenuItemElement;
-        using super = NMenuItemElement;
-        using ptr = std::shared_ptr<self>;
-
-        static ptr create() { return std::shared_ptr<self>(new self()); }
-    protected:
-        virtual NColorPair get_color();
-
-        virtual void render() override;
-        virtual NSize measure(const NSize& available) override;
     };
 
     class NMenuElement : public NButtonBaseElement {
@@ -1424,7 +1349,7 @@ namespace nwindows
         virtual ~NWindow();
 
 
-        virtual void add_child(NElement::ptr& child) override;
+        virtual void add_child(const NElement::ptr& child) override;
         virtual void add_child(NElement::ptr&& child) override;
 
 

@@ -31,15 +31,16 @@ import { Route, Routes, useNavigate } from 'react-router-dom'
 import NotFound from './NotFound';
 import { IndexBuilder } from './IndexBuilder';
 import SearchPage from './SearchPage';
-import { CppFunctionParserTest } from './CppFunctionParser';
 
 
-
+// vite needs these placed right here in this form in order to do proper partitioning 
+// for lazy loading. Do not optimize.
 const HomePage = React.lazy(() => import("./pages/HomePage"));
 const Documentation = React.lazy(() => import("./pages/Documentation"));
 const PlatformSupport = React.lazy(() => import("./pages/PlatformSupport"));
 const InstallingNWindows = React.lazy(() => import("./pages/InstallingNWindows"));
 const UsingNWindows = React.lazy(() => import("./pages/UsingNWindows"));
+const NWindowsFundamentals = React.lazy(() => import("./pages/NWindowsFundamentals"));
 const HelloNWindows = React.lazy(() => import("./pages/HelloNWindows"));
 const NWindowsElements = React.lazy(() => import("./pages/NWindowsElements"));
 const NWindowsWindows = React.lazy(() => import("./pages/NWindowsWindows"));
@@ -66,6 +67,12 @@ const ApiClasses = React.lazy(() => import("./pages/ApiClasses"));
 const ClassNElement = React.lazy(() => import("./pages/ClassNElement"));
 const ClassNColor = React.lazy(() => import("./pages/ClassNColor"));
 const ClassNColorPair = React.lazy(() => import("./pages/ClassNColorPair"));
+const ClassNTextElement = React.lazy(() => import("./pages/ClassNTextElement"));
+const ClassNContainerElement = React.lazy(() => import("./pages/ClassNContainerElement"));
+const ClassNBoxElement = React.lazy(() => import("./pages/ClassNBoxElement"));
+const ClassNVerticalStackElement = React.lazy(() => import("./pages/ClassNVerticalStackElement"));
+const ClassNHorizontalStackElement = React.lazy(() => import("./pages/ClassNHorizontalStackElement"));
+const ClassNRadioGroupElement = React.lazy(() => import("./pages/ClassNRadioGroupElement"));
 
 const IndexPage = React.lazy(() => import("./pages/IndexPage"));
 
@@ -88,6 +95,7 @@ const indexedComponents: IndexedComponent[] = [
     { route: "/support", component: () => PlatformSupport },
     { route: "/installing", component: () => InstallingNWindows },
     { route: "/using", component: () => UsingNWindows },
+    { route: "/using/fundamentals", component: () => NWindowsFundamentals },
     { route: "/using/hello", component: () => HelloNWindows },
     { route: "/using/elements", component: () => NWindowsElements },
     { route: "/using/windows", component: () => NWindowsWindows },
@@ -112,6 +120,12 @@ const indexedComponents: IndexedComponent[] = [
     { route: "/apis/classes/NElement", component: () => ClassNElement },
     { route: "/apis/classes/NColor", component: () => ClassNColor },
     { route: "/apis/classes/NColorPair", component: () => ClassNColorPair },
+    { route: "/apis/classes/NTextElement", component: () => ClassNTextElement },
+    { route: "/apis/classes/NContainerElement", component: () => ClassNContainerElement },
+    { route: "/apis/classes/NBoxElement", component: () => ClassNBoxElement },
+    { route: "/apis/classes/NVerticalStackElement", component: () => ClassNVerticalStackElement },
+    { route: "/apis/classes/NHorizontalStackElement", component: () => ClassNHorizontalStackElement },
+    { route: "/apis/classes/NRadioGroupElement", component: () => ClassNRadioGroupElement },
 ];
 
 export function IndexedComponents() {
@@ -124,19 +138,20 @@ let docsIndex: DocsPage[] = [
     { route: "/support", title: "1.0 - Support", up: "/documentation" },
     { route: "/installing", title: "2.0 - Installing NWindows", up: "/documentation" },
     { route: "/using", title: "3.0 - Using NWindows", up: "/documentation" },
-    { route: "/using/hello", title: "3.1 - Hello NWindows - General Principles", up: "/using" },
-    { route: "/using/elements", title: "3.2 - NWindows Elements", up: "/using" },
-    { route: "/using/windows", title: "3.3 - NWindows Windows", up: "/using" },
-    { route: "/using/events", title: "3.4 - NWindows Events", up: "/using" },
-    { route: "/using/events/keyboard", title: "3.4.1 - Keyboard Events", up: "/using/events", },
-    { route: "/using/events/mouse", title: "3.4.2 - Mouse Events", up: "/using/events", },
-    { route: "/using/events/misc", title: "3.4.3 - Miscellaneous Events", up: "/using/events", },
-    { route: "/using/custom", title: "3.5 - Implementing Custom Controls", up: "/using", },
-    { route: "/using/custom/unicode", title: "3.5.1 - Unicode Support", up: "/using/custom", },
-    { route: "/using/custom/inherit", title: "3.5.2 - Inheriting from Existing Elements", up: "/using/custom", },
-    { route: "/using/custom/compose", title: "3.5.3 - Compound Elements", up: "/using/custom", },
-    { route: "/using/custom/full", title: "3.5.4 - Fully-Custom Elements", up: "/using/custom", },
-    { route: "/using/dispatcher", title: "3.6 - The NWindows Dispatcher", up: "/using", },
+    { route: "/using/fundamentals", title: "3.1 - General Principles", up: "/using" },
+    { route: "/using/hello", title: "3.2 - Hello NWindows", up: "/using" },
+    { route: "/using/elements", title: "3.3 - NWindows Elements", up: "/using" },
+    { route: "/using/windows", title: "3.4 - NWindows Windows", up: "/using" },
+    { route: "/using/events", title: "3.5 - NWindows Events", up: "/using" },
+    { route: "/using/events/keyboard", title: "3.5.1 - Keyboard Events", up: "/using/events", },
+    { route: "/using/events/mouse", title: "3.5.2 - Mouse Events", up: "/using/events", },
+    { route: "/using/events/misc", title: "3.5.3 - Miscellaneous Events", up: "/using/events", },
+    { route: "/using/custom", title: "3.6 - Implementing Custom Controls", up: "/using", },
+    { route: "/using/custom/unicode", title: "3.6.1 - Unicode Support", up: "/using/custom", },
+    { route: "/using/custom/inherit", title: "3.6.2 - Inheriting from Existing Elements", up: "/using/custom", },
+    { route: "/using/custom/compose", title: "3.6.3 - Compound Elements", up: "/using/custom", },
+    { route: "/using/custom/full", title: "3.6.4 - Fully-Custom Elements", up: "/using/custom", },
+    { route: "/using/dispatcher", title: "3.7 - The NWindows Dispatcher", up: "/using", },
     { route: "/apis", title: "4.0 - NWindows API Reference", up: "/documentation", },
     { route: "/apis/defines", title: "4.1 - Defines", up: "/apis", },
     { route: "/apis/constants", title: "4.2 - Constants", up: "/apis", },
@@ -145,9 +160,16 @@ let docsIndex: DocsPage[] = [
     { route: "/apis/structs", title: "4.5 - Structs", up: "/apis", },
     { route: "/apis/methods", title: "4.6 - Methods", up: "/apis", },
     { route: "/apis/classes", title: "4.7 - Classes", up: "/apis", },
-    { route: "/apis/classes/NColor", title: "4.7.1 - NColor", up: "/apis/classes" },
-    { route: "/apis/classes/NColorPair", title: "4.7.2 - NColorPair", up: "/apis/classes" },
-    { route: "/apis/classes/NElement", title: "4.7.3 - NElement", up: "/apis/classes" },
+    { route: "/apis/classes/NBoxElement", title: "4.7.1 - NBoxElement", up: "/apis/classes" },
+    { route: "/apis/classes/NColor", title: "4.7.2 - NColor", up: "/apis/classes" },
+    { route: "/apis/classes/NColorPair", title: "4.7.3 - NColorPair", up: "/apis/classes" },
+    { route: "/apis/classes/NContainerElement", title: "4.7.4 - NContainerElement", up: "/apis/classes" },
+    { route: "/apis/classes/NElement", title: "4.7.5 - NElement", up: "/apis/classes" },
+    { route: "/apis/classes/NHorizontalStackElement", title: "4.7.X - NHorizontalStackElement", up: "/apis/classes" },
+    { route: "/apis/classes/NRadioGroupElement", title: "4.7.X - NRadioGroupElement", up: "/apis/classes" },
+    { route: "/apis/classes/NTextElement", title: "4.7.6 - NTextElement", up: "/apis/classes" },
+    { route: "/apis/classes/NVerticalStackElement", title: "4.7.7 - NVerticalStackElement", up: "/apis/classes" },
+    { route: "/index_builder", title: "Index Builder", up: "/documentation", },
     { route: "/index", title: "Index", up: "/documentation", },
 
 ];
@@ -168,7 +190,7 @@ function IndexPageRoutes() {
             {
                 indexedComponents.map((comp) => {
                     let t = { component: comp.component() };
-                    return (<Route path={comp.route} element={
+                    return (<Route key={comp.route} path={comp.route} element={
                         <React.Suspense fallback={<Loading />}>
 
                             <t.component />
@@ -194,6 +216,13 @@ export function DocsRoutes() {
             {
                 IndexPageRoutes()
             }
+            <Route path="/documentation" element=
+                {
+                    <React.Suspense fallback={<Loading />}>
+                        <Documentation />
+                    </React.Suspense>
+
+                } />
             <Route path="index" element=
                 {
                     <React.Suspense fallback={<Loading />}>
@@ -207,9 +236,6 @@ export function DocsRoutes() {
             } />
             <Route path="index_builder" element={
                 <IndexBuilder />
-            } />
-            <Route path="cpp_function_parser_test" element={
-                <CppFunctionParserTest />
             } />
 
 
@@ -226,7 +252,7 @@ interface DocsTree {
 function RenderTree(tree: DocsTree) {
 
     return (
-        <div>
+        <div key={tree.page.route}>
             {tree.children.map((node) => {
                 if (node.children.length != 0) {
                     return (<React.Fragment>

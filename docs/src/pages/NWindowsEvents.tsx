@@ -129,8 +129,8 @@ function NWindowsEvents() {
             <ClassDescription name="NElement">
                 <EventDescriptions>
                     <EventDescription
-                        indexName="NEvent<void (NKeyEventArgs&event_args)> NElement::on_key;"
-                        method={
+                        indexName="NEvent<void (NKeyEventArgs&event_args)> NElement::on_key"
+                        event={
                             `NEvent<void (NKeyEventArgs&event_args)> on_key;
     NEvent<void (NKeyCodeEventArgs&event_args)> on_key_code;
 
@@ -235,11 +235,11 @@ function NWindowsEvents() {
                             `NEvent<void (int button,NMouseEventArgs&event_args)> NElement::on_mouse_button_pressed`,
                             `NEvent<void (int button,NMouseEventArgs&event_args)>  NElement::on_mouse_button_released`,
                             `NEvent<void (NMouseEventArgs&event_args)>  NElement::on_mouse_move`,
-                            `NEvent<void ()>  on_mouse_lost_capture`,
+                            `NEvent<void ()>  NElement::on_mouse_lost_capture`,
                             `NEvent<void (NMouseEventArgs&event_args)> NElement::on_mouse_enter`,
                             `NEvent<void (NMouseEventArgs&event_args)> NElement::on_mouse_leave`
                         ]}
-                        method={`NEvent<void (
+                        event={`NEvent<void (
     int button,
     NClickedEventArgs&event_args
 )>  on_clicked;

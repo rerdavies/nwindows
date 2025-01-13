@@ -26,7 +26,7 @@ import PageColumn from './PageColumn';
 import SearchBox from './SearchBox';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SiteIndexData from './SiteIndexData';
-import { IndexData, IndexReference } from './IndexBuilder';
+import IndexData, { IndexReference } from './IndexData';
 import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
 

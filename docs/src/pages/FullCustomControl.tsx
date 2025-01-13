@@ -56,7 +56,7 @@ virtual void handle_detaching();
                     "NEvent<void(void)> void NElement::on_detaching"
 
                 ]}
-                method={`NEvent<void(NWindow*)> on_attached;
+                event={`NEvent<void(NWindow*)> on_attached;
 NEvent<void(void)> void on_detaching;
 `} />
 
@@ -204,13 +204,16 @@ virtual void arrange(const NRect& bounds);`} />
             </p>
             <p>Implementing <M>measure</M> for elements that don't have children is fairly straightforward. It should look
                 something like this:</p>
-            <CodeFragment2 white text={`NSize measure(const NSize& available) {
-    NSize result = { measure_text(this->text()), 1 };
+            <Code text={`NSize measure(const NSize& available) {
+    NSize result = { 
+        measure_text(this->text()), 1 
+    };
     if (width() != AUTO_SIZE)
     {
         result.width = width();
     }
-    if (available.width != AUTO_SIZE && result.width > available.width)
+    if (available.width != AUTO_SIZE 
+        && result.width > available.width)
     {
         result.width = available.width;
     }
@@ -218,7 +221,8 @@ virtual void arrange(const NRect& bounds);`} />
     {
         result.width = 0;
     }
-    if (available.height != AUTO_SIZE && available.height < result.height)
+    if (available.height != AUTO_SIZE 
+        && available.height < result.height)
     {
         result.height = available.height;
     }    
@@ -234,22 +238,29 @@ virtual void arrange(const NRect& bounds);`} />
 
             <p>Measuring elements that have children is a bit more complicated. The actual code for <M>NVerticalStackElement::measure</M> serves as a good example of
                 how <M>measure</M> should be implemented.</p>
-            <CodeFragment2 white text={`NSize NVerticalStackElement::measure(const NSize& available)
+            <Code text={`NSize measure(const NSize& available)
 {
-    NSize constrainedWidth = { available.width, std::numeric_limits<int>::max() };
+    NSize constrainedWidth = { 
+        available.width, 
+        std::numeric_limits<int>::max() 
+    };
     int height = 0;
     int width = 0;
 
     for (auto& child : children())
     {
-        auto childSize = measure_child_with_margins(constrainedWidth, child);
+        auto childSize 
+            = measure_child_with_margins(
+                constrainedWidth, child);
         child->measured(childSize);
         height += childSize.height;
         width = std::max(width, childSize.width);
     }
     if (children().size() > 1)
     {
-        height += (int)(children().size() - 1) * row_gap_;
+        height += 
+            (int)(children().size() - 1) 
+            * row_gap_;
     }
     if (this->width() != AUTO_SIZE)
     {
@@ -284,7 +295,7 @@ virtual void arrange(const NRect& bounds);`} />
                 margins excluded &mdash; (0,0) is at the top-left corner of the owning <M>NWindow</M>.</p>
             <p>The actual code for <M>NVerticalStackElement</M> serves as a good example of what an implementation
                 of <M>arrange</M> should look like.</p>
-            <CodeFragment2 white text={`void NVerticalStackElement::arrange(const NRect& rect)
+            <Code text={`void arrange(const NRect& rect)
 {
     NElement::arrange(rect);
     int y = rect.y;
@@ -292,7 +303,9 @@ virtual void arrange(const NRect& bounds);`} />
     for (auto& child : children())
     {
         NSize measured = child->measured();
-        NRect childRect{ 0,y,measured.width,measured.height };
+        NRect childRect{ 
+            0,y,
+            measured.width,measured.height };
         childRect = childRect.intersect(rect);
         switch (alignment_)
         {
@@ -300,21 +313,25 @@ virtual void arrange(const NRect& bounds);`} />
             childRect.x = rect.x;
             break;
         case NAlignment::Center:
-            childRect.x = rect.x + (rect.width - measured.width) / 2;
+            childRect.x = rect.x 
+                + (rect.width - measured.width) / 2;
             break;
         case NAlignment::Justify:
             childRect.x = rect.x;
             childRect.width = rect.width;
             break;
         case NAlignment::End:
-            childRect.x = rect.right() - measured.width;
+            childRect.x = rect.right() 
+                          - measured.width;
             break;
         }
         if (childRect.x < 0)
         {
             childRect.x = 0;
         }
-        childRect = childRect.inset(child->margin());
+        childRect = childRect.inset(
+            child->margin()
+        );
         child->arrange(childRect);
         y += measured.height + row_gap_;
     }
@@ -415,7 +432,7 @@ void print(const std::string& text);`} >
                         `void horizontal_line(int x, int y, int width);
 void vertical_line(int x, int y, int height);`} >
                     <p>Draw a vertical or horizontal line at the specified location. Coordinates are element coordinates. Uses line-drawing characters
-                        if availalbe, and falls back to ASCII rendering otherwise.
+                        if available, and falls back to ASCII rendering otherwise.
                     </p>
                 </MethodDescription>
 
