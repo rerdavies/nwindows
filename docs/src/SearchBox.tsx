@@ -36,12 +36,13 @@ interface SearchBoxProps {
     onSearchChanged?: (text: string) => void;
     onSearchChangedWithDelay?: (text: string) => void;
     onApplySearch?: (text: string) => boolean;
-    onOpen?: (open: boolean) => void;
+    onOpen: (open: boolean) => void;
     initialText?: string;
+    open: boolean;
+    style?: React.CSSProperties;
     alwaysOpen?: boolean;
 }
 interface SearchBoxState {
-    open: boolean;
     searchText: string;
 }
 
@@ -49,18 +50,26 @@ export class SearchBox extends React.Component<SearchBoxProps, SearchBoxState> {
     constructor(props: SearchBoxProps) {
         super(props);
         this.state = {
-            open: props.alwaysOpen ?? false,
             searchText: this.props.initialText ?? "",
         };
 
     }
 
+    private lastClickTime: number = 0;
+
     handleSearchClicked(open: boolean) {
+        // debounce to handle bug in chrome/react wrt/ clicks on controls that are animating.
+        let now = performance.now();
+        if (now - this.lastClickTime < 200) {
+            return;
+        }
+        this.lastClickTime = now;
+
         if (this.props.alwaysOpen) {
             return;
         }
         if (open) {
-            this.setState({ open: open, searchText: "" });
+            this.setState({ searchText: "" });
             if (this.inputRef) {
                 this.inputRef.disabled = false;
                 this.inputRef.focus();
@@ -70,7 +79,6 @@ export class SearchBox extends React.Component<SearchBoxProps, SearchBoxState> {
             }
         }
         else {
-            this.setState({ open: false });
             if (this.inputRef) {
                 this.inputRef.disabled = true;
                 this.inputRef.blur();
@@ -90,7 +98,7 @@ export class SearchBox extends React.Component<SearchBoxProps, SearchBoxState> {
     }
 
     componentDidMount(): void {
-        if (this.state.open || this.props.alwaysOpen) {
+        if (this.props.open || this.props.alwaysOpen) {
             if (this.inputRef) {
                 this.inputRef.focus();                
             }
@@ -131,23 +139,24 @@ export class SearchBox extends React.Component<SearchBoxProps, SearchBoxState> {
     render() {
         let alwaysOpen = this.props.alwaysOpen ?? false;
         return (
-            <div className="search_box"   style={{ border: alwaysOpen ? "1px solid #888" : undefined }}
+            <div className="search_box"   style={{ border: alwaysOpen ? "1px solid #888" : undefined, ...this.props.style }}
 
             >
-                <IconButton onClick={() => this.handleSearchClicked(!this.state.open)}
+                <IconButton onClick={() => this.handleSearchClicked(!this.props.open)}
                 >
                     <SearchIcon />
                 </IconButton>
                 <div className={
                         alwaysOpen ? "search_box_always_open" : 
-                            ((this.state.open  ) ? "search_box_open" : "search_box_closed")
+                            ((this.props.open  ) ? "search_box_open" : "search_box_closed")
                     }
                 >
-                    <TextField id="standard-basic"
+                    <TextField id="standard-basic" spellCheck={false}
+                        autoComplete="off"
                         inputRef={(input) => {
                             this.inputRef = input as HTMLInputElement;
                             if (this.inputRef) {
-                                if (this.state.open || alwaysOpen) {
+                                if (this.props.open || alwaysOpen) {
                                     this.inputRef.disabled = false;
                                 } else {
                                     this.inputRef.disabled = true;
@@ -180,14 +189,13 @@ export class SearchBox extends React.Component<SearchBoxProps, SearchBoxState> {
                                         this.handleSearchClicked(false);
                                         e.preventDefault();
                                     } else {
-                                        if (this.searchTimerHandle) {
-                                            clearTimeout(this.searchTimerHandle);
-                                            this.props.onSearchChangedWithDelay?.(this.state.searchText);
-                                        }
+                                        this.cancelSearchTimer();
                                         if (this.props.onApplySearch) {
                                             if (this.props.onApplySearch(this.state.searchText)) {
                                                 this.handleSearchClicked(false);
                                             }
+                                        } else {
+                                            this.props.onSearchChangedWithDelay?.(this.state.searchText);
                                         }
                                         e.preventDefault();
                                     }
@@ -200,6 +208,10 @@ export class SearchBox extends React.Component<SearchBoxProps, SearchBoxState> {
                                         if (this.state.searchText.length > 0) {
 
                                             this.setState({ searchText: "" });
+                                            if (this.inputRef) 
+                                            {
+                                                this.inputRef.focus();
+                                            }
                                             this.handleTextChanged("");
                                         } else {
                                             this.handleSearchClicked(false);

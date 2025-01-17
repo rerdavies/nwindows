@@ -25,7 +25,7 @@ import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import M from '../M';
 import ClassDescription, { EventDescription } from '../ClassDescription';
-import Code, { CodeFragment2 } from '../Code';
+import CodeDiv, { CodeFragment2 } from '../Code';
 
 
 
@@ -108,7 +108,7 @@ NEvent<
 `} />
                     <p>The <M>cursor_position</M> is in window coordinates (0,0, is at the top left corner of the
                         containing <M>NWindow</M>). To convert to element-relative coordinates, use</p>
-                    <Code text={`NPoint position = screen_to_element(event_args.cursor_position);`} />
+                    <CodeDiv text={`NPoint position = screen_to_element(event_args.cursor_position);`} />
                     <p>If the mouse cursor is outside the bounds of the current <M>NWindow</M>, <M>cursor_position</M> will
                         be set to <M>{"{-1,-1}"}</M>
                     </p>

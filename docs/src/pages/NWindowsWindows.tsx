@@ -4,7 +4,7 @@ import M from '../M';
 import ClassDescription, {
     PropertyList, EnumDescription, EnumDefinitionList, MethodDescription, ParameterList, DefinitionList
 } from '../ClassDescription';
-import Code from '../Code';
+import CodeDiv from '../Code';
 
 
 function NWindowsWindows() {
@@ -215,7 +215,7 @@ static NWindow::ptr create(
                     <p>The anchor rectangle is usually the bounding rectangle of an <M>NElement</M> control that is opening
                         the popup window. The rectangle must be specified in screen coordinates, not window coordinates. The
                         following code fragment converts an element's layout bounds (which are in window coordinates) to screen coordinates:</p>
-                    <Code text={`NRect anchor = this->window_to_screen(this->bounds());`} />
+                    <CodeDiv text={`NRect anchor = this->window_to_screen(this->bounds());`} />
                     <p>The <M>attachment</M> argument can take the following values:</p>
                     <EnumDescription
                         enumName="NAttachment">

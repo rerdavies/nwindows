@@ -1126,10 +1126,6 @@ void NWindow::color_palette(const NColorPalette& color_palette)
 void NWindow::color_palette(std::shared_ptr<NColorPalette> color_palette)
 {
     color_palette_ = color_palette;
-    for (auto child : child_windows_)
-    {
-        child->color_palette(color_palette_);
-    }
 }
 
 
@@ -1320,10 +1316,11 @@ void NWindow::init_root_window()
 
 }
 
-NWindow::ptr NWindow::create_(NWindow::ptr parentWindow, int x, int y, int width, int height, NColorPalette* colorPalette)
+NWindow::ptr NWindow::create_(NWindow::ptr parentWindow, int x, int y, int width, int height, NColorPalette* color_palette)
 {
+    // create in two steps because we need a shared_ptr to establish parent/child relationship.
     auto result = std::shared_ptr<self>(new NWindow(
-        x, y, width, height, colorPalette));
+        x, y, width, height,"Window", color_palette));
     if (parentWindow)
     {
         parentWindow->add_child_window(result);
@@ -1336,15 +1333,16 @@ NWindow::ptr NWindow::create_(NWindow::ptr parentWindow, int x, int y, int width
 
 NWindow::NWindow(
     int x, int y, int width, int height,
-    NColorPalette* colorPalette)
-    : super("Window")
+    const std::string&tagName,
+    NColorPalette* color_palette)
+    : super(tagName)
 {
     this->measured_ = { -1,-1, }; // flag to indicate that we need to measure on window creation.
-    if (colorPalette == nullptr)
+    if (color_palette == nullptr)
     {
         this->color_palette_ = std::make_shared<NColorPalette>();
     } else {
-        this->color_palette_ = std::make_shared<NColorPalette>(*colorPalette);
+        this->color_palette_ = std::make_shared<NColorPalette>(*color_palette);
     }
 
     this->window_position_ = NRect(x, y, width, height);
@@ -2925,12 +2923,12 @@ bool NCheckboxElement::handle_clicked(int button, NClickedEventArgs& event_args)
 NRadioGroupElement::NRadioGroupElement(
     NOrientation orientation, 
     const std::vector<std::string>& labels, 
-    int value,
+    int selection,
     const std::string&tagName)
     : NContainerElement(tagName)
     , orientation_(orientation)
     , labels_(labels)
-    , value_(value)
+    , selection_(selection)
 {
     update_child_elements();
 }
@@ -2961,17 +2959,17 @@ void NRadioGroupElement::labels(const std::vector<std::string>& value)
     update_child_elements();
 }
 
-void NRadioGroupElement::value(int v)
+void NRadioGroupElement::selection(int v)
 {
-    if (this->value_ != v)
+    if (this->selection_ != v)
     {
-        this->value_ = v;
+        this->selection_ = v;
 
         for (int i = 0; i < (int)radio_buttons_.size(); ++i)
         {
-            radio_buttons_[i]->checked(i == value_);
+            radio_buttons_[i]->checked(i == selection_);
         }
-        on_value_changed.fire(shared_from_this<NRadioGroupElement>(), v);
+        on_selection_changed.fire(shared_from_this<NRadioGroupElement>(), v);
     }
 }
 
@@ -3039,14 +3037,14 @@ void NRadioGroupElement::update_child_elements()
         radioBox->checked_text(checked_text);
         radioBox->unchecked_text(unchecked_text);
         radioBox->disabled(disabled());
-        radioBox->checked(ix == value_);
+        radioBox->checked(ix == selection_);
         container->add_child(radioBox);
 
         radio_buttons_.push_back(radioBox);
 
         radioBox->on_clicked.subscribe(
             [this, ix](int button, NClickedEventArgs& event_args) {
-                this->value(ix);
+                this->selection(ix);
                 event_args.handled = true;
                 return true;
             }
@@ -3093,7 +3091,7 @@ void NRadioGroupElement::update_child_layout() {
             radioBox->width(width);
             radioBox->checked_text(checked_text);
             radioBox->unchecked_text(unchecked_text);
-            radioBox->checked((int)i == value_);
+            radioBox->checked((int)i == selection_);
             radioBox->disabled(disabled());
         }
     }
@@ -3125,7 +3123,7 @@ void NRadioGroupElement::update_child_layout() {
             radioButton->width(checkboxWidth);
             radioButton->checked_text(checked_text);
             radioButton->unchecked_text(unchecked_text);
-            radioButton->checked((int)i == value_);
+            radioButton->checked((int)i == selection_);
             radioButton->disabled(disabled());
         }
     }
@@ -3633,7 +3631,7 @@ void NTextEditElement::text(const std::string& value)
         text_ = value;
         int length = utf8_length(text_);
         invalidate_render();
-        on_text_changed.fire(shared_from_this(), text_);
+        on_text_changed.fire(shared_from_this<NTextEditElement>(), text_);
 
         NTextSelection selection{ selection_ };
         if (selection.start > length)
@@ -3654,7 +3652,7 @@ void NTextEditElement::selection(const NTextSelection& value)
     {
         selection_ = value;
         invalidate_render();
-        on_selection_changed.fire(shared_from_this(), selection_);
+        this->on_selection_changed.fire(shared_from_this<NTextEditElement>(), selection_);
     }
 }
 
@@ -4491,7 +4489,7 @@ NMenuItemElement::NMenuItemElement(const std::string& text, int item_id)
 
 void NDropdownElement::open_popup(const NRect& mouseRect)
 {
-    if (items_.size() == 0)
+    if (menu_items_.size() == 0)
     {
         return;
     }
@@ -4502,7 +4500,7 @@ void NDropdownElement::open_popup(const NRect& mouseRect)
     }
     popup_window_ = NPopupMenuWindow::create(
         window()->shared_from_this<NWindow>(),
-        items_,
+        menu_items_,
         window_to_screen(bounds),
         dropdown_attachment()
     );
@@ -4546,12 +4544,13 @@ void NDropdownElement::open(bool value, const NRect& anchorRect)
         if (value)
         {
             close_popup();
+
+            this->on_opening.fire(this->shared_from_this<NDropdownElement>());
             open_popup(anchorRect);
-            on_opened.fire();
         }
         else {
             close_popup();
-            on_closed.fire();
+            this->on_closed.fire(this->shared_from_this<NDropdownElement>());
 
         }
 
@@ -4582,11 +4581,10 @@ NPopupWindow::NPopupWindow(
     NWindow::ptr parentWindow,
     const NRect& anchor,
     NAttachment attachment)
-    : NWindow(AUTO_SIZE, AUTO_SIZE, AUTO_SIZE, AUTO_SIZE, nullptr)
+    : NWindow(AUTO_SIZE, AUTO_SIZE, AUTO_SIZE, AUTO_SIZE,tag,nullptr)
     , anchor_(anchor)
     , attachment_(attachment)
 {
-    this->tag(tag);
 }
 
 void NDropdownElement::selected(int value)
@@ -4595,34 +4593,34 @@ void NDropdownElement::selected(int value)
     {
         this->selected_ = value;
         invalidate_render();
-        on_selection_changed.fire(shared_from_this(), value);
+        on_selection_changed.fire(shared_from_this<NDropdownElement>(), value);
     }
 }
 
-NDropdownElement::NDropdownElement()
-    : NButtonBaseElement("Dropdown")
+NDropdownElement::NDropdownElement(const std::string &tagName)
+    : NButtonBaseElement(tagName)
 {
 }
-NDropdownElement::NDropdownElement(const std::vector<NMenuItem>& items, int selected)
-    : NButtonBaseElement("Dropdown")
-    , items_(items)
+NDropdownElement::NDropdownElement(const std::vector<NMenuItem>& items, int selected,const std::string &tagName)
+    : NButtonBaseElement(tagName)
+    , menu_items_(items)
     , selected_(selected)
 {
 
 }
-NDropdownElement::NDropdownElement(std::vector<NMenuItem>&& items, int selected)
-    : NButtonBaseElement("Dropdown")
-    , items_(std::move(items))
+NDropdownElement::NDropdownElement(std::vector<NMenuItem>&& items, int selected,const std::string &tagName)
+    : NButtonBaseElement(tagName)
+    , menu_items_(std::move(items))
     , selected_(selected)
 {
 
 }
 
-std::string NDropdownElement::end_text() const
+std::string NDropdownElement::suffix() const
 {
-    if (end_text_.length() != 0)
+    if (suffix_.length() != 0)
     {
-        return end_text_;
+        return suffix_;
     }
     if (window() && window()->is_unicode_locale())
     {
@@ -4643,11 +4641,11 @@ NSize NDropdownElement::measure(const NSize& available)
         width = this->width();
     }
     else {
-        for (auto& item : items_)
+        for (auto& item : menu_items_)
         {
             width = std::max(width, measure_menu_text(item.label));
         }
-        width += measure_text(end_text()) + 1;
+        width += measure_text(suffix()) + 1;
     }
     if (this->height() != AUTO_SIZE)
     {
@@ -4664,7 +4662,7 @@ void NDropdownElement::render()
     NColorPair color = get_color();
     color_on(color);
     std::string text;
-    for (auto& item : items_)
+    for (auto& item : menu_items_)
     {
         if (item.item_id == selected_ && !item.is_divider())
         {
@@ -4672,7 +4670,7 @@ void NDropdownElement::render()
             break;
         }
     }
-    std::string end_text = this->end_text();
+    std::string end_text = this->suffix();
     print(" ");
     print_menu_text(
         text,
@@ -4828,8 +4826,7 @@ NPopupWindow::ptr NPopupWindow::create(
 ) {
     ptr result = std::shared_ptr<NPopupWindow>(
         new self(parentWindow, anchor, attachment));
-    NWindow::ptr w = result;
-    parentWindow->add_child_window(w);
+    result->add_to_parent_window(parentWindow);
     return result;
 }
 
@@ -5321,7 +5318,7 @@ void NTextEditElement::select_end()
 
 void NDropdownElement::menu_items(const std::vector<NMenuItem>& value)
 {
-    this->items_ = value;
+    this->menu_items_ = value;
     invalidate_layout();
 }
 
@@ -5639,7 +5636,7 @@ NColorPair NSubmenuMenuItemElement::get_color() {
 }
 
 NSubmenuMenuItemElement::NSubmenuMenuItemElement(const NMenuItem& submenu)
-    : super(submenu.label, NMenuItem::NO_ITEM_ID)
+    : super(submenu.label, NO_ITEM_ID)
 {
     if (submenu.submenu.size() == 0)
     {
@@ -5655,6 +5652,8 @@ void NSubmenuMenuItemElement::open(bool value)
         open_ = value;
         if (open_)
         {
+            on_opening.fire(shared_from_this<self>());
+
             popup_window_ = NPopupMenuWindow::create(
                 window()->shared_from_this<NWindow>(),
                 submenu_,
@@ -5683,7 +5682,6 @@ void NSubmenuMenuItemElement::open(bool value)
                     this_->open(false);
                 }
             );
-            on_opened.fire(shared_from_this<NElement>());
         }
         else {
             if (popup_window_)
@@ -5692,7 +5690,7 @@ void NSubmenuMenuItemElement::open(bool value)
                 popup_window_ = nullptr;
 
             }
-            on_closed.fire(shared_from_this<NElement>());
+            on_closed.fire(shared_from_this<self>());
         }
     }
 }
@@ -5709,13 +5707,13 @@ void NSubmenuMenuItemElement::handle_attached(NWindow* window)
     }
 }
 
-NMenuElement::NMenuElement(const std::string& label, std::vector<NMenuItem>&& items)
-    :super("Menu")
+NMenuElement::NMenuElement(const std::string& label, std::vector<NMenuItem>&& items, const std::string&tagName)
+    :super(tagName)
     , label_(label)
     , items_(std::move(items)) {
 }
-NMenuElement::NMenuElement(const std::string& label, const std::vector<NMenuItem>& items)
-    :super("Menu")
+NMenuElement::NMenuElement(const std::string& label, const std::vector<NMenuItem>& items, const std::string&tagName)
+    :super(tagName)
     , label_(label)
     , items_(items)
 {
@@ -5730,6 +5728,8 @@ void NMenuElement::open(bool value)
         open_ = value;
         if (open_)
         {
+            on_opening.fire(shared_from_this<NMenuElement>());
+
             popup_window_ = NPopupMenuWindow::create(
                 window()->shared_from_this<NWindow>(),
                 items_,
@@ -5758,7 +5758,6 @@ void NMenuElement::open(bool value)
                     this_->open(false);
                 }
             );
-            on_opened.fire(shared_from_this());
         }
         else {
             if (popup_window_)
@@ -5766,7 +5765,7 @@ void NMenuElement::open(bool value)
                 popup_window_->close();
                 popup_window_ = nullptr;
             }
-            on_closed.fire(shared_from_this());
+            on_closed.fire(shared_from_this<NMenuElement>());
         }
     }
 }
@@ -5886,9 +5885,8 @@ NMessageWindow::NMessageWindow(
     const std::string& title,
     int width
 )
-    :NWindow(AUTO_SIZE, AUTO_SIZE, AUTO_SIZE, AUTO_SIZE)
+    :NWindow(AUTO_SIZE, AUTO_SIZE, AUTO_SIZE, AUTO_SIZE,"MessageWindow",nullptr)
 {
-    tag("MessageWindow");
     this->title(title);
 }
 NMessageWindow::ptr NMessageWindow::create(

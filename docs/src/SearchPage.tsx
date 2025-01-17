@@ -21,107 +21,119 @@
  *   SOFTWARE.
  */
 
-import {useState} from 'react';
+import { useState, useEffect } from 'react';
 import PageColumn from './PageColumn';
 import SearchBox from './SearchBox';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SiteIndexData from './SiteIndexData';
 import IndexData, { IndexReference } from './IndexData';
-import { Link } from 'react-router-dom';
-import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
 
 
-function flattenData(data: IndexData) {
-    let result: IndexReference[] = [];
-
-    for (let reference of data.entries) {
-        for (let indexReference of reference.indexReferences) {
-            result.push(indexReference);
-        }
-    }
-    result.sort((a, b) => {
-        if (a.searchScore == b.searchScore) {
-            return 0;
-        }
-        return a.searchScore < b.searchScore ? 1 : -1;
-    }
-    );
-    return result;
-}
+const MAX_SEARCH_RESULTS = 600;
 
 function SearchPage() {
     let location = useLocation();
-    let navigate = useNavigate();
 
     const initialSearchString: string = location.state?.initialSearchString ?? "";
-    let searchString = initialSearchString;
+    const [searchString, setSearchString] = useState(initialSearchString);
+    const navigate = useNavigate();
+    const hasValidSearchString = !IndexData.isEmptySearchString(searchString);
+    const [siteIndexData, setSiteIndexData] = useState<IndexReference[] | undefined>(undefined);
+    const [filterExecutionTime, setFilterExecutionTime] = useState(0);
+    filterExecutionTime as any; // unused variable.
 
-    const [currentSearchString,setCurrentSearchString] = useState(initialSearchString);
-
-    let siteIndexData: IndexReference[] = [];
-    const searched = !IndexData.isEmptySearchString(searchString);
-    if (searched) {
-        siteIndexData = flattenData(SiteIndexData().filter(searchString));
-    }
+    useEffect(
+        () => {
+            if (hasValidSearchString) {
+                let startTime =  performance.now();
+                setSiteIndexData(SiteIndexData().filterForSearchPage(searchString));
+                let elapsedTime = performance.now() - startTime;
+                setFilterExecutionTime(elapsedTime);
+            } else {
+                setSiteIndexData(undefined);
+            }
+        }
+        , [searchString]
+    );
     return (
-        <div>
+        <Paper className="app_body">
             <PageColumn>
                 <div style={{ height: 32 }} />
-                <div style={{ flex: "1 0 auto",  display: "flex", flexFlow: "row nowrap", gap: 16,
-                    alignItems: "center" }}>
-                <SearchBox alwaysOpen initialText={initialSearchString} 
-                    onSearchChanged={(text) => {
-                        setCurrentSearchString(text);
-                    }}  
-                    onApplySearch={(searchString) => {
-                        navigate("", {  state: { initialSearchString: searchString } });
-                        return true;
-                    }
-                    }
-                    />
-                    <Button variant="contained"
-                        onClick={() => {
-                            navigate("", {  state: { initialSearchString: currentSearchString } });
+                <div style={{
+                    flex: "1 0 auto", display: "flex", flexFlow: "row nowrap", gap: 16,
+                    alignItems: "center"
+                }}>
+                    <SearchBox open={true} alwaysOpen initialText={initialSearchString}
+                        onOpen={(open) => { 
+                            open as any; // unused variable.
                         }}
-                    >Search</Button>
+                        onSearchChangedWithDelay={(text) => {
+                            setSearchString(text);
+                        }}
+                        onApplySearch={(searchText) => {
+                            setSearchString(searchText);
+                            return false;
+                        }
+                        }
+                    />
                 </div>
-                <div style={{ height: 16 }} />
                 {
-                    searched && siteIndexData.length !== 0 && (
+                    siteIndexData && siteIndexData.length !== 0 && (
                         <div>
-                            <p style={{marginLeft: 24}}> {siteIndexData.length} matches found.</p>
-                            <div>
-                                {siteIndexData.map((entry, index) => {
-                                    return (
-                                        <div key={index} style={{marginBottom: 8}}>
-                                            <Link to={entry.route} state={{ showElement: entry.elementId }}>
-                                            <div>
-                                                <p className="indexTitle">{entry.route_title}</p>
-                                                <p className="indexSubtitle">{entry.text}</p>
-                                            </div>
-                                                
-                                            </Link>
-                                        </div>
-                                    );
-                                })}
+                            <div className="no_select">
+                                <Typography display="block" variant="caption" style={{ marginLeft: 64, marginTop: 16, marginBottom: 16, opacity: 0.6 }}
+                                > 
+                                { siteIndexData.length > MAX_SEARCH_RESULTS ?
+                                    ("SHOWING " + MAX_SEARCH_RESULTS + " OF " + siteIndexData.length + " RESULTS")
+                                    : ("SHOWING " + siteIndexData.length + " RESULTS" )
+                                }
+                                </Typography>
                             </div>
+                            {siteIndexData.map((entry, index) => {
+                                return (
+                                    <div key={index} style={{ marginBottom: 8 }}>
+                                        <div className="search_page_link" tabIndex={0}
+                                            onKeyDown={(e) => {
+                                                if (e.key === "Enter") {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                                navigate(entry.route, { state: { showElement: entry.elementId } });
+                                                }
+                                            }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                e.preventDefault();
+                                                navigate(entry.route, { state: { showElement: entry.elementId } });
+                                            }}
+                                        >
+                                            <Typography variant="body1" color="inherit" display="block">
+                                                {entry.route_title}
+                                            </Typography>
+                                            <Typography variant="body1" color="inherit" display="block">
+                                                {entry.text}</Typography>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     )
                 }
                 {
-                    searched && siteIndexData.length === 0 && (
-                        <div>
-                            <h4>No matches found.</h4>
+                    siteIndexData && siteIndexData.length === 0 && (
+                        <div style={{ marginLeft: 64, marginTop: 32 }}>
+                            <Typography variant="caption">NO MATCHES FOUND.</Typography>
                         </div>
                     )
                 }
                 {
-                    !searched && (
+                    !hasValidSearchString && (
                         <div />
                     )
                 }
-            </PageColumn>
-        </div>
+            </PageColumn >
+        </Paper>
     );
 }
 

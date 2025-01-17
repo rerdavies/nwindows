@@ -23,7 +23,7 @@
 
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
-import ClassDescription, {MethodDescription,ClassSectionHead,UsingDescription, PropertyList, PropertyEntry, EnumDescription, EnumDefinitionList} from '../ClassDescription';
+import ClassDescription, {MethodDescription,ClassSectionHead,UsingDescription, PropertyList, PropertyEntry, EnumDescription, EnumDefinitionList, TypeDefinitions} from '../ClassDescription';
 import M from '../M';
 import CenteredImage from '../CenteredImage';
 
@@ -37,13 +37,14 @@ function ClassNTextElement() {
                 <p>
                     The <M>NTextElement</M> displays text.
                 </p>
-                <ClassSectionHead text="Type Definitions" />
-                <UsingDescription indexName={"NTextElement::super"} declaration="using super = NElement;" >
-                </UsingDescription>
-                <UsingDescription indexName={"NTextElement::self"} declaration="using self = NTextElement;" >
-                </UsingDescription>
-                <UsingDescription indexName="NTextElement::ptr" declaration={`using ptr = std::shared_ptr<self>;`} >
-                </UsingDescription>
+                <TypeDefinitions>
+                    <UsingDescription indexName={"NTextElement::super"} declaration="using super = NElement;" >
+                    </UsingDescription>
+                    <UsingDescription indexName={"NTextElement::self"} declaration="using self = NTextElement;" >
+                    </UsingDescription>
+                    <UsingDescription indexName="NTextElement::ptr" declaration={`using ptr = std::shared_ptr<self>;`} >
+                    </UsingDescription>
+                </TypeDefinitions>
 
                 <ClassSectionHead text="Constructors" />
                 <MethodDescription indexName={

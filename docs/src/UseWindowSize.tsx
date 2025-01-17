@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2024-2025 Robin E. R. Davies
+ *   Copyright (c) 2025 Robin E. R. Davies
  *   All rights reserved.
 
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,29 +21,38 @@
  *   SOFTWARE.
  */
 
-import DocsPage from '../DocsPage';
-import { DocsTitle } from '../DocsNav';
-import { ConstantDescription } from '../ClassDescription';
-import { ML } from '../M';
+import { useState, useEffect, useCallback } from 'react';
 
-function ApiConstants() {
-
-    return (
-        <DocsPage route="/apis/constants">
-            <h1>{DocsTitle("/apis/constants")}</h1>
-
-            <ConstantDescription indexName="constexpr int AUTO_SIZE"
-                constant={`constexpr int AUTO_SIZE =
-    = std::numeric_limits<int>::min()`}>
-                <p>Indicates that the effective value of a width, height, x or y property should be chosen automatically.</p>
-            </ConstantDescription>
-            <ConstantDescription indexName="constexpr int NO_MENU_ITEM"
-                constant={`constexpr int NO_MENU_ITEM =  
-    = std::numeric_limits<int>::min()`}>
-                <p>Indicates that no menu item is selected, or that an <ML name="NMenuItem" /> cannot be selected.</p>
-            </ConstantDescription>
-
-        </DocsPage >
-    );
+const getSize = () => {
+  return { 
+    width: window.innerWidth,
+    height: window.innerHeight,
+  };
+};
+ 
+export interface WindowSize {
+    width: number;
+    height: number;
 }
-export default ApiConstants;
+export default function useWindowSize() {
+ 
+  const [size, setSize] = useState<WindowSize>(getSize());
+ 
+  const handleResize = useCallback(() => {
+    let ticking = false;
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        setSize(getSize());
+        ticking = false;
+      });
+      ticking = true;
+    } 
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+ 
+  return size;
+}

@@ -33,13 +33,12 @@ import ArticleIcon from '@mui/icons-material/Article';
 import ApiIcon from '@mui/icons-material/Api';
 import ArrowDropdownIcon from '@mui/icons-material/ArrowDropDown';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import Divider from '@mui/material/Divider'
-import Paper from '@mui/material/Paper'
 import { useNavigate, useLocation } from 'react-router-dom';
 import ErrorBoundary from './ErrorBoundary'
 import { DocsRoutes } from './DocsNav';
-import SearchBox from './SearchBox';
 import Drawer from '@mui/material/Drawer';
 
 import List from '@mui/material/List';
@@ -48,7 +47,9 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Box from '@mui/material/Box';
-import { useNavigationTracker  } from './NavigationType';
+import { useNavigationTracker } from './NavigationType';
+import MainPageSearchBox from './MainPageSearchBox';
+import Collapse from '@mui/material/Collapse';
 
 function App() {
     const navigate = useNavigate();
@@ -57,7 +58,7 @@ function App() {
     const [searchOpen, setSearchOpen] = React.useState(false);
     const [drawerOpen, setDrawerOpen] = React.useState(false);
     const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
-    const {startTracking,stopTracking} = useNavigationTracker(()=>{})
+    const { startTracking, stopTracking } = useNavigationTracker(() => { })
     useEffect(() => {
         const handleResize = () => {
             setWindowWidth(window.innerWidth);
@@ -72,7 +73,8 @@ function App() {
     })
 
     let isSearchPage = location.pathname === "/search";
-    const compactNavBar = windowWidth < 600; 
+    const compactNavBar = windowWidth < 600 && !isSearchPage;
+    const fullNavBar = !compactNavBar && !isSearchPage;
 
     const hideNavBar = windowWidth < 790 && searchOpen;
 
@@ -126,7 +128,7 @@ function App() {
     );
 
     return (
-        <div className="app_frame">
+        <div className="app_frame" style={{ backgroundColor: isSearchPage ? "#000024" : "#242424", transition: "background-color 0.5s" }}>
             <Drawer
                 anchor="left"
                 open={drawerOpen}
@@ -143,93 +145,49 @@ function App() {
                 </Toolbar>
                 {DrawerList}
             </Drawer>
+            <div className='no_print'>
+                <Toolbar style={{ overflowX: "hidden", overflowY: "hidden" }}>
+                    <div style={{ flex: "1 1 auto", display: "flex", flexFlow: "row nowrap", alignItems: "center" }}>
+                        <Collapse in={isSearchPage} orientation='horizontal' timeout={75}>
+                            <IconButton color="inherit" disabled={!isSearchPage} onClick={() => {
+                                history.back();
+                            }}>
+                                <ArrowBackIcon />
+                            </IconButton>
+                        </Collapse>
 
-            <Toolbar style={{ overflowX: "hidden", overflowY: "hidden" }}>
-                <div style={{ flex: "1 1 auto", display: "flex", flexFlow: "row nowrap", alignItems: "center" }}>
-                    {!compactNavBar ? (<React.Fragment>
-                        {!hideNavBar ?
-                            (<React.Fragment>
-                                {/************ REGULAR NAV BAR */}
+                        {isSearchPage && (
 
+                            <React.Fragment>
                                 <Button color="inherit" style={{ color: "#FFFFFF", textTransform: "none", borderWidth: 0, fontSize: "1.25em", marginRight: 32, fontWeight: 700 }}
-                                    onClick={() => { navigate(""); }}
+                                    disabled={true}
                                 >
                                     <img src={logo} className="app_logo" alt="logo" />
-                                    NWindows
+                                    Search
                                 </Button>
-                                <Button style={{ marginLeft: 8, textTransform: "none", fontSize: "1.25em" }}
-                                    onClick={() => { navigate("documentation"); }}
-                                >
-                                    Documentation
-                                </Button>
-                                <Button style={{ marginLeft: 8, textTransform: "none", fontSize: "1.25em", }}
-                                    onClick={() => { navigate("apis"); }}
-                                >APIs</Button>
-                                <div style={{ flex: "1 1 1px" }} />
+
                             </React.Fragment>
-                            )
-                            : (
-                                <div style={{ flex: "1 1 1px" }} />
-                            )
-                        }
-                        {!isSearchPage && (
-                            <SearchBox onSearchChangedWithDelay={() => { }} onOpen={(open) => { setSearchOpen(open); }}
-
-                                onApplySearch={(searchString) => {
-                                    navigate("search", { state: { initialSearchString: searchString } });
-                                    return true;
-                                }} />
-                        )}
-                        {!hideNavBar && (
-                            <div style={{ color: "#FFF", marginLeft: 8 }}>
-                                <IconButton color="inherit" onClick={() => {
-                                    window.open("https://github.com/rerdavies/nwindows/", "_blank");
-                                }}>
-                                    <GitHubIcon />
-                                </IconButton>
-                            </div>
                         )}
 
-                    </React.Fragment>) :
-                        (<React.Fragment>
-                            {/************* COMPACT NAV BAR */}
+                        {fullNavBar && (<React.Fragment>
                             {!hideNavBar ?
                                 (<React.Fragment>
-                                    <Button onClick={() => { setDrawerOpen(!drawerOpen); }}>
-                                        <img src={logo} className="app_logo" alt="logo"
-                                            onClick={() => { setDrawerOpen(!drawerOpen); }}
-                                        />
-                                        <ArrowDropdownIcon htmlColor="#FF0000" />
+                                    {/************ REGULAR NAV BAR */}
 
+                                    <Button color="inherit" style={{ color: "#FFFFFF", textTransform: "none", borderWidth: 0, fontSize: "1.25em", marginRight: 32, fontWeight: 700 }}
+                                        onClick={() => { navigate(""); }}
+                                    >
+                                        <img src={logo} className="app_logo" alt="logo" />
+                                        NWindows
                                     </Button>
-
-                                    {location.pathname === "/" && (
-                                        <Button color="inherit" focusVisibleClassName='no_border_button' style={{ marginLeft: 8, color: "#FFFFFF", textTransform: "none", borderWidth: 0, fontSize: "1.25em", marginRight: 32, fontWeight: 700 }}
-                                            onClick={() => { navigate(""); }}
-                                        >
-                                            NWindows
-                                        </Button>
-                                    )}
-                                    {(location.pathname !== "/" &&
-                                        location.pathname !== "/search" &&
-                                        !location.pathname.startsWith("/apis")) && (
-                                            <Button style={{ marginLeft: 8, textTransform: "none", fontSize: "1.25em" }}
-                                                onClick={() => { navigate("documentation"); }}
-
-                                            >
-                                                Documentation
-                                            </Button>
-                                        )}
-                                    {location.pathname.startsWith("/apis") && (
-                                        <Button style={{ marginLeft: 8, textTransform: "none", fontSize: "1.25em", }}
-                                            onClick={() => { navigate("apis"); }}
-                                        >APIs</Button>
-                                    )}
-                                    {location.pathname.startsWith("/search") && (
-                                        <Button style={{ marginLeft: 8, textTransform: "none", fontSize: "1.25em", }}
-                                            onClick={() => { }}
-                                        >Search</Button>
-                                    )}
+                                    <Button style={{ marginLeft: 8, textTransform: "none", fontSize: "1.25em" }}
+                                        onClick={() => { navigate("documentation"); }}
+                                    >
+                                        Documentation
+                                    </Button>
+                                    <Button style={{ marginLeft: 8, textTransform: "none", fontSize: "1.25em", }}
+                                        onClick={() => { navigate("apis"); }}
+                                    >APIs</Button>
                                     <div style={{ flex: "1 1 1px" }} />
                                 </React.Fragment>
                                 )
@@ -238,27 +196,84 @@ function App() {
                                 )
                             }
                             {!isSearchPage && (
-                                <SearchBox onSearchChangedWithDelay={() => { }} onOpen={(open) => { setSearchOpen(open); }}
-                                    onApplySearch={(searchString) => {
-                                        navigate("search", { state: { initialSearchString: searchString } });
-                                        return true;
-                                    }} />
+                                <MainPageSearchBox open={searchOpen} onOpen={(open) => { setSearchOpen(open); }} />
+                            )}
+                            {!hideNavBar && (
+                                <div style={{ color: "#FFF", marginLeft: 8 }}>
+                                    <IconButton color="inherit" onClick={() => {
+                                        window.open("https://github.com/rerdavies/nwindows/", "_blank");
+                                    }}>
+                                        <GitHubIcon />
+                                    </IconButton>
+                                </div>
                             )}
 
-                        </React.Fragment>
-                        )}
-                </div>
-            </Toolbar >
-            <Divider orientation='horizontal' variant="inset" style={{ height: 3 }} />
-            <Paper className="app_body">
+                        </React.Fragment>)
+                        }
+                        {compactNavBar &&
+                            (<React.Fragment>
+                                {/************* COMPACT NAV BAR */}
+                                {!hideNavBar ?
+                                    (<React.Fragment>
+                                        <Button onClick={() => { setDrawerOpen(!drawerOpen); }}>
+                                            <img src={logo} className="app_logo" alt="logo"
+                                                onClick={() => { setDrawerOpen(!drawerOpen); }}
+                                            />
+                                            <ArrowDropdownIcon htmlColor="#FF0000" />
 
-                <ErrorBoundary>
-                    <DocsRoutes />
-                    {/*
-                        <Outlet />
-                    */}
-                </ErrorBoundary>
-            </Paper>
+                                        </Button>
+
+                                        {location.pathname === "/" && (
+                                            <Button color="inherit" focusVisibleClassName='no_border_button' style={{ marginLeft: 8, color: "#FFFFFF", textTransform: "none", borderWidth: 0, fontSize: "1.25em", marginRight: 32, fontWeight: 700 }}
+                                                onClick={() => { navigate(""); }}
+                                            >
+                                                NWindows
+                                            </Button>
+                                        )}
+                                        {(location.pathname !== "/" &&
+                                            location.pathname !== "/search" &&
+                                            !location.pathname.startsWith("/apis")) && (
+                                                <Button style={{ marginLeft: 8, textTransform: "none", fontSize: "1.25em" }}
+                                                    onClick={() => { navigate("documentation"); }}
+
+                                                >
+                                                    Documentation
+                                                </Button>
+                                            )}
+                                        {location.pathname.startsWith("/apis") && (
+                                            <Button style={{ marginLeft: 8, textTransform: "none", fontSize: "1.25em", }}
+                                                onClick={() => { navigate("apis"); }}
+                                            >APIs</Button>
+                                        )}
+                                        {location.pathname.startsWith("/search") && (
+                                            <Button style={{ marginLeft: 8, textTransform: "none", fontSize: "1.25em", }}
+                                                onClick={() => { }}
+                                            >Search</Button>
+                                        )}
+                                        <div style={{ flex: "1 1 1px" }} />
+                                    </React.Fragment>
+                                    )
+                                    : (
+                                        <div style={{ flex: "1 1 1px" }} />
+                                    )
+                                }
+                                {!isSearchPage && (
+                                    <MainPageSearchBox open={searchOpen} onOpen={(open) => { setSearchOpen(open); }} />
+                                )}
+
+                            </React.Fragment>
+                            )}
+                    </div>
+                </Toolbar >
+                <Divider orientation='horizontal' variant="inset" style={{ height: 3 }} />
+            </div>
+
+            <ErrorBoundary>
+                <DocsRoutes />
+                {/*
+                    <Outlet />
+                */}
+            </ErrorBoundary>
         </div >
 
     )

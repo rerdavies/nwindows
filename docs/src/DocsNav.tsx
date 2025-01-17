@@ -31,12 +31,16 @@ import { Route, Routes, useNavigate } from 'react-router-dom'
 import NotFound from './NotFound';
 import { IndexBuilder } from './IndexBuilder';
 import SearchPage from './SearchPage';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 
 
 // vite needs these placed right here in this form in order to do proper partitioning 
 // for lazy loading. Do not optimize.
 const HomePage = React.lazy(() => import("./pages/HomePage"));
 const Documentation = React.lazy(() => import("./pages/Documentation"));
+const Licenses = React.lazy(() => import("./pages/Licenses"));
+
 const PlatformSupport = React.lazy(() => import("./pages/PlatformSupport"));
 const InstallingNWindows = React.lazy(() => import("./pages/InstallingNWindows"));
 const UsingNWindows = React.lazy(() => import("./pages/UsingNWindows"));
@@ -73,6 +77,9 @@ const ClassNBoxElement = React.lazy(() => import("./pages/ClassNBoxElement"));
 const ClassNVerticalStackElement = React.lazy(() => import("./pages/ClassNVerticalStackElement"));
 const ClassNHorizontalStackElement = React.lazy(() => import("./pages/ClassNHorizontalStackElement"));
 const ClassNRadioGroupElement = React.lazy(() => import("./pages/ClassNRadioGroupElement"));
+const ClassNMenuElement = React.lazy(() => import("./pages/ClassNMenuElement"));
+const ClassNDropdownElement = React.lazy(() => import("./pages/ClassNDropdownElement"));
+const ClassNWindow = React.lazy(() => import("./pages/ClassNWindow"));
 
 const IndexPage = React.lazy(() => import("./pages/IndexPage"));
 
@@ -92,6 +99,7 @@ export interface IndexedComponent {
 };
 
 const indexedComponents: IndexedComponent[] = [
+    { route: "/licenses", component: () => Licenses},
     { route: "/support", component: () => PlatformSupport },
     { route: "/installing", component: () => InstallingNWindows },
     { route: "/using", component: () => UsingNWindows },
@@ -126,6 +134,9 @@ const indexedComponents: IndexedComponent[] = [
     { route: "/apis/classes/NVerticalStackElement", component: () => ClassNVerticalStackElement },
     { route: "/apis/classes/NHorizontalStackElement", component: () => ClassNHorizontalStackElement },
     { route: "/apis/classes/NRadioGroupElement", component: () => ClassNRadioGroupElement },
+    { route: "/apis/classes/NMenuElement", component: () => ClassNMenuElement },
+    { route: "/apis/classes/NDropdownElement", component: () => ClassNDropdownElement },
+    { route: "/apis/classes/NWindow", component: () => ClassNWindow },
 ];
 
 export function IndexedComponents() {
@@ -135,7 +146,8 @@ export function IndexedComponents() {
 
 let docsIndex: DocsPage[] = [
     { route: "/documentation", title: "Documentation", up: "" },
-    { route: "/support", title: "1.0 - Support", up: "/documentation" },
+    { route: "/licenses", title: "Licenses", up: "/documentation" },
+    { route: "/support", title: "1.0 - Platform Support", up: "/documentation" },
     { route: "/installing", title: "2.0 - Installing NWindows", up: "/documentation" },
     { route: "/using", title: "3.0 - Using NWindows", up: "/documentation" },
     { route: "/using/fundamentals", title: "3.1 - General Principles", up: "/using" },
@@ -164,11 +176,15 @@ let docsIndex: DocsPage[] = [
     { route: "/apis/classes/NColor", title: "4.7.2 - NColor", up: "/apis/classes" },
     { route: "/apis/classes/NColorPair", title: "4.7.3 - NColorPair", up: "/apis/classes" },
     { route: "/apis/classes/NContainerElement", title: "4.7.4 - NContainerElement", up: "/apis/classes" },
+    { route: "/apis/classes/NDropdownElement", title: "4.7.X - NDropdownElement", up: "/apis/classes" },
     { route: "/apis/classes/NElement", title: "4.7.5 - NElement", up: "/apis/classes" },
     { route: "/apis/classes/NHorizontalStackElement", title: "4.7.X - NHorizontalStackElement", up: "/apis/classes" },
+    { route: "/apis/classes/NMenuElement", title: "4.7.X - NMenuElement", up: "/apis/classes" },
     { route: "/apis/classes/NRadioGroupElement", title: "4.7.X - NRadioGroupElement", up: "/apis/classes" },
     { route: "/apis/classes/NTextElement", title: "4.7.6 - NTextElement", up: "/apis/classes" },
-    { route: "/apis/classes/NVerticalStackElement", title: "4.7.7 - NVerticalStackElement", up: "/apis/classes" },
+    { route: "/apis/classes/NVerticalStackElement", title: "4.7.X - NVerticalStackElement", up: "/apis/classes" },
+    { route: "/apis/classes/NWindow", title: "4.7.X - NWindow", up: "/apis/classes" },
+    // XXX Delete me!
     { route: "/index_builder", title: "Index Builder", up: "/documentation", },
     { route: "/index", title: "Index", up: "/documentation", },
 
@@ -249,21 +265,27 @@ interface DocsTree {
 }
 
 
+let treeNodeId = 0;
 function RenderTree(tree: DocsTree) {
-
+    // React requires a unique key for each element in the entire tree!
+    if (treeNodeId > 1_000_000_000) {
+        treeNodeId = 0;
+    }
     return (
-        <div key={tree.page.route}>
+        <div key={treeNodeId++}>
             {tree.children.map((node) => {
                 if (node.children.length != 0) {
-                    return (<React.Fragment>
+                    return (<div key={treeNodeId++}>
                         {DocsLink(node.page.route)}
                         <div style={{ marginLeft: 32 }}>
                             {RenderTree(node)}
                         </div>
-                    </React.Fragment>
+                    </div>
                     );
                 } else {
-                    return DocsLink(node.page.route);
+                    return (<div key={treeNodeId++}>
+                        {DocsLink(node.page.route)}
+                    </div>);
                 }
             })}
         </div>
@@ -355,6 +377,48 @@ export function DocsLink(route: string) {
     }
 }
 
+function NavTooltip(props: { title: string, children: React.ReactElement, placement: 'top' | 'top-end' | 'top-start' | undefined }
+) {
+    return (
+        <Tooltip color="black" arrow disableFocusListener disableTouchListener title={(
+
+            <Typography noWrap variant="h6" style={{ fontSize: "16px" }}>{props.title}</Typography>
+        )} placement={props.placement} enterDelay={1250} enterNextDelay={750}
+            slotProps={{
+                tooltip: { style: { background: "#000", color: "#FFF", opacity: 0.9 } },
+                arrow: { style: { color: "#000", opacity: 0.9 } },
+                popper: { style: { paddingBottom: 4 } }
+            }}
+        >
+            {props.children}
+        </Tooltip>
+    );
+}
+
+function NavButton(props: { route: string, color: string, disabled: boolean, children: React.ReactElement | string }) {
+    let navigate = useNavigate();
+    const opacity = 0.75;
+
+    let tooltip = DocsTitle(props.route);
+    if (props.disabled) {
+        return (
+            <Button style={{ color: props.color, opacity: 0.2 }}
+                disabled={props.disabled}
+                onClick={() => navigate(props.route)}
+            >{props.children}</Button>
+        );
+    }
+    return (
+        <NavTooltip title={tooltip} placement='top'>
+            <Button style={{ color: props.color, opacity: opacity }}
+                disabled={props.disabled}
+                onClick={() => navigate(props.route)}
+            >{props.children}</Button>
+        </NavTooltip>
+    );
+
+}
+
 
 function DocsNav(props: { currentRoute: string }) {
     const navigate = useNavigate();
@@ -392,33 +456,25 @@ function DocsNav(props: { currentRoute: string }) {
     if (props.currentRoute !== "/documentation") {
         indexDisabled = false;
     }
-    const opacity = 0.75;
     return (
         <div style={{ display: "flex", flexFlow: "row nowrap", alignItems: "center", gap: 16 }}>
             <div style={{ flex: "1 0 1px", display: "flex", justifyContent: "flex-end" }}>
-
-                <Button style={{ color: "#FFF", opacity: prevDisabled ? 0.2 : opacity }}
-                    disabled={prevDisabled}
-                    onClick={() => navigate(prevNavLink)}
-                >&lt; PREV</Button>
+                <NavButton route={prevNavLink} disabled={prevDisabled} color="#FFF">
+                    &lt; PREV
+                </NavButton>
             </div>
             <div style={{ flex: "0 0 auto" }}>
-                <Button style={{ color: "#FFF", opacity: upDisabled ? 0.2 : opacity }}
-                    disabled={upDisabled}
-                    onClick={() => navigate(upNavLink)}
-                >UP
-                </Button>
+                <NavButton route={upNavLink} disabled={upDisabled} color="#FFF">
+                    UP
+                </NavButton>
             </div>
 
-            <div style={{ flex: "1 0 1px", color: "#FFF", opacity: nextDisabled ? 0.2 : opacity }}>
-                <Button
-                    disabled={nextDisabled}
-                    onClick={() => navigate(nextNavLink)}
-                    style={{ color: "#FFF" }}>
+            <div style={{ flex: "1 0 1px" }}>
+                <NavButton route={nextNavLink} disabled={nextDisabled} color="#FFF">
                     NEXT &gt;
-                </Button>
+                </NavButton>
             </div>
-            <div style={{ flex: "0 0 auto", opacity: indexDisabled ? 0.2 : opacity }}>
+            <div style={{ flex: "0 0 auto", opacity: 0.75 }}>
                 <Button style={{ color: "#FFF" }} startIcon={<ListIcon />}
                     onClick={() => navigate('/documentation')}
                     disabled={indexDisabled}
@@ -429,6 +485,29 @@ function DocsNav(props: { currentRoute: string }) {
             </div>
         </div>
     );
+}
+
+
+export function WhereToGoFromHere() {
+    let tree: DocsTree = buildDocsTree();
+
+    if (treeNodeId > 1_000_000_000) {
+        treeNodeId = 0;
+    }
+    return (
+        <div style={{marginLeft: 0}}>
+            {DocsLink("/documentation")}
+            <div style={{ marginLeft: 32 }}>
+            {tree.children.map((node) => {
+
+                return (<div key={treeNodeId++}>
+                    {DocsLink(node.page.route)}
+                </div>);
+            })}
+            </div>
+        </div>
+    );
+
 }
 
 

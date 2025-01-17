@@ -23,9 +23,10 @@
 
 import React, { useLayoutEffect } from "react";
 import { DocsTitle, IndexedComponents, RoutePaths } from "./DocsNav";
-import Code from "./Code";
+import CodeDiv from "./Code";
 import M from "./M";
-import IndexData, {IndexEntry,IndexReference, IndexLink} from "./IndexData";
+import IndexData, { IndexEntry, IndexReference, IndexLink } from "./IndexData";
+import Paper from "@mui/material/Paper";
 
 
 class RegisteredIndexEntry {
@@ -41,16 +42,15 @@ class RegisteredIndexEntry {
     elementId: string = "";
     text: string = "";
 
-    equal(other: RegisteredIndexEntry): boolean
-    {
-        return this.name === other.name 
-        && this.route === other.route 
-        && this.elementId === other.elementId
-        && this.text === other.text;;
+    equal(other: RegisteredIndexEntry): boolean {
+        return this.name === other.name
+            && this.route === other.route
+            && this.elementId === other.elementId
+            && this.text === other.text;;
     }
     key(): string {
-        return this.name + "/"+ this.route + "/" + this.elementId + "/" + this.text;
-    }   
+        return this.name + "/" + this.route + "/" + this.elementId + "/" + this.text;
+    }
 }
 
 let collectIndexEntries: boolean = false;
@@ -91,9 +91,9 @@ export function EnableIndexCollection(value: boolean) {
 
 function addToDataEntry(dataEntry: IndexEntry, indexEntry: RegisteredIndexEntry) {
     let indexReference = new IndexReference(
-        indexEntry.route, 
+        indexEntry.route,
         DocsTitle(indexEntry.route),
-        indexEntry.text, 
+        indexEntry.text,
         indexEntry.elementId);
     dataEntry.indexReferences.push(indexReference);
 }
@@ -118,13 +118,12 @@ function makeIndexData(indexEntries: RegisteredIndexEntry[]): IndexData {
 
     for (let indexEntry of indexEntries) {
         let dataEntry = indexMap.get(indexEntry.name);
-        if (!dataEntry)
-        {
+        if (!dataEntry) {
             dataEntry = new IndexEntry(indexEntry.name);
             indexMap.set(indexEntry.name, dataEntry);
             result.entries.push(dataEntry);
         }
-        addToDataEntry(dataEntry,indexEntry);
+        addToDataEntry(dataEntry, indexEntry);
     }
     sortIndexData(result);
     return result;
@@ -132,18 +131,19 @@ function makeIndexData(indexEntries: RegisteredIndexEntry[]): IndexData {
 
 let keywordIdRegex = /^([^_]+)__([^_]+(?:_.+)?)$/;
 
-function makeKeywordData(indexData: IndexData): Map<string,IndexLink> {
-    let result = new Map<string,IndexLink>();
+function makeKeywordData(indexData: IndexData): Map<string, IndexLink> {
+    let result = new Map<string, IndexLink>();
     for (let entry of indexData.entries) {
         for (let indexReference of entry.indexReferences) {
             if (indexReference.route.startsWith("/apis/")) {
                 let match = indexReference.elementId.match(keywordIdRegex);
                 if (match) {
-                    let keyword = match[2].replace("_","::");
+                    let keyword = match[2].replace("_", "::");
                     result.set(keyword, {
-                        route: indexReference.route, 
+                        route: indexReference.route,
                         id: indexReference.elementId,
-                        classRef: match[1] === "class"});
+                        classRef: match[1] === "class"
+                    });
                 }
             }
         }
@@ -161,20 +161,20 @@ const indexData = new IndexData([
     for (let entry of indexData.entries) {
         text += `    new IndexEntry("${entry.name}", [\n`;
         for (let indexReference of entry.indexReferences) {
-            text += 
-`        new IndexReference(
-            "${indexReference.route}", 
-            "${indexReference.route_title}", 
-            "${indexReference.text}", 
-            "${indexReference.elementId}"),\n`;
+            text +=
+                `        new IndexReference(
+            \`${indexReference.route}\`, 
+            \`${indexReference.route_title}\`, 
+            \`${indexReference.text}\`, 
+            \`${indexReference.elementId}\`),\n`;
         }
         text += `    ]),\n`;
     }
     text += `]);
 
 `;
-    text += 
-`const SiteIndexData = () => { return indexData; }
+    text +=
+        `const SiteIndexData = () => { return indexData; }
 export default  SiteIndexData;
 `;
 
@@ -183,11 +183,11 @@ export default  SiteIndexData;
 let keywordIndexMap = new Map<string,IndexLink>([
 `;
 
-    for (let [keyword, link] of keywordData) {  
+    for (let [keyword, link] of keywordData) {
         text += `    ["${keyword}", {route: "${link.route}", id: "${link.id}", classRef: ${link.classRef}}],\n`;
     }
 
-text += `]);
+    text += `]);
 
 export function KeywordIndexMap(): Map<string,IndexLink> {
     return keywordIndexMap; 
@@ -293,7 +293,7 @@ if [ ! -d "$1" ]; then
     exit 1
 fi
 
-strings=(`+"\\\n";
+strings=(`+ "\\\n";
 
         let routePaths = RoutePaths();
 
@@ -303,7 +303,7 @@ strings=(`+"\\\n";
 
         text += `)
 
-for str in "$`+`{strings[`+`@`+`]`+`}"; do
+for str in "$`+ `{strings[` + `@` + `]` + `}"; do
     echo "Processing $str"
     mkdir -p $1$str
     cp $1/index.html $1$str/index.html
@@ -314,47 +314,49 @@ done
 
     render() {
         return (
-            <div style={{ margin: 32 }}>
-                <h1>Index Builder</h1>
-                {this.state.complete ?
-                    (
-                        <div>
-                            <p><M>SiteIndexData.tsx</M></p>
-                            <Code text={this.state.indexText} />
+            <Paper className="app_body">
+                <div style={{ margin: 32, overflowY: "auto" }}>
+                    <h1>Index Builder</h1>
+                    {this.state.complete ?
+                        (
+                            <div>
+                                <p><M>SiteIndexData.tsx</M></p>
+                                <CodeDiv language="ts" text={this.state.indexText} />
 
-                            <p></p>
-                            <p><M>copy_route_pages.sh</M></p>
-                            <Code text={this.make_copy_route_pages()} />
-                        </div>
-                    )
-                    : (
-                        <div>
-                            <p>Building index...</p>
-                            <p style={{ marginLeft: 32 }}> {this.state.currentRoute}</p>
-
-                            <div style={{
-                                marginLeft: 32, marginRight: 32, border: "2px solid #000000",
-                                overflowX: "auto", overflowY: "auto", height: 300, opacity: 0.5
-                            }}>
-                                {this.state.currentComponent &&
-                                    (
-                                        <React.Suspense fallback={<div>Loading...</div>} >
-                                            <Loader
-                                                route={this.state.currentRoute}
-                                                onComplete={(route) => {
-                                                    this.onRouteComplete(route);
-                                                }}
-                                                onLoad={() => { }}
-                                            >
-
-                                                {<this.state.currentComponent />}
-                                            </Loader>
-                                        </React.Suspense>
-                                    )
-                                }
+                                <p></p>
+                                <p><M>make_route_pages.sh</M></p>
+                                <CodeDiv language="bash" text={this.make_copy_route_pages()} />
                             </div>
-                        </div>)}
-            </div>
+                        )
+                        : (
+                            <div>
+                                <p>Building index...</p>
+                                <p style={{ marginLeft: 32 }}> {this.state.currentRoute}</p>
+
+                                <div style={{
+                                    marginLeft: 32, marginRight: 32, border: "2px solid #000000",
+                                    overflowX: "auto", overflowY: "auto", height: 300, opacity: 0.5
+                                }}>
+                                    {this.state.currentComponent &&
+                                        (
+                                            <React.Suspense fallback={<div>Loading...</div>} >
+                                                <Loader
+                                                    route={this.state.currentRoute}
+                                                    onComplete={(route) => {
+                                                        this.onRouteComplete(route);
+                                                    }}
+                                                    onLoad={() => { }}
+                                                >
+
+                                                    {<this.state.currentComponent />}
+                                                </Loader>
+                                            </React.Suspense>
+                                        )
+                                    }
+                                </div>
+                            </div>)}
+                </div>
+            </Paper>
         );
     }
 }

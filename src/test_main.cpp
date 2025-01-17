@@ -126,6 +126,7 @@ void rendering_test_window(NWindow::ptr parent_window)
         window->title("Hello world!");
 
         NTextElement::ptr keyIndicator;
+
         auto verticalStack =
             NVerticalStackElement::create()
             | margin({ 4, 1, 4, 1 })
@@ -260,6 +261,12 @@ void rendering_test_window(NWindow::ptr parent_window)
                     )
                     | add_child(
                         NTextEditElement::create("Robin Davies")
+                        | on_text_changed([](NTextEditElement::ptr source, const std::string& text) {
+                            // do something.
+                            })
+                        | on_selection_changed([](NTextEditElement::ptr source, const NTextSelection& selection) {
+                            // do something.
+                            })  
                         | width(15)
                     )
                     | add_child(
@@ -277,6 +284,9 @@ void rendering_test_window(NWindow::ptr parent_window)
                             },
                             0
                             )
+                        | on_selection_changed([](NDropdownElement::ptr source, int selection) {
+                            // do something.
+                            })
                     )
 
                 );
@@ -375,6 +385,7 @@ static void box_test_window(NWindow::ptr parentWindow = nullptr)
                         NVerticalStackElement::create()
                         | add_child(
                             NRadioGroupElement::create(NOrientation::Vertical, { "Chicken", "Beef", "Pork" }, 0)
+                            | on_selection_changed([](NElement::ptr source, int value) {})
                         )
 
                     )
@@ -456,7 +467,9 @@ static void menu_test_window(NWindow::ptr parentWindow = nullptr)
                             NMenuItem("Exit", 11),
                         }
                     )
-                    | on_item_selected([](NElement::ptr source, int item_id)
+                    | on_closed([](NMenuElement::ptr) {})
+                    | on_opening([](NMenuElement::ptr) {})
+                    | on_item_selected([](NMenuElement::ptr source, int item_id)
                         {
                             NMessageWindow::create(
                                 source->window()->shared_from_this<NWindow>(),
@@ -542,9 +555,9 @@ static void menu_test_window(NWindow::ptr parentWindow = nullptr)
                         1
                         )
                     | request_initial_focus()
-                    | on_opened([]() {})
-                    | on_closed([]() {})
-                    | on_selection_changed([](NElement::ptr source, int value) {})
+                    | on_opening([](NDropdownElement::ptr) {})
+                    | on_closed([](NDropdownElement::ptr) {})
+                    | on_selection_changed([](NDropdownElement::ptr source, int value) {})
                 )
                 | add_child(NTextElement::create("  Attachment: "))
                 | add_child(

@@ -21,7 +21,7 @@
  *   SOFTWARE.
  */
 
-import Code from '../Code';
+import CodeDiv from '../Code';
 import DocsPage from '../DocsPage';
 import M from '../M';
 import Name from '../Name';
@@ -45,7 +45,7 @@ function InstallingNWindows() {
                     </ul>
                 </p>
                 <p>On Debian-based systems (including Ubuntu), you can install the dependencies using the following commands:</p>
-                <Code text={
+                <CodeDiv text={
                     `sudo apt install libncursesw5-dev xclip libicu-dev
 `               }
                 />
@@ -71,14 +71,14 @@ function InstallingNWindows() {
                     </li>
                     <li>
                         Issue the following command to install NWindows as a submodule of your project:
-                        <Code style={{ marginTop: 16,marginBottom: 16 }} text={
+                        <CodeDiv style={{ marginTop: 16,marginBottom: 16 }} text={
                             `git submodule add https:://github.com/rerdavies/nwindows.git`
                         }
                         />
                     </li>
                     <li>If you are using a <M>CMake</M> build system, you can neatly incorporate NWindows into your project by adding the following
                         line to the <M>CMakeList.txt</M> file in the root of your project, before you include your own build steps:
-                        <Code style={{ marginTop: 16, marginBottom: 16 }} text={
+                        <CodeDiv style={{ marginTop: 16, marginBottom: 16 }} text={
                             `add(nwindows)`
                         }
                         />
@@ -86,7 +86,7 @@ function InstallingNWindows() {
                         The <M>target_link_libraries</M> statement adds all necessary  compiler flags, include
                         directories, and linker commands to your project compile commands in a single step.
 
-                        <Code style={{ marginTop: 16, marginBottom: 16 }} text={
+                        <CodeDiv style={{ marginTop: 16, marginBottom: 16 }} text={
                             `project(your_project your_files.cpp)
         
 target_link_libraries(your_project PRIVATE nwindows)
@@ -99,14 +99,14 @@ target_link_libraries(your_project PRIVATE nwindows)
                 <p>To, instead, build and install NWindows as a development component, follow these steps:</p>
                 <ul>
                     <li>Clone the NWindows project from Github:
-                        <Code style={{ marginTop: 16, marginBottom: 16 }} text={
+                        <CodeDiv style={{ marginTop: 16, marginBottom: 16 }} text={
                             `mkdir ~/src
 cd ~/src     #or wherever you want to put the project
 git clone https://github.com/rerdavies/nwindows.git`
                         } />
                     </li>
                     <li>Change to the root directory of cloned project and issue the following commands:
-                        <Code style={{ marginTop: 16, marginBottom: 16 }} text={
+                        <CodeDiv style={{ marginTop: 16, marginBottom: 16 }} text={
                             `./configure.sh   # Configures the CMake build system
 ./build.sh       # Builds NWindows
 ./install.sh     # Installs NWindows in /usr/local/include and /usr/local/lib`

@@ -1,3 +1,3 @@
 #!/bin/bash
 npm run build
-./make_route_pages.sh ../build/docs
+./make_route_pages.sh ./dist

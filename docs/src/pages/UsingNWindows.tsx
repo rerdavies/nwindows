@@ -23,16 +23,17 @@
 
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
+import { Link } from 'react-router-dom';
 
 
 function UsingNWindows() {
     return (
         <DocsPage route="/using">
             <h1>{DocsTitle("/using")}</h1>
-            <p>This section discusses how to use NWindows. Details of implementation 
-                and information on how to implement custom controls have been deliberately omitted in order
-                to keep this section as accessible as possible.
+            <p>This section discusses how to use NWindows. Descriptions of classes in this chapter have 
+                been abridged to only describe those properties and methods that are most commonly used.
             </p>
+            <p>For complete documentation of the NWindows API, please refer to the <Link to="/apis"><i>NWindows API Reference</i></Link>.</p>
         </DocsPage>
     );
 }

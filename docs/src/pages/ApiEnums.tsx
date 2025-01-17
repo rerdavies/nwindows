@@ -27,7 +27,7 @@ import { EnumDescription, EnumDefinitionList } from '../ClassDescription';
 import CenteredImage from '../CenteredImage';
 import M from '../M';
 
-function NWindowsApis() {
+function ApiEnums() {
 
     return (
         <DocsPage route="/apis/enums">
@@ -181,4 +181,4 @@ function NWindowsApis() {
 
     );
 }
-export default NWindowsApis;
+export default ApiEnums;

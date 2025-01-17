@@ -24,7 +24,8 @@
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import ClassDescription, { MethodDescription, ClassSectionHead, UsingDescription, 
-    PropertyList, PropertyEntry, MethodDescriptions } from '../ClassDescription';
+    PropertyList, PropertyEntry, MethodDescriptions, 
+    TypeDefinitions} from '../ClassDescription';
 import M from '../M';
 
 function ClassNBoxElement() {
@@ -41,13 +42,14 @@ function ClassNBoxElement() {
                     <M>NBoxElement</M> renders a box around a single child element. By default, with <M>width</M> and <M>height</M> set
                     to <M>AUTO_SIZE</M> the box will be sized to fit the child element.
                 </p>
-                <ClassSectionHead text="Type Definitions" />
-                <UsingDescription indexName={"NBoxElement::super"} declaration="using super = NElement;" >
-                </UsingDescription>
-                <UsingDescription indexName={"NBoxElement::self"} declaration="using self = NBoxElement;" >
-                </UsingDescription>
-                <UsingDescription indexName="NBoxElement::ptr" declaration={`using ptr = std::shared_ptr<self>;`} >
-                </UsingDescription>
+                <TypeDefinitions>
+                    <UsingDescription indexName={"NBoxElement::super"} declaration="using super = NElement;" >
+                    </UsingDescription>
+                    <UsingDescription indexName={"NBoxElement::self"} declaration="using self = NBoxElement;" >
+                    </UsingDescription>
+                    <UsingDescription indexName="NBoxElement::ptr" declaration={`using ptr = std::shared_ptr<self>;`} >
+                    </UsingDescription>
+                </TypeDefinitions>
 
                 <ClassSectionHead text="Constructors" />
                 <MethodDescription indexName={

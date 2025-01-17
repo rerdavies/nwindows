@@ -26,7 +26,7 @@ import { DocsTitle } from '../DocsNav';
 import M from '../M';
 import ClassDescription, { MethodDescription, EventDescription, EnumDefinitionList, EnumDescription } from '../ClassDescription';
 import SectionHead from '../SectionHead';
-import Code, { CodeFragment2 } from '../Code';
+import CodeDiv, { CodeFragment2 } from '../Code';
 
 
 function FullCustomControl() {
@@ -163,37 +163,37 @@ virtual void on_attach(NWindow*) override {
                 method={`virtual NSize measure(const NSize& available);
 virtual void arrange(const NRect& bounds);`} />
 
-            <p>These methods are called during the layout pass of the element tree. The layout pass occurs in two phases. 
-                During the measure phase, <M>measure</M> is called to determine the desired size of each element in the tree. 
-                Once sizes are determined, <M>arrange</M> is called on each element in the visual tree to determine the final 
+            <p>These methods are called during the layout pass of the element tree. The layout pass occurs in two phases.
+                During the measure phase, <M>measure</M> is called to determine the desired size of each element in the tree.
+                Once sizes are determined, <M>arrange</M> is called on each element in the visual tree to determine the final
                 position of each element.</p>
             <p>When measuring, either or both of <M>available.width</M> and <M>available.height</M> may be set to <M>AUTO_SIZE</M>.
                 if that's the case, implementations of <M>measure</M> should return a width or height that reflects the desired size
                 of the element if it were unconstrained. The width and height of the returned value of <M>measure</M> must <i>not</i> be
-                <M>AUTO_SIZE</M>, and must not be less than zero. Container elements are responsible for calling <M>measure</M> on 
-                each of their child elements, with available space appropriately adjusted. The <M>available</M> argument contains 
-                the space available to the element with margins already applied. <M>NContainerElement</M> implementations of <M>measure</M> 
-                must deal with margins of their child elements by subtracting the margins of the child from the space available to the 
-                child before calling the child's arrange method, and then adding the child's margins back onto the value return from 
-                the child's <M>measure</M> method. <M>NContainerElement</M> provides a <M>measure_child_with_margins</M> method 
+                <M>AUTO_SIZE</M>, and must not be less than zero. Container elements are responsible for calling <M>measure</M> on
+                each of their child elements, with available space appropriately adjusted. The <M>available</M> argument contains
+                the space available to the element with margins already applied. <M>NContainerElement</M> implementations of <M>measure</M>
+                must deal with margins of their child elements by subtracting the margins of the child from the space available to the
+                child before calling the child's arrange method, and then adding the child's margins back onto the value return from
+                the child's <M>measure</M> method. <M>NContainerElement</M> provides a <M>measure_child_with_margins</M> method
                 to subtract and re-add a child's margins when measuring.</p>
 
             <p>The <M>arrange</M> method
-                is called on each element in the visual tree, starting at the root and working in toward the 
-                leaves. <M>NContainerElement</M>s are responsible for calling <M>arrange</M> on each of their 
-                children. The <M>bounds</M> argument has margins already applied, and determines the final layout position 
-                of the client area of the element. The <M>bounds</M> argument is in window coordinates &mdash; (0,0) is at the top-left 
+                is called on each element in the visual tree, starting at the root and working in toward the
+                leaves. <M>NContainerElement</M>s are responsible for calling <M>arrange</M> on each of their
+                children. The <M>bounds</M> argument has margins already applied, and determines the final layout position
+                of the client area of the element. The <M>bounds</M> argument is in window coordinates &mdash; (0,0) is at the top-left
                 corner of the owning <M>NWindow</M>. <M>NContainerElement</M> implementations of <M>arrange</M> are expected to arrange their
-                children within those bounds as they sees fit. Container implementations of <M>arrange </M> are responsible for 
-                subtracting the margins of child elements before calling <M>arrange</M> on the child element. The bounds argument of 
-                each call to a child's <M>arrange</M> method must be contained entirely within the bounds argument of the container element. 
-                If the child doesn't fit at all, it the width and height of the bounds argument supplied to the child should be 
-                set to zero. Implementations of <M>arrange</M> must call the <M>arrange</M> method of their superclass, 
+                children within those bounds as they sees fit. Container implementations of <M>arrange </M> are responsible for
+                subtracting the margins of child elements before calling <M>arrange</M> on the child element. The bounds argument of
+                each call to a child's <M>arrange</M> method must be contained entirely within the bounds argument of the container element.
+                If the child doesn't fit at all, it the width and height of the bounds argument supplied to the child should be
+                set to zero. Implementations of <M>arrange</M> must call the <M>arrange</M> method of their superclass,
                 since <M>NElement::arrange</M> sets private properties that control the position of the element when rendering.
             </p>
             <p>When calling <M>measure</M> on a child element, container implementations of <M>measure</M> may set the <M>NElement::measured</M>
-            property of child elements to the result return by the <M>measure</M> call so that the measured result can be retrieved in their <M>arrange</M> implementation.
-            reserved specifically for this use, and no other.
+                property of child elements to the result return by the <M>measure</M> call so that the measured result can be retrieved in their <M>arrange</M> implementation.
+                reserved specifically for this use, and no other.
             </p>
 
             <p>When implementing <M>measure</M> and <M>arrange</M>, the element should not change its state or the state of any of
@@ -204,7 +204,7 @@ virtual void arrange(const NRect& bounds);`} />
             </p>
             <p>Implementing <M>measure</M> for elements that don't have children is fairly straightforward. It should look
                 something like this:</p>
-            <Code text={`NSize measure(const NSize& available) {
+            <CodeDiv text={`NSize measure(const NSize& available) {
     NSize result = { 
         measure_text(this->text()), 1 
     };
@@ -238,7 +238,7 @@ virtual void arrange(const NRect& bounds);`} />
 
             <p>Measuring elements that have children is a bit more complicated. The actual code for <M>NVerticalStackElement::measure</M> serves as a good example of
                 how <M>measure</M> should be implemented.</p>
-            <Code text={`NSize measure(const NSize& available)
+            <CodeDiv text={`NSize measure(const NSize& available)
 {
     NSize constrainedWidth = { 
         available.width, 
@@ -295,7 +295,7 @@ virtual void arrange(const NRect& bounds);`} />
                 margins excluded &mdash; (0,0) is at the top-left corner of the owning <M>NWindow</M>.</p>
             <p>The actual code for <M>NVerticalStackElement</M> serves as a good example of what an implementation
                 of <M>arrange</M> should look like.</p>
-            <Code text={`void arrange(const NRect& rect)
+            <CodeDiv text={`void arrange(const NRect& rect)
 {
     NElement::arrange(rect);
     int y = rect.y;
@@ -443,7 +443,7 @@ void vertical_line(int x, int y, int height);`} >
                     <p>Print a character from the <M>ncurses</M> alternate character set. Typically, these are box drawing characters. For example,
                         the following code displays the top-left corner of a box:
                     </p>
-                    <Code text={`print_acs(0,0,ACS_ULCORNER);`} />
+                    <CodeDiv text={`print_acs(0,0,ACS_ULCORNER);`} />
                     <p>see the ACS_* literals in <M>ncurses.h</M> for a complete lists of alternate-character-set characters.</p>
                     <p>Prefer this method for ACS line-drawing characters, because <M>ncurses</M> provides fallback
                         behavior for terminal devices that don't have line-drawing characters.
@@ -476,14 +476,14 @@ void print_menu_item(
     bool show_underline = true);`} >
                     <p>Prints the supplied text as a  menu item. The '_' character indicates that the character which
                         follows is a shortcut key. The shortcut character will either be underlined or not, depending on
-                        the value of <M>show_underline</M></p>
-                    <p><M>max_display_width</M> specifies the maximum number of display columns of text to write to the screen. 
+                        the value of <M>show_underline</M>.</p>
+                    <p><M>max_display_width</M> specifies the maximum number of display columns of text to write to the screen.
                         If the measure of the text is less than width, the displayed text will be padded with spaces. If the measure of the text is
                         greater than <M>width</M>, displayed text will be truncated.
-                        <p>If <M>alignment</M> is specified, padding will be applied as required to align the text at the
-                            start, center or end of the specified <M>display_width</M>. If <M>text</M> requires more than <M>display_width</M> columns, 
-                            the text will be truncated when displayed.</p>
                     </p>
+                    <p>If <M>alignment</M> is specified, padding will be applied as required to align the text at the
+                        start, center or end of the specified <M>display_width</M>. If <M>text</M> requires more than <M>display_width</M> columns,
+                        the text will be truncated when displayed.</p>
                 </MethodDescription>
 
                 <MethodDescription
@@ -504,32 +504,31 @@ bool is_menu_item_shortcut_key(
                         the current locale. </p>
                     <p>If <M>utf8key</M> is supplied as an argument, the string must contain a single
                         currently Unicode codepoint (which may consist of multiple UTF-8 encoded bytes) </p>
-                    <p>The recommended implementation for custom elements that wish to handle shortcut keys is to 
-                        override <M>NElement::wants_shortcut_key</M>, which provides  a <M>std::string</M> instead of intercepting 
-                        keyboard events and using the <M>char32_t</M> key provided in the keyboard event arguments. Future versions of 
+                    <p>The recommended implementation for custom elements that wish to handle shortcut keys is to
+                        override <M>NElement::wants_shortcut_key</M>, which provides  a <M>std::string</M> instead of intercepting
+                        keyboard events and using the <M>char32_t</M> key provided in the keyboard event arguments. Future versions of
                         <M>NWindows</M> may allow a single Unicode character followed by a possible modifier sequence or composing-accent
-                        sequence, depending on actual internationalization requirements. Please log a problem report if you need this 
+                        sequence, depending on actual internationalization requirements. Please log a problem report if you need this
                         feature.</p>
                 </MethodDescription>
 
                 <MethodDescription indexName={["virtual bool NElement::wants_shortcut_key(const std::string& key)"]}
                     method={`virtual bool wants_shortcut_key(const std::string& key);`} >
-                    <p>An element can override this method in order to handle shortcut keys.  Return <M>true</M> to have the parent <M>NWindow</M> fire a 
-                        synthetic <M>on_click</M> event on the element. The default <M>NElement</M>implementation 
-                        returns false. 
+                    <p>An element can override this method in order to handle shortcut keys.  Return <M>true</M> to have the parent <M>NWindow</M> fire a
+                        synthetic <M>on_click</M> event on the element. The default <M>NElement</M>implementation
+                        returns false.
                     </p>
-                    <p>The following conditions must be true to get Nwindows to call this method.
-                        <ul>
+                    <p>The following conditions must be true to get Nwindows to call this method.</p>
+                    <ul>
                         <   li>The element's parent window must be the currently-active window. </li>
-                            <li>The element, or one of its children must have the current keyboard focus.</li>
-                            <li>The element's <M>clickable</M> property must be true.</li>
-                            <li>The element's <M>enabled</M> property must be true.</li>
-                        </ul>
-                    </p>
-                    <p>The provided <M>key</M> currently contains the UTF-8 byte sequence for a single Unicode codepoint. However, 
-                    future versions of <M>NWindows</M> may provide a single codepoint followed by a Unicode modifier sequence or 
-                    combining-accent sequence should that prove to be necessary to properly support international locales. Please file a problem 
-                    report if you require this feature. </p>
+                        <li>The element, or one of its children must have the current keyboard focus.</li>
+                        <li>The element's <M>clickable</M> property must be true.</li>
+                        <li>The element's <M>enabled</M> property must be true.</li>
+                    </ul>
+                    <p>The provided <M>key</M> currently contains the UTF-8 byte sequence for a single Unicode codepoint. However,
+                        future versions of <M>NWindows</M> may provide a single codepoint followed by a Unicode modifier sequence or
+                        combining-accent sequence should that prove to be necessary to properly support international locales. Please file a problem
+                        report if you require this feature. </p>
                 </MethodDescription>
 
                 <MethodDescription indexName={[

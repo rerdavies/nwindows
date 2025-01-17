@@ -27,12 +27,13 @@ import PageColumn from "./PageColumn";
 import { useLayoutEffect } from "react";
 import PersistentScrollDiv from "./PersistentScrollDiv";
 import { useNavigationType } from "./NavigationType";
+import Paper from "@mui/material/Paper"
 
 
-function DocsPage(props: { children: React.ReactNode, route: string}) {  
+function DocsPage(props: { children: React.ReactNode, route: string }) {
     let navigationType = useNavigationType();
     let location = useLocation();
-    if (location.state 
+    if (location.state
         && navigationType !== 'pop' // don't do hash links on browser back navigation.
     ) {
         let navRef = location.state.showElement as string | undefined;
@@ -44,21 +45,24 @@ function DocsPage(props: { children: React.ReactNode, route: string}) {
                 } else {
                     console.error("Element not found: " + navRef);
                 }
-            },[]);
+            }, []);
         }
     }
     let t = (
-        <div className="docs_page" style={{display: "flex", height: "100%",flexFlow: "column nowrap", position: "relative"}}>
-           <PersistentScrollDiv tag="docs" style={{flex: "1 1 auto", overflowY: "auto", overflowX: "auto"}} > 
-                <PageColumn>
-                    {props.children}
-                </PageColumn>
-            </PersistentScrollDiv>
-           <div style={{flex: "0 0 54px", background: "#404040", color: "#FFFFFF'"}} >
-                <PageColumn >
-                    <DocsNav currentRoute={props.route} />
-                </PageColumn>
-            </div>
+        <div className="docs_page" style={{ display: "flex", height: "100%", flexFlow: "column nowrap", position: "relative" }}>
+            <Paper className="app_body">
+
+                <PersistentScrollDiv tag="docs" style={{ flex: "1 1 auto", overflowY: "auto", overflowX: "auto" }} >
+                    <PageColumn>
+                        {props.children}
+                    </PageColumn>
+                </PersistentScrollDiv>
+            </Paper>
+            <div className="docs_footer no_print" >
+                    <PageColumn >
+                        <DocsNav currentRoute={props.route} />
+                    </PageColumn>
+                </div>
 
         </div>
     );

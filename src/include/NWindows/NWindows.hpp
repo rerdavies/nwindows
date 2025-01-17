@@ -8,10 +8,10 @@
  *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *   copies of the Software, and to permit persons to whom the Software is
  *   furnished to do so, subject to the following conditions:
- 
+
  *   The above copyright notice and this permission notice shall be included in all
  *   copies or substantial portions of the Software.
- 
+
  *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -58,6 +58,7 @@ namespace nwindows
     class NContainerElement;
 
     constexpr int AUTO_SIZE = std::numeric_limits<int>::min();
+    constexpr int NO_ITEM_ID = std::numeric_limits<int>::min();
 
     class NContainerElement;
     class NWindow;
@@ -119,9 +120,8 @@ namespace nwindows
     };
 
     struct NMenuItem {
-        static constexpr int NO_ITEM_ID = std::numeric_limits<int>::min();
         NMenuItem() {}
-        NMenuItem(const std::string &label, int item_id, bool enabled = true)
+        NMenuItem(const std::string& label, int item_id, bool enabled = true)
             : label(label), item_id(item_id), enabled(enabled) {
         }
         NMenuItem(const std::string& label, const std::vector<NMenuItem>& submenu, bool enabled = true)
@@ -217,7 +217,7 @@ namespace nwindows
         NPoint operator-(const NPoint& other) const {
             return NPoint(x - other.x, y - other.y);
         }
-        NPoint operator-() const { return NPoint(-x,-y); }
+        NPoint operator-() const { return NPoint(-x, -y); }
     };
     struct NThickness
     {
@@ -282,7 +282,7 @@ namespace nwindows
 
 
         NRect inset(const NThickness& thickness) const;
-        NRect inflate(const NThickness&thickness) const;
+        NRect inflate(const NThickness& thickness) const;
 
         NRect intersect(const NRect& other) const;
         NRect bounds(const NRect& other) const;
@@ -388,7 +388,7 @@ namespace nwindows
         virtual void height(int value);
 
 
-        const NSize size() { return NSize(width_,height_); }
+        const NSize size() { return NSize(width_, height_); }
         void size(const NSize& size);
 
         virtual bool is_container() const { return false; }
@@ -402,7 +402,7 @@ namespace nwindows
 
         int actual_width() const { return bounds_.width; }
         int actual_height() const { return bounds_.height; }
-        NSize actual_size() const { return NSize(bounds_.width,bounds_.height); }
+        NSize actual_size() const { return NSize(bounds_.width, bounds_.height); }
 
 
         bool focusable() const { return focusable_; }
@@ -496,7 +496,7 @@ namespace nwindows
         void print(const char* text);
         void print(const std::string& text);
         void print(const std::string& text, int max_display_width);
-        void print(const std::string&text, NAlignment alignment, int display_width);
+        void print(const std::string& text, NAlignment alignment, int display_width);
         void print_acs(int x, int y, int alternate_character);
 
         void box(const NRect& rect, const std::optional<NColorPair>& colorPair = std::nullopt);
@@ -701,7 +701,7 @@ namespace nwindows
         virtual void for_each_element(const std::function<void(NElement&)>& callback) override;
 
         virtual void invalidate_render() override;
- 
+
     protected:
         virtual void render_outer() override;
 
@@ -865,7 +865,7 @@ namespace nwindows
         const std::string& text() const { return text_; }
         void text(const std::string& value);
 
-        NEvent<void(NElement::ptr source, const std::string&)> on_text_changed;
+        NEvent<void(NTextEditElement::ptr source, const std::string&)> on_text_changed;
 
         // In utf8 Unicode canonical form (accents composed)
         std::string normalized_text() const;
@@ -879,7 +879,7 @@ namespace nwindows
         // (0,0) is the top-left corner of the element.
         int cursor_position();
 
-        NEvent<void(NElement::ptr source, const NTextSelection& selection)> on_selection_changed;
+        NEvent<void(NTextEditElement::ptr source, NTextSelection selection)> on_selection_changed;
 
         void select_all();
         void select_start() { selection({ 0, 0 }); }
@@ -1074,11 +1074,11 @@ namespace nwindows
     class NRadioGroupElement : public NContainerElement {
     protected:
         NRadioGroupElement(
-            NOrientation orientation, 
-            const std::vector<std::string>& labels, 
-            int value,
-            const std::string&tagName="RadioGroup"
-            );
+            NOrientation orientation,
+            const std::vector<std::string>& labels,
+            int selection,
+            const std::string& tagName = "RadioGroup"
+        );
 
     public:
 
@@ -1112,15 +1112,15 @@ namespace nwindows
         void row_gap(int row_gap_);
         int row_gap() const { return row_gap_; }
 
-        int value() const { return value_; }
-        virtual void value(int v);
+        int selection() const { return selection_; }
+        virtual void selection(int v);
 
         virtual void disabled(bool value) override;
         virtual bool disabled() const { return super::disabled(); }
 
         // Events
 
-        NEvent<void(NRadioGroupElement::ptr source, int value)> on_value_changed;
+        NEvent<void(NRadioGroupElement::ptr source, int value)> on_selection_changed;
 
         // Customizability.
         std::string checked_text() const;
@@ -1151,14 +1151,14 @@ namespace nwindows
         NHorizontalStackElement::ptr horizontal_container_;
         NOrientation orientation_;
         std::vector<std::string> labels_;
-        int value_ = 0;
+        int selection_ = 0;
 
     };
 
     class NMenuElement : public NButtonBaseElement {
-    private:
-        NMenuElement(const std::string& label, std::vector<NMenuItem>&& items);
-        NMenuElement(const std::string& label, const std::vector<NMenuItem>& items);
+    protected:
+        NMenuElement(const std::string& label, std::vector<NMenuItem>&& items, const std::string& tagName = "Menu");
+        NMenuElement(const std::string& label, const std::vector<NMenuItem>& items, const std::string& tagName = "Menu");
     public:
         using self = NMenuElement;
         using super = NButtonBaseElement;
@@ -1166,10 +1166,11 @@ namespace nwindows
 
         static ptr create(const std::string& label, std::vector<NMenuItem>&& items) { return std::shared_ptr<self>(new self(label, std::move(items))); }
         static ptr create(const std::string& label, const std::vector<NMenuItem>& items) { return std::shared_ptr<self>(new self(label, items)); }
+        static ptr create() { return std::shared_ptr<self>(new self("", std::vector<NMenuItem>())); }
 
-        NEvent<void(NElement::ptr source)> on_opened;
-        NEvent<void(NElement::ptr source)> on_closed;
-        NEvent<void(NElement::ptr source, int selection)> on_item_selected;
+        NEvent<void(NMenuElement::ptr source)> on_opening;
+        NEvent<void(NMenuElement::ptr source)> on_closed;
+        NEvent<void(NMenuElement::ptr source, int selection)> on_item_selected;
 
         bool open() const { return open_; }
         void open(bool value);
@@ -1211,9 +1212,9 @@ namespace nwindows
 
     class NDropdownElement : public NButtonBaseElement {
     private:
-        NDropdownElement();
-        NDropdownElement(const std::vector<NMenuItem>& items, int selected);
-        NDropdownElement(std::vector<NMenuItem>&& items, int selected);
+        NDropdownElement(const std::string& tagName = "Dropdown");
+        NDropdownElement(const std::vector<NMenuItem>& items, int selected, const std::string& tagName = "Dropdown");
+        NDropdownElement(std::vector<NMenuItem>&& items, int selected, const std::string& tagName = "Dropdown");
     public:
         using self = NDropdownElement;
         using NButtonBaseElement = NButtonBaseElement;
@@ -1239,7 +1240,7 @@ namespace nwindows
         void open(bool value, const NRect& anchorRect);
 
 
-        const std::vector<NMenuItem>& items() const { return items_; }
+        const std::vector<NMenuItem>& menu_items() const { return menu_items_; }
         void menu_items(const std::vector<NMenuItem>& value);
         void menu_items(const std::vector<std::string>& value);
 
@@ -1249,16 +1250,17 @@ namespace nwindows
         NAttachment dropdown_attachment() const { return dropdown_attachment_; }
         void dropdown_attachment(NAttachment value) { dropdown_attachment_ = value; }
 
-        NEvent<void(NElement::ptr source, int selection)> on_selection_changed;
-        NEvent<void(void)> on_opened;
-        NEvent<void(void)> on_closed;
+        void suffix(const std::string& value) { suffix_ = value; }
+        std::string suffix() const;
+
+        NEvent<void(NDropdownElement::ptr source, int selection)> on_selection_changed;
+        NEvent<void(NDropdownElement::ptr source)> on_opening;
+        NEvent<void(NDropdownElement::ptr source)> on_closed;
 
     protected:
         virtual bool handle_clicked(int button, NClickedEventArgs& eventArgs) override;
         virtual NColorPair get_color() override;
 
-        void end_text(const std::string& value) { end_text_ = value; }
-        std::string end_text() const;
         virtual NSize measure(const NSize& available) override;
         virtual void render() override;
         virtual void arrange(const NRect& bounds) override;
@@ -1268,44 +1270,45 @@ namespace nwindows
 
         NAttachment dropdown_attachment_ = NAttachment::BottomEnd;
         std::shared_ptr<NPopupMenuWindow> popup_window_;
-        std::string end_text_;
+        std::string suffix_;
         bool open_ = false;
-        std::vector<NMenuItem> items_;
-        int selected_ = -1;
+        std::vector<NMenuItem> menu_items_;
+        int selected_ = NO_ITEM_ID;
     };
 
     class NWindow : public NContainerElement
     {
     public:
         using ptr = std::shared_ptr<NWindow>;
+        using super = NContainerElement;
+        using self = NWindow;
     protected:
-
-        friend class NPopupWindow;
-        friend class NPopupWindow;
 
         NWindow(
             int x, int y, int width, int height,
-            NColorPalette* colorPalette = nullptr);
+            const std::string& tagName,
+            NColorPalette* color_palette = nullptr);
 
-
+    private:
         void add_child_window(NWindow::ptr child);
+    protected:
+        void init_root_window();
+
         void add_to_parent_window(NWindow::ptr parent)
         {
             parent->add_child_window(shared_from_this<NWindow>());
         }
-
+    private:
         static ptr create_(
             NWindow::ptr parentWindow,
             int x,
             int y,
             int width,
             int height,
-            NColorPalette* colorPalette = nullptr);
+            NColorPalette* color_palette = nullptr);
 
 
     public:
-        using super = NContainerElement;
-        using self = NWindow;
 
         std::weak_ptr<NWindow> weak_ptr() {
             return shared_from_this<self>();
@@ -1317,10 +1320,10 @@ namespace nwindows
         bool can_display_character(char32_t c) const;
 
 
-        static ptr create(int width, int height, NColorPalette* colorPalette = nullptr)
+        static ptr create(int width, int height, NColorPalette* color_palette = nullptr)
         {
             return create_(nullptr,
-                AUTO_SIZE, AUTO_SIZE, width, height, colorPalette);
+                AUTO_SIZE, AUTO_SIZE, width, height, color_palette);
 
         }
 
@@ -1341,9 +1344,9 @@ namespace nwindows
         }
 
 
-        static ptr create(int x, int y, int width, int height, NColorPalette* colorPalette = nullptr)
+        static ptr create(int x, int y, int width, int height, NColorPalette* color_palette = nullptr)
         {
-            return create_(nullptr, x, y, width, height, colorPalette);
+            return create_(nullptr, x, y, width, height, color_palette);
         }
 
         virtual ~NWindow();
@@ -1578,7 +1581,6 @@ namespace nwindows
 
         bool remove_child_window(NWindow::ptr child);
         bool remove_child_window(NWindow* child);
-        void init_root_window();
 
 
         int x = 0; int y = 0;
@@ -1795,7 +1797,7 @@ namespace nwindows
         virtual void handle_cancelled();
 
     private:
-        int measure_prefix(const NMenuItem&menuItem, bool isUnicodeLocale);
+        int measure_prefix(const NMenuItem& menuItem, bool isUnicodeLocale);
         bool was_item_selected_ = false;
 
     };
@@ -1910,22 +1912,6 @@ namespace nwindows
 
     };
 
-    class on_item_selected : public NElementManipulator {
-    public:
-        using CallbackT = void(NElement::ptr source, int item_id);
-
-        on_item_selected(std::function<CallbackT>&& function) : function_(std::move(function)) {
-        }
-        template<typename T>
-        std::shared_ptr<T> apply(std::shared_ptr<T> element) const {
-            element->on_item_selected.subscribe(
-                this->function_);
-            return element;
-        }
-    private:
-        std::function<CallbackT> function_;
-
-    };
 
     class on_cancelled : public NElementManipulator {
     public:
@@ -2301,39 +2287,82 @@ namespace nwindows
     };
 
 
-    class on_opened : public NElementManipulator {
+    template <typename P>
+    class on_text_changed : public NElementManipulator {
     public:
-        on_opened(const std::function<void(void)>& callback) : value(callback) {}
-        on_opened(std::function<void(void)>&& callback) : value(std::move(callback)) {}
 
-        template<typename T>
+        on_text_changed(const P& callback) : value(callback) {}
+        on_text_changed(P&& callback) : value(std::move(callback)) {}
+
+        template <class T>
         std::shared_ptr<T> apply(std::shared_ptr<T> element) {
-            element->on_opened.subscribe(value);
+            element->on_text_changed.subscribe(value);
             return element;
         }
     private:
-        const std::function<void(void)> value;
+        P value;
     };
 
+
+
+
+    template <typename P>
+    class on_opening : public NElementManipulator {
+    public:
+
+        on_opening(const P& callback) : value(callback) {}
+        on_opening(P&& callback) : value(std::move(callback)) {}
+
+        template <class T>
+        std::shared_ptr<T> apply(std::shared_ptr<T> element) {
+            element->on_opening.subscribe(value);
+            return element;
+        }
+    private:
+        P value;
+    };
+
+
+
+    template<typename P>
     class on_closed : public NElementManipulator {
     public:
-        on_closed(const std::function<void(void)>& callback) : value(callback) {}
-        on_closed(std::function<void(void)>&& callback) : value(std::move(callback)) {}
 
-        template<typename T>
+        on_closed(const P& callback) : value(callback) {}
+        on_closed(P&& callback) : value(std::move(callback)) {}
+
+        template <class T>
         std::shared_ptr<T> apply(std::shared_ptr<T> element) {
             element->on_closed.subscribe(value);
             return element;
         }
     private:
-        const std::function<void(void)> value;
+        P value;
     };
 
+    template<typename P>
+    class on_item_selected : public NElementManipulator {
+    public:
+
+        on_item_selected(const P& callback) : value(callback) {}
+        on_item_selected(P&& callback) : value(std::move(callback)) {}
+
+        template <class T>
+        std::shared_ptr<T> apply(std::shared_ptr<T> element) {
+            element->on_item_selected.subscribe(value);
+            return element;
+        }
+    private:
+        P value;
+    };
+
+
+    template<typename P>
     class on_selection_changed : public NElementManipulator {
     public:
-        using CallbackT = void(NElement::ptr source, int value);
-        on_selection_changed(const std::function<CallbackT>& callback) : value(callback) {}
-        on_selection_changed(std::function<CallbackT>&& callback) : value(std::move(callback)) {}
+        using CallbackParam = P;  // avoids problems with failing to convert  lambdas to std::functions without a cast
+        on_selection_changed(CallbackParam& callback) : value(callback) {}
+        on_selection_changed(CallbackParam&& callback) : value(std::move(callback)) {}
 
         template<typename T>
         std::shared_ptr<T> apply(std::shared_ptr<T> element) {
@@ -2341,7 +2370,7 @@ namespace nwindows
             return element;
         }
     private:
-        const std::function<CallbackT> value;
+        const CallbackParam value;
     };
 
     class request_initial_focus : public NElementManipulator {
@@ -2361,11 +2390,13 @@ namespace nwindows
     template<typename ELEMENT, typename MANIPULATOR>
         requires std::derived_from<ELEMENT, NElement>
     && std::derived_from<MANIPULATOR, NElementManipulator>
-        std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATOR value)
+        std::shared_ptr<ELEMENT>
+        operator |(std::shared_ptr<ELEMENT> element, MANIPULATOR manipulator)
     {
-        value.apply(element);
+        manipulator.apply(element);
         return element;
     }
+
     ////////////////////////////////////////////////
 
     inline void NElement::move(int x, int y)

@@ -21,7 +21,7 @@
  *   SOFTWARE.
  */
 
-import Code from '../Code';
+import CodeDiv from '../Code';
 import DocsPage from '../DocsPage';
 import M, { ML } from '../M';
 import { DocsTitle } from '../DocsNav';
@@ -57,7 +57,7 @@ function NWindowsFundamentals() {
                 rather than using an explicit <M>std::shared_ptr</M> type.
                 For example:
             </p>
-            <Code text={`NTextElement::ptr = NTextElement::create();`} />
+            <CodeDiv text={`NTextElement::ptr = NTextElement::create();`} />
 
             <p>Element
                 lifetimes are determined entirely by whether there are
@@ -111,7 +111,7 @@ function NWindowsFundamentals() {
                 NWindows manipulators use <M>operator|</M> to set properties on elements
                 that are being manipulated.
             </p>
-            <Code text={`NTextElement::ptr textElement = NTextElement::create() 
+            <CodeDiv text={`NTextElement::ptr textElement = NTextElement::create() 
     | text("Ipsem lorem)
     | margins({2,1,2,1})
     | color(window->make_color_pair(0x000000,0xFF8080));`} />
@@ -124,7 +124,7 @@ function NWindowsFundamentals() {
                 with visual elements in a single expression.
             </p>
             <p>There are also manipulators for handling common events: </p>
-            <Code text={`NButtonElement okButton = NButtonElement::create()
+            <CodeDiv text={`NButtonElement okButton = NButtonElement::create()
     | label("OK")
     | width(10)
     | on_clicked((
@@ -142,7 +142,7 @@ function NWindowsFundamentals() {
                 which allows you to retrieve elements elsewhere in the visual tree by id.
                 Whether this is a good idea or not... -- I'll leave it to you to decide.
             </p>
-            <Code text={`NButtonElement::create()
+            <CodeDiv text={`NButtonElement::create()
     | label("Apply")
     | width(10)
     | on_clicked(

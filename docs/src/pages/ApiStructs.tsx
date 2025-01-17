@@ -245,7 +245,7 @@ function ApiStructs() {
                 </p>
 
                 <ClassSectionHead text="Constants" />
-                <ConstantDescription indexName="const int NMenuItem::NO_ITEM_ID"
+                <ConstantDescription indexName="const int NO_ITEM_ID"
                     constant={`static constexpr int NO_ITEM_ID = 
     std::numeric_limits<int>::min();`} >
                     The item_id for menu items that can never be selected.
@@ -290,7 +290,7 @@ function ApiStructs() {
 
                         <div>int</div>
                         <div>item_id</div>
-                        <div>The id used to identify menu selection of menu items.</div>
+                        <div>The id used to identify menu selected menu items.</div>
 
                         <div>bool</div>
                         <div>enabled</div>

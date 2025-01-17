@@ -83,8 +83,8 @@ namespace nwindows::private_elements
         using super = NMenuItemElement;
         using ptr = std::shared_ptr<self>;
 
-        NEvent<void(NElement::ptr source)> on_opened;
-        NEvent<void(NElement::ptr source)> on_closed;
+        NEvent<void(NSubmenuMenuItemElement::ptr source)> on_opening;
+        NEvent<void(NSubmenuMenuItemElement::ptr source)> on_closed;
 
         bool open() const { return open_; }
         void open(bool value);

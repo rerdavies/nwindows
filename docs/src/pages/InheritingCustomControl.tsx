@@ -25,7 +25,7 @@ import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import M from '../M';
 import SectionHead from '../SectionHead';
-import Code, { CodeFragment2 } from '../Code';
+import CodeDiv, { CodeFragment2 } from '../Code';
 import CenteredImage from '../CenteredImage';
 
 
@@ -43,7 +43,7 @@ function InheritedCustomControl() {
                 NWindows doesn't provide style-sheets, you could use trivial overrides like this to set properties to values 
                 on input elements in a consistent way if you  find yourself setting the same properties over and over again.
             </p>
-            <Code showLines text={`class HappyButtonElement : public NButtonElement { 
+            <CodeDiv showLines text={`class HappyButtonElement : public NButtonElement { 
 private:
     HappyButtonElement(
         const std::std::string& label, 
@@ -73,7 +73,7 @@ public:
 
             <SectionHead text="ContextEditElement" />
             <p>A more ambitious example might be a class that implements a Text Edit field with a context menu.</p>
-            <Code showLines text={`#include <NWindows/NWindows.hpp>
+            <CodeDiv showLines text={`#include <NWindows/NWindows.hpp>
 
 using namespace nwindows;
 
@@ -168,7 +168,7 @@ private:
 };
 `} />
         <p>Calling </p>
-        <Code text={`ContextEditElement::Create(
+        <CodeDiv text={`ContextEditElement::Create(
 {
     NMenuItem("Cut",1),
     NMenuItem("Copy",2),

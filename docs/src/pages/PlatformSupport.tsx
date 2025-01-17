@@ -45,12 +45,12 @@ function PlatformSupport() {
                     the <Name>NWindows</Name> github repository.
                 </p>
                 <h2>Unicode Support</h2>
-                <p><Name>NWindows</Name> provides partial Unicode support, but you should use it very cautiously.
+                <p><Name>NWindows</Name> provides Unicode support, but you should use it cautiously.
                 </p>
                 <p><Name>NWindows</Name> provides the following support for Unicode:</p>
                 <ul>
                     <li>All std::strings are assumed to contain UTF-8 characters.</li>
-                    <li>On xterm terminals, almost all Unicode characters are correctly displayed. Emoji, double-width characters, and composed characters
+                    <li>On xterm terminals, almost all Unicode characters are correctly displayed. Emoji, double-width characters, and composed accents
                         are all supported.
                     </li>
                     <li>On text-mode terminals, UTF-8 characters are correctly mapped to available characters on the current terminal. Extended Unicode characters
@@ -66,12 +66,14 @@ function PlatformSupport() {
                 <p>Unicode support in NWindows has the following limitations:</p>
                 <ul>
                     <li>There is no support for bi-direction characters at all.</li>
-                    <li>On Ubuntu, xterm, and system libraries are not fully synched with latest Unicode standards. As a result, many
+                    <li>Locales and scripts that require advanced Unicode features are probably not supported.</li>
+                    <li>On Ubuntu, xterm, and system libraries are not fully synched with latest Unicode standards. As a result, some
                         new double-width emoji and extended Unicode characters incorrectly display as single-width characters. The same
-                        is likely to be true on other Linux distributions as well. You can work around this problem by positioning such
-                        unicode characters explicitly.
+                        is likely to be true on other Linux distributions as well. You can work around this problem by positioning problematic
+                        Unicode characters explicitly.
                     </li>
-                    <li>Skin-tone modifiers are not supported by xterm on Ubuntu 22.04, and are likely to be unsupported on other distributions as well.
+                    <li>It's uncertain to what extent Unicode modifier sequences are supported. Skin-tone modifiers are not 
+                        supported by xterm on Ubuntu 22.04, and are likely to be unsupported on other distributions as well.
                     </li>
                 </ul>
                 <p>If your users will be using text-mode terminals, you should be very cautious about relying on adequate support of non-ASCII characters.</p>

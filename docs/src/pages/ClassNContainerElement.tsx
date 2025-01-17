@@ -23,11 +23,11 @@
 
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
-import ClassDescription, { MethodDescription, ClassSectionHead, UsingDescription, PropertyList, PropertyEntry, MethodDescriptions } from '../ClassDescription';
+import ClassDescription, { MethodDescription, ClassSectionHead, UsingDescription, PropertyList, PropertyEntry, MethodDescriptions, TypeDefinitions } from '../ClassDescription';
 import M from '../M';
 import { Link } from 'react-router-dom';
 import { DocsLink } from '../ClassDescription';
-import Code from '../Code';
+import CodeDiv from '../Code';
 
 function ClassNContainerElement() {
 
@@ -45,13 +45,14 @@ function ClassNContainerElement() {
                     the <DocsLink route="/using/custom/full#section__layout" directId='section__Layout'>Layout</DocsLink> section
                     of the <i><Link to="/using/custom/full">Fully-Custom Elements</Link></i> page for details how to implement custom layout.</p>
 
-                <ClassSectionHead text="Type Definitions" />
-                <UsingDescription indexName={"NContainerElement::super"} declaration="using super = NElement;" >
-                </UsingDescription>
-                <UsingDescription indexName={"NContainerElement::self"} declaration="using self = NContainerElement;" >
-                </UsingDescription>
-                <UsingDescription indexName="NContainerElement::ptr" declaration={`using ptr = std::shared_ptr<self>;`} >
-                </UsingDescription>
+                <TypeDefinitions>
+                    <UsingDescription indexName={"NContainerElement::super"} declaration="using super = NElement;" >
+                    </UsingDescription>
+                    <UsingDescription indexName={"NContainerElement::self"} declaration="using self = NContainerElement;" >
+                    </UsingDescription>
+                    <UsingDescription indexName="NContainerElement::ptr" declaration={`using ptr = std::shared_ptr<self>;`} >
+                    </UsingDescription>
+                </TypeDefinitions>
 
                 <ClassSectionHead text="Protected Constructors" />
                 <MethodDescription indexName={["NContainerElement::NContainerElement(const std::string& tag)"]}
@@ -112,7 +113,7 @@ NElement::ptr get_element_at(const NPoint&pt);`}>
                             Get the topmost child element of the current element whose bounds contains the point (x,y). Returns an empty pointer
                             if no element is found at the point. The point is specified in window coordinates. To search the entire visual
                             tree call</p>
-                        <Code text={'window()->get_element_at(x,y)'} />
+                        <CodeDiv text={'window()->get_element_at(x,y)'} />
                     </MethodDescription>
 
                     <MethodDescription indexName="NElement::ptr NContainerElement::find_child_element(const std::function<bool(NElement&)>& predicate);"

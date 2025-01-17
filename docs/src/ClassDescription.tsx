@@ -49,7 +49,7 @@ export default function
                 {props.baseClass && <div style={{opacity: 0.6,marginLeft: 32 }}>extends {props.baseClass}</div>}
             </h2>
 
-            <div style={{ marginLeft: 32, marginRight: 16 }}>
+            <div className="indent">
                 {props.children}
             </div>
         </div>
@@ -228,6 +228,16 @@ export function ConstructorDescriptions(props: { children?: React.ReactNode }) {
     );
 }
 
+export function TypeDefinitions(props: { children?: React.ReactNode, title?: string }) {
+    return (
+        <div>
+            <ClassSectionHead text={props.title??"Type Definitions"} />
+            {props.children}
+        </div>
+    );
+}
+
+
 export enum LinkType {
     Define,
     ClassMethod,
@@ -394,7 +404,7 @@ export function MethodDescription(
 
             {extraTargetLinks}
             <pre className="mono" style={{ paddingLeft: "8px", paddingTop: "12px", paddingBottom: "12px", overflowX: "auto" }}>{props.method}</pre>
-            <div style={{ marginLeft: 24 }}>
+            <div className="indent">
                 {props.children}
             </div>
         </div>

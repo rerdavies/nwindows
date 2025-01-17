@@ -23,9 +23,9 @@
 
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
-import ClassDescription, { MethodDescription, ClassSectionHead, UsingDescription, PropertyList, PropertyEntry, MethodDescriptions, DefinitionList } from '../ClassDescription';
+import ClassDescription, { MethodDescription, ClassSectionHead, UsingDescription, PropertyList, PropertyEntry, MethodDescriptions, DefinitionList, TypeDefinitions } from '../ClassDescription';
 import M, { ML } from '../M';
-import Code from '../Code';
+import CodeDiv from '../Code';
 
 function ClassNHorizontalStackElement() {
 
@@ -40,13 +40,14 @@ function ClassNHorizontalStackElement() {
                     <M>NHorizontalStackElement</M> stacks child elements horizontally.
                 </p>
 
-                <ClassSectionHead text="Type Definitions" />
-                <UsingDescription indexName={"NHorizontalStackElement::super"} declaration="using super = NContainerElement;" >
-                </UsingDescription>
-                <UsingDescription indexName={"NHorizontalStackElement::self"} declaration="using self = NHorizontalStackElement;" >
-                </UsingDescription>
-                <UsingDescription indexName="NHorizontalStackElement::ptr" declaration={`using ptr = std::shared_ptr<self>;`} >
-                </UsingDescription>
+                <TypeDefinitions>
+                    <UsingDescription indexName={"NHorizontalStackElement::super"} declaration="using super = NContainerElement;" >
+                    </UsingDescription>
+                    <UsingDescription indexName={"NHorizontalStackElement::self"} declaration="using self = NHorizontalStackElement;" >
+                    </UsingDescription>
+                    <UsingDescription indexName="NHorizontalStackElement::ptr" declaration={`using ptr = std::shared_ptr<self>;`} >
+                    </UsingDescription>
+                </TypeDefinitions>
 
 
                 <ClassSectionHead text="Constructors" />
@@ -70,7 +71,7 @@ function ClassNHorizontalStackElement() {
                         <div>
                             <p>Controls how child elements are aligned within the <M>NHorizontalStackElement</M>.</p>
                             <p>alignment can take the following values:</p>
-                            <p>When the alignment of an <M>NHorizontalStackElement</M> is set to <M>NAlignment::Cetner</M>,
+                            <p>When the alignment of an <M>NHorizontalStackElement</M> is set to <M>NAlignment::Center</M>,
                                 or <M>NAlignment::end</M>, the width of the <M>NHorizontalStackElement</M> must be be constrained.
                                 The width my be constrained, either by setting <M>width</M> property of the element, or one
                                 of its parents to something other than <M>AUTO_SIZE</M>, or by ensuring that one of the parents
@@ -79,7 +80,7 @@ function ClassNHorizontalStackElement() {
                                 justify will cause the width of all child elements to be constrained to the width of its widest
                                 child element. Consider the following example:
                             </p>
-                            <Code showLines text={`NVerticalStackElement::create()
+                            <CodeDiv showLines text={`NVerticalStackElement::create()
     | alignment(NAlignment::Justify)
     | margins(2,0,2,0)
     | addChild(

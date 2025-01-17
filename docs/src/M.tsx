@@ -36,12 +36,13 @@ export default M;
 
 
 let whitespaceRegex = /\s+/g;
-let sharedPtrRegex = /^std::shared_ptr<(.*)>$/;
-let optionalRegex = /^std::optional<(.*)>$/;
-let argumentsRegex = /^([^(]*)\(.*\)$/u;
-
+let sharedPtrRegex = /^std::shared_ptr<\s*([^\s>)]+)\s*>$/;
+let optionalRegex = /^std::optional<\s*([^\s>]+)\s*>$/;
+let vectorRegex = /^std::vector<\s*([^\s>]+)\s*>$/;
+let argumentsRegex = /^([^(]*)\(.*\)\s*$/u;
+let elaboratedTypeRegex = /^(?:(?:enum)|(?:class)|(?:typename)|(?:struct))\s+(.*)$/u;
 function reduceTarget(target: string) : string {
-    target = target.replace(whitespaceRegex, "");
+    target = target.replace(whitespaceRegex, " ");
 
     while (true) {
         if (target.endsWith("::ptr")) {
@@ -65,12 +66,24 @@ function reduceTarget(target: string) : string {
         if (match) {
             target = match[1];
             continue;
-        } 
+        }
+        match = target.match(elaboratedTypeRegex);
+        if (match) {
+            target = match[1];
+            continue;
+        }   
         match = target.match(argumentsRegex);
         if (match) {
             target = match[1];
             continue;
         }
+        match = target.match(vectorRegex);
+        if (match)
+        {
+            target = match[1];
+            continue;
+        }
+        // nothing matched this time. we're done.
         break;
     }
     return target;

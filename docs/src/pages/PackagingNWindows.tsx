@@ -21,7 +21,7 @@
  *   SOFTWARE.
  */
 
-import Code from '../Code';
+import CodeDiv from '../Code';
 import DocsPage from '../DocsPage';
 import M from '../M';
 import Name from '../Name';
@@ -45,7 +45,7 @@ function InstallingNWindows() {
                     </ul>
                 </p>
                 <p>On Debian-based systems (including Ubuntu), you can install the dependencies using the following commands:</p>
-                <Code text={
+                <CodeDiv text={
 `sudo apt install libncursesw5-dev xclip libicu-dev
 `               }
                 />

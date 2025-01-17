@@ -22,13 +22,16 @@
  */
 
 import CircularProgress from "@mui/material/CircularProgress";
+import Paper from "@mui/material/Paper";
 
 
 function Loading() {
     return (    
-        <div style={{ display: "flex", flexFlow: "column nowrap", justifyContent: "center",position: "relative", top: "25%"}}>
-            <CircularProgress style={{marginLeft: "auto",marginRight: "auto"}}/>
-        </div>
+        <Paper className="app_body">
+            <div style={{ display: "flex", flexFlow: "column nowrap", justifyContent: "center",position: "relative", top: "25%"}}>
+                <CircularProgress style={{marginLeft: "auto",marginRight: "auto"}}/>
+            </div>
+        </Paper>
     );
 }
 

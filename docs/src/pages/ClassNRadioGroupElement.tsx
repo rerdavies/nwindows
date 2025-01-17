@@ -23,7 +23,7 @@
 
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
-import ClassDescription, { MethodDescription, ClassSectionHead, UsingDescription, PropertyList, PropertyEntry, EventDescriptions, EventDescription } from '../ClassDescription';
+import ClassDescription, { MethodDescription, ClassSectionHead, UsingDescription, PropertyList, PropertyEntry, EventDescriptions, EventDescription, TypeDefinitions } from '../ClassDescription';
 import M from '../M';
 import CenteredImage from '../CenteredImage';
 
@@ -41,31 +41,32 @@ function ClassNRadioGroupElement() {
                 </p>
                 <CenteredImage src="/nwindows/image/sample_radiogroup.png" alt="Radio Group" />
 
-                <ClassSectionHead text="Type Definitions" />
-                <UsingDescription indexName={"NRadioGroupElement::super"} declaration="using super = NContainerElement;" >
-                </UsingDescription>
-                <UsingDescription indexName={"NRadioGroupElement::self"} declaration="using self = NRadioGroupElement;" >
-                </UsingDescription>
-                <UsingDescription indexName="NRadioGroupElement::ptr" declaration={`using ptr = std::shared_ptr<self>;`} >
-                </UsingDescription>
+                <TypeDefinitions>
+                    <UsingDescription indexName={"NRadioGroupElement::super"} declaration="using super = NContainerElement;" >
+                    </UsingDescription>
+                    <UsingDescription indexName={"NRadioGroupElement::self"} declaration="using self = NRadioGroupElement;" >
+                    </UsingDescription>
+                    <UsingDescription indexName="NRadioGroupElement::ptr" declaration={`using ptr = std::shared_ptr<self>;`} >
+                    </UsingDescription>
+                </TypeDefinitions>
 
 
                 <ClassSectionHead text="Constructors" />
                 <MethodDescription indexName={[
-                    "static NRadioGroupElement::ptr NRadioGroupElement::create(NOrientation orientation, const std::vector<std::string>& labels, int value)",
+                    "static NRadioGroupElement::ptr NRadioGroupElement::create(NOrientation orientation, const std::vector<std::string>& labels, int selection)",
                     "static NRadioGroupElement::ptr NRadioGroupElement::create()",
 
                 ]}
                     method={`static NRadioGroupElement::ptr create(
     NOrientation orientation,
     const std::vector<std::string>& labels,
-    int value);
+    int selection);
 
 static NRadioGroupElement::ptr create();
 `}>
                     <div>
                         Return an <M>std::shared_ptr</M> to a newly-created <M>NRadioGroupElement</M>. Optionally set
-                        the orientation, labels and value properties.
+                        the orientation, labels and selection properties.
                     </div>
                 </MethodDescription>
 
@@ -74,7 +75,7 @@ static NRadioGroupElement::ptr create();
                     method={`NRadioGroupElement(
     NOrientation orientation, 
     const std::vector<std::string>& labels, 
-    int value,
+    int selection,
     const std::string&tagName="RadioGroup"
     );`}>
                 </MethodDescription>
@@ -99,9 +100,9 @@ static NRadioGroupElement::ptr create();
                                 select the radio button.</p>
                         </div>
                     </PropertyEntry>
-                    <PropertyEntry type="int" propertyName='NRadioGroupElement::value'>
+                    <PropertyEntry type="int" propertyName='NRadioGroupElement::selection'>
                         <div>
-                            The index of the currently selected radio button. Defaults to 0. Set the value to -1 to 
+                            The index of the currently selected radio button. Defaults to 0. Set the selection to -1 to 
                             deselect all radio buttons.
                         </div>
                     </PropertyEntry>
@@ -138,10 +139,10 @@ static NRadioGroupElement::ptr create();
                 </PropertyList>
 
                 <EventDescriptions>
-                        <EventDescription indexName="NEvent<void(NRadioButtonGroupElement::ptr source, int value)> NRadioGroupElement::on_value_changed"    
+                        <EventDescription indexName="NEvent<void(NRadioButtonGroupElement::ptr source, int selection)> NRadioGroupElement::on_selection_changed"    
                             event={`NEvent<
-    void(NRadioButtonGroupElement::ptr source, int value)
-> on_value_changed;`}>
+    void(NRadioButtonGroupElement::ptr source, int selection)
+> on_selection_changed;`}>
                             <p>
                                 Fired when the selected radio button changes. 
                             </p>

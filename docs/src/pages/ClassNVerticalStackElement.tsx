@@ -24,7 +24,8 @@
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import ClassDescription, { MethodDescription, ClassSectionHead, UsingDescription,
-    PropertyList, PropertyEntry, MethodDescriptions, DefinitionList } from '../ClassDescription';
+    PropertyList, PropertyEntry, MethodDescriptions, DefinitionList, 
+    TypeDefinitions} from '../ClassDescription';
 import M from '../M';
 
 function ClassNVerticalStackElement() {
@@ -39,13 +40,14 @@ function ClassNVerticalStackElement() {
                 <p>
                     <M>NVerticalStackElement</M> stacks child elements vertically.
                 </p>
-                <ClassSectionHead text="Type Definitions" />
-                <UsingDescription indexName={"NVerticalStackElement::super"} declaration="using super = NContainerElement;" >
-                </UsingDescription>
-                <UsingDescription indexName={"NVerticalStackElement::self"} declaration="using self = NVerticalStackElement;" >
-                </UsingDescription>
-                <UsingDescription indexName="NVerticalStackElement::ptr" declaration={`using ptr = std::shared_ptr<self>;`} >
-                </UsingDescription>
+                <TypeDefinitions>
+                    <UsingDescription indexName={"NVerticalStackElement::super"} declaration="using super = NContainerElement;" >
+                    </UsingDescription>
+                    <UsingDescription indexName={"NVerticalStackElement::self"} declaration="using self = NVerticalStackElement;" >
+                    </UsingDescription>
+                    <UsingDescription indexName="NVerticalStackElement::ptr" declaration={`using ptr = std::shared_ptr<self>;`} >
+                    </UsingDescription>
+                </TypeDefinitions>
 
 
                 <ClassSectionHead text="Constructors" />

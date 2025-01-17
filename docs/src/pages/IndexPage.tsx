@@ -37,7 +37,7 @@ export default function IndexPage() {
     let found = true;
 
     if (searchString !== "") {
-        siteIndexData = siteIndexData.filter(searchString);
+        siteIndexData = siteIndexData.filterForIndex(searchString);
         found = siteIndexData.entries.length > 0;
 
     }
@@ -51,8 +51,8 @@ export default function IndexPage() {
                             (<h2 className="section-head" style={{ marginBottom: 0, marginTop: 0, flexShrink: 1 }}>Index</h2>)
                             : (<div style={{ flex: "1 1 auto" }}></div>)
                         }
-                        <SearchBox
-                            onSearchChangedWithDelay={(searchString) => {
+                        <SearchBox open={searchOpen}
+                        onSearchChangedWithDelay={(searchString) => {
                                 setSearchString(searchString);
 
                             }}

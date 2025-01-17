@@ -3,19 +3,19 @@ cmake_minimum_required(VERSION 3.14)
 
 # Only add the custom target for release builds
 
-set(BUILD_DIR "./dist")
+set(DOCS_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dist")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release" 
     OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel" 
     OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
         add_custom_target(build_docs ALL
-            DEPENDS ${BUILD_DIR}/index.html
+            DEPENDS ${DOCS_BUILD_DIR}/index.html
         )
         add_custom_command( 
-            OUTPUT ${BUILD_DIR}/index.html
+            OUTPUT ${DOCS_BUILD_DIR}/index.html
             
         COMMAND npm run build
-        COMMAND ./make_route_pages.sh ${BUILD_DIR}
+        COMMAND ./make_route_pages.sh ${DOCS_BUILD_DIR}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMENT "Building Vite React website"
 

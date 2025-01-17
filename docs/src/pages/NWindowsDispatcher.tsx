@@ -25,7 +25,7 @@ import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import M from '../M';
 import ClassDescription, { MethodDescription } from '../ClassDescription';
-import Code from '../Code';
+import CodeDiv from '../Code';
 
 
 
@@ -70,7 +70,7 @@ function NWindowsDispatcher() {
                 a <M>weak_from_this&lt;T&gt;</M> method which make it easy to capture
                 a weak reference. For example:
             </p>
-            <Code text={`PostHandle postHandle = window()->post(
+            <CodeDiv text={`PostHandle postHandle = window()->post(
     std::chrono::milliseconds(1250),
     [elementRef = textElement->weak_from_this<NTextElement>()](
     {

@@ -25,7 +25,7 @@ import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import M from '../M';
 import ClassDescription, { EnumDescription, PropertyEntry, PropertyList, EnumDefinitionList } from '../ClassDescription';
-import Code from '../Code';
+import CodeDiv from '../Code';
 import SectionHead from '../SectionHead';
 import CenteredImage from '../CenteredImage';
 
@@ -45,25 +45,25 @@ function NWindowsElements() {
             <p>Each property on an NWindows element has a getter and (usually) a setter method. Getters and setters use the
                 following convention:
             </p>
-            <Code white text={`const std::string&text() const; // the getter for the the text property
+            <CodeDiv white text={`const std::string&text() const; // the getter for the the text property
 void text(const std::string&value); // the setter.`} />
 
             <p>Each property has a corresponding <i>manipulator</i> which can be used to set the property using <i>manipulator</i> syntax.</p>
-            <Code white text={`NTextElement element = NTextElement::create()
+            <CodeDiv white text={`NTextElement element = NTextElement::create()
     | text("Hello world.");`} />
             <p>Manipulators are actually classes, which use a scheme similar to (but better than) <M>iomanip</M> manipulators. They capture
                 values, and then apply them to an object pointer on the left-hand side of an "|" operator.
                 The <M>operator|</M> overload for manipulators then returns an object pointer of the exact same type as the
                 object on its left-hand side. This allows one or more <i>manipulator</i> operations to be chained together
                 into a single expression.</p>
-            <Code white text={`NTextElement element = NTextElement::create()
+            <CodeDiv white text={`NTextElement element = NTextElement::create()
     | width(15)
     | alignment(NAlignment::End)
     | margin({2,1,2,1})
     | text("Hello world.");`} />
 
             <p>Here's a sample implementation of a manipulator, in order to help give you a sense of what's happening under the covers.</p>
-            <Code white text={`    class text : public NElementManipulator {
+            <CodeDiv white text={`    class text : public NElementManipulator {
     public:
         text(const std::string& value) : value(value) {
         }
@@ -79,7 +79,7 @@ void text(const std::string&value); // the setter.`} />
 `} />
 
             <p>And then this dense little piece of code provides the <M>operator</M> | overload:</p>
-            <Code white text={
+            <CodeDiv white text={
                 `template<typename ELEMENT, typename MANIPULATOR>
     requires std::derived_from<ELEMENT, NElement>
     && std::derived_from<MANIPULATOR, NElementManipulator>
@@ -100,7 +100,7 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                 and <M>height</M> properties default to a value of <M>AUTO_SIZE</M>, which generally means that the element
                 will be sized to fit its content. The <M>margin</M> property is of type  <M>NThickness</M>
             </p>
-            <Code white text={`
+            <CodeDiv white text={`
             struct NThickness
     {
         NThickness() : left(0), top(0), right(0), bottom(0) {}
@@ -180,7 +180,7 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                         <div>
                             Controls how child elements are aligned within the <M>NVerticalStackElement</M>. The <M>alignment</M> property
                             is of type
-                            <Code white text={`enum class NAlignment {
+                            <CodeDiv white text={`enum class NAlignment {
     Start,
     Center,
     End,
@@ -222,7 +222,7 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                             <p>
                                 Controls how child elements are aligned within the <M>NHorizontalStackElement</M>. The <M>alignment</M> property is of type
                             </p>
-                            <Code white text={`enum class NAlignment {
+                            <CodeDiv white text={`enum class NAlignment {
     Start,  
     Center,
     End,
@@ -397,7 +397,7 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                     <PropertyEntry type="std::string" propertyName='NButtonElement::prefix'>
                         <div><p>Text to display before the label. Could be used to display UTF-8 icons
                             in a button. For example, </p>
-                            <Code white text={`
+                            <CodeDiv white text={`
 NButtonElement::create()
     | width(10)
     | alignment(NAlignment::Start)
@@ -439,12 +439,12 @@ NButtonElement::create()
                     You can control which characters may be entered in a <M>NTextEditElement</M> using
                     the following methods (and their corresponding manipulator):
                 </p>
-                <Code white text={
+                <CodeDiv white text={
                     `void character_filter(const std::function&lt;bool(char32_t c)&gt;& filter);
         void character_filter(std::function&lt;bool(char32_t c)&gt;&& filter);
 `} />
                 <p>So you could, for example, restrict the text of an edit box to (European) digits only using the following code:</p>
-                <Code white text={
+                <CodeDiv white text={
                     `NTextEditElement::create()
     | character_filter(
         [](char32_t c) {
@@ -460,7 +460,7 @@ NButtonElement::create()
                     <M>NTextEditElement</M> provides the following methods to deal with
                     simple selection operations:
                 </p>
-                <Code white text={
+                <CodeDiv white text={
                     `void select_all();
 void select_start();
 void select_end();

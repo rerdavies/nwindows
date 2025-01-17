@@ -26,13 +26,13 @@ import {CopyBlock, CodeBlock, dracula,github} from 'react-code-blocks'
 const whiteTheme = github;
 
 
-function  Code (props: {text: string, style?: React.CSSProperties, showLines?: boolean, white?: boolean}) {
+function  CodeDiv (props: {text: string, language?: string, style?: React.CSSProperties, showLines?: boolean, white?: boolean}) {
   return (
     <div style={props.style}>
 
       <CopyBlock 
         text={props.text} 
-        language="cpp" 
+        language={props.language??"cpp" }
         theme={props.white??false ? whiteTheme : dracula} 
         wrapLongLines={false} 
         showLineNumbers={props.showLines??false}
@@ -45,7 +45,7 @@ function  Code (props: {text: string, style?: React.CSSProperties, showLines?: b
   )
 }
 
-export default Code;
+export default CodeDiv;
 
 export function CodeFragment(props: { text: string})
 {

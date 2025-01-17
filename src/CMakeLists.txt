@@ -56,6 +56,7 @@ target_include_directories(nwindows PUBLIC
 
 
 add_executable(nwindows_test
+    scratch.cpp
     test_main.cpp
 )
 

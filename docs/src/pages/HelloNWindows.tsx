@@ -22,7 +22,7 @@
  */
 
 import CenteredImage from '../CenteredImage';
-import Code from '../Code';
+import CodeDiv from '../Code';
 import DocsPage from '../DocsPage';
 import M from '../M';
 import Name from '../Name';
@@ -45,7 +45,7 @@ function UsingNWindows() {
                 <p>
                     As a starting point, here is the <Name>NWindows</Name> Hello World program:
                 </p>
-                <Code showLines text=
+                <CodeDiv showLines text=
                     {
                         `#include "NWindows/NWindows.hpp"
 
@@ -122,7 +122,7 @@ int main(void) {
                 </p>
                 <p>Line 11 is the first instance of a <i>manipulator</i> being used to set a property on the <M>window</M> object.
                     Properties of objects in the NWindows api use the following convention:</p>
-                <Code text=
+                <CodeDiv text=
                     {
                         `const std::string& title() const;  // the getter for the title property
 void title(const std::string);      // the setter for the title property
@@ -130,15 +130,15 @@ void title(const std::string);      // the setter for the title property
                     } />
                 <p><i>Manipulators</i> are classes that set properties on objects to which they are applied. Manipulators are applied
                     NWindows objects using the '|' operator. So, return value aside,</p>
-                <Code text={` window | title("Hello")`} />
+                <CodeDiv text={` window | title("Hello")`} />
                 <p>has the same effect as setting the <M>title</M> property with</p>
-                <Code text={` window->title("Hello")`} />
+                <CodeDiv text={` window->title("Hello")`} />
                 <p>Unlike the method call, however, application of a manipulator returns a pointer to the original object which allows
                     setting of properties to be chained together to achieve the rather delightful and concise syntax for composing
                     the user interface of NWindows Hello World. Note that you can always fall back to using properties and method calls
                     instead of manipulators. There's nothing terribly wrong with the following:
                 </p>
-                <Code text=
+                <CodeDiv text=
                     {
                         `NWindow::ptr window = NWindow::create(AUTO_SIZE, AUTO_SIZE);
 window->title("Hello");
@@ -215,7 +215,7 @@ window->title("Hello");
                     and <M>unsubscribe</M> methods to add and remove event handler delegates. So
 
                 </p>
-                <Code text=
+                <CodeDiv text=
                     {
                         `NEventHandle on_clicked_handle = button->on_clicked.subscribe(
         [](int button, NClickedEvent&event_args) { 
@@ -231,7 +231,7 @@ window->title("Hello");
                 <p>will have the same effect as the lambda function in the manipulator.
                     The <M>subscribe</M> method returns an <M>NEventHandle</M> which can later be used to remove the event handler.
                 </p>
-                <Code text=
+                <CodeDiv text=
                     {
                         `button->on_clicked.unsubscribe(on_clicked_handle);`
                     } />
@@ -251,7 +251,7 @@ window->title("Hello");
                     actually  <i>not</i> generate a circular reference, but the code serves to show how relatively painless it
                     is to capture a weak_ptr instead of a shared_ptr.
                 </p>
-                <Code text=
+                <CodeDiv text=
                     {
                         `NEventHandle on_clicked_handle = button->on_clicked.subscribe(
          // capture a weak_ptr to a text element
@@ -270,7 +270,7 @@ window->title("Hello");
                     The event loop will continue until the window is closed, at which point the <M>run</M> method will return.
                 </p>
                 <p>And that's it! You've created your first NWindows program. You can compile and run this program with the following commands:</p>
-                <Code text={
+                <CodeDiv text={
                     `g++ -std=c++20 hello_world.cpp -o hello_world -lNWindows -lncursesw`
                 } />
                 <p>This code sample is included in the <M>examples/hello_world2</M> folder of the NWindows project, and is built as part of the 
