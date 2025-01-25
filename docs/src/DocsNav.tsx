@@ -43,6 +43,7 @@ const Licenses = React.lazy(() => import("./pages/Licenses"));
 
 const PlatformSupport = React.lazy(() => import("./pages/PlatformSupport"));
 const InstallingNWindows = React.lazy(() => import("./pages/InstallingNWindows"));
+const PackagingNWindows = React.lazy(() => import("./pages/PackagingNWindows"));
 const UsingNWindows = React.lazy(() => import("./pages/UsingNWindows"));
 const NWindowsFundamentals = React.lazy(() => import("./pages/NWindowsFundamentals"));
 const HelloNWindows = React.lazy(() => import("./pages/HelloNWindows"));
@@ -80,7 +81,14 @@ const ClassNRadioGroupElement = React.lazy(() => import("./pages/ClassNRadioGrou
 const ClassNMenuElement = React.lazy(() => import("./pages/ClassNMenuElement"));
 const ClassNDropdownElement = React.lazy(() => import("./pages/ClassNDropdownElement"));
 const ClassNWindow = React.lazy(() => import("./pages/ClassNWindow"));
-
+const ClassNMessageWindow = React.lazy(() => import("./pages/ClassNMessageWindow"));
+const ClassNPopupWindow = React.lazy(() => import("./pages/ClassNPopupWindow"));
+const ClassNPopupMenuWindow = React.lazy(() => import("./pages/ClassNPopupMenuWindow"));
+const ClassNButtonElement = React.lazy(() => import("./pages/ClassNButtonElement"));
+const ClassNButtonBaseElement = React.lazy(() => import("./pages/ClassNButtonBaseElement"));
+const ClassNCheckboxElement = React.lazy(() => import("./pages/ClassNCheckboxElement"));
+const ClassNTextEditElement = React.lazy(() => import("./pages/ClassNTextEditElement"));
+const ClassNEvent = React.lazy(() => import("./pages/ClassNEvent"));
 const IndexPage = React.lazy(() => import("./pages/IndexPage"));
 
 
@@ -99,9 +107,10 @@ export interface IndexedComponent {
 };
 
 const indexedComponents: IndexedComponent[] = [
-    { route: "/licenses", component: () => Licenses},
+    { route: "/licenses", component: () => Licenses },
     { route: "/support", component: () => PlatformSupport },
     { route: "/installing", component: () => InstallingNWindows },
+    { route: "/packaging", component: () => PackagingNWindows },
     { route: "/using", component: () => UsingNWindows },
     { route: "/using/fundamentals", component: () => NWindowsFundamentals },
     { route: "/using/hello", component: () => HelloNWindows },
@@ -137,6 +146,14 @@ const indexedComponents: IndexedComponent[] = [
     { route: "/apis/classes/NMenuElement", component: () => ClassNMenuElement },
     { route: "/apis/classes/NDropdownElement", component: () => ClassNDropdownElement },
     { route: "/apis/classes/NWindow", component: () => ClassNWindow },
+    { route: "/apis/classes/NMessageWindow", component: () => ClassNMessageWindow },
+    { route: "/apis/classes/NPopupWindow", component: () => ClassNPopupWindow },
+    { route: "/apis/classes/NPopupMenuWindow", component: () => ClassNPopupMenuWindow },
+    { route: "/apis/classes/NButtonElement", component: () => ClassNButtonElement },
+    { route: "/apis/classes/NButtonBaseElement", component: () => ClassNButtonBaseElement },
+    { route: "/apis/classes/NCheckboxElement", component: () => ClassNCheckboxElement },
+    { route: "/apis/classes/NTextEditElement", component: () => ClassNTextEditElement },
+    { route: "/apis/classes/NEvent", component: () => ClassNEvent },
 ];
 
 export function IndexedComponents() {
@@ -148,42 +165,52 @@ let docsIndex: DocsPage[] = [
     { route: "/documentation", title: "Documentation", up: "" },
     { route: "/licenses", title: "Licenses", up: "/documentation" },
     { route: "/support", title: "1.0 - Platform Support", up: "/documentation" },
-    { route: "/installing", title: "2.0 - Installing NWindows", up: "/documentation" },
-    { route: "/using", title: "3.0 - Using NWindows", up: "/documentation" },
-    { route: "/using/fundamentals", title: "3.1 - General Principles", up: "/using" },
-    { route: "/using/hello", title: "3.2 - Hello NWindows", up: "/using" },
-    { route: "/using/elements", title: "3.3 - NWindows Elements", up: "/using" },
-    { route: "/using/windows", title: "3.4 - NWindows Windows", up: "/using" },
-    { route: "/using/events", title: "3.5 - NWindows Events", up: "/using" },
-    { route: "/using/events/keyboard", title: "3.5.1 - Keyboard Events", up: "/using/events", },
-    { route: "/using/events/mouse", title: "3.5.2 - Mouse Events", up: "/using/events", },
-    { route: "/using/events/misc", title: "3.5.3 - Miscellaneous Events", up: "/using/events", },
-    { route: "/using/custom", title: "3.6 - Implementing Custom Controls", up: "/using", },
-    { route: "/using/custom/unicode", title: "3.6.1 - Unicode Support", up: "/using/custom", },
-    { route: "/using/custom/inherit", title: "3.6.2 - Inheriting from Existing Elements", up: "/using/custom", },
-    { route: "/using/custom/compose", title: "3.6.3 - Compound Elements", up: "/using/custom", },
-    { route: "/using/custom/full", title: "3.6.4 - Fully-Custom Elements", up: "/using/custom", },
-    { route: "/using/dispatcher", title: "3.7 - The NWindows Dispatcher", up: "/using", },
-    { route: "/apis", title: "4.0 - NWindows API Reference", up: "/documentation", },
-    { route: "/apis/defines", title: "4.1 - Defines", up: "/apis", },
-    { route: "/apis/constants", title: "4.2 - Constants", up: "/apis", },
-    { route: "/apis/typedefs", title: "4.3 - Type Definitions", up: "/apis", },
-    { route: "/apis/enums", title: "4.4 - Enums", up: "/apis", },
-    { route: "/apis/structs", title: "4.5 - Structs", up: "/apis", },
-    { route: "/apis/methods", title: "4.6 - Methods", up: "/apis", },
-    { route: "/apis/classes", title: "4.7 - Classes", up: "/apis", },
-    { route: "/apis/classes/NBoxElement", title: "4.7.1 - NBoxElement", up: "/apis/classes" },
-    { route: "/apis/classes/NColor", title: "4.7.2 - NColor", up: "/apis/classes" },
-    { route: "/apis/classes/NColorPair", title: "4.7.3 - NColorPair", up: "/apis/classes" },
-    { route: "/apis/classes/NContainerElement", title: "4.7.4 - NContainerElement", up: "/apis/classes" },
-    { route: "/apis/classes/NDropdownElement", title: "4.7.X - NDropdownElement", up: "/apis/classes" },
-    { route: "/apis/classes/NElement", title: "4.7.5 - NElement", up: "/apis/classes" },
-    { route: "/apis/classes/NHorizontalStackElement", title: "4.7.X - NHorizontalStackElement", up: "/apis/classes" },
-    { route: "/apis/classes/NMenuElement", title: "4.7.X - NMenuElement", up: "/apis/classes" },
-    { route: "/apis/classes/NRadioGroupElement", title: "4.7.X - NRadioGroupElement", up: "/apis/classes" },
-    { route: "/apis/classes/NTextElement", title: "4.7.6 - NTextElement", up: "/apis/classes" },
-    { route: "/apis/classes/NVerticalStackElement", title: "4.7.X - NVerticalStackElement", up: "/apis/classes" },
-    { route: "/apis/classes/NWindow", title: "4.7.X - NWindow", up: "/apis/classes" },
+    { route: "/installing", title: "2.0 - Installing and Building NWindows", up: "/documentation" },
+    { route: "/packaging", title: "3.0 - Packaging NWindows Applications", up: "/documentation" },
+    { route: "/using", title: "4.0 - Using NWindows", up: "/documentation" },
+    { route: "/using/fundamentals", title: "4.1 - General Principles", up: "/using" },
+    { route: "/using/hello", title: "4.2 - Hello NWindows", up: "/using" },
+    { route: "/using/elements", title: "4.3 - NWindows Elements", up: "/using" },
+    { route: "/using/windows", title: "4.4 - NWindows Windows", up: "/using" },
+    { route: "/using/events", title: "4.5 - NWindows Events", up: "/using" },
+    { route: "/using/events/keyboard", title: "4.5.1 - Keyboard Events", up: "/using/events", },
+    { route: "/using/events/mouse", title: "4.5.2 - Mouse Events", up: "/using/events", },
+    { route: "/using/events/misc", title: "4.5.3 - Miscellaneous Events", up: "/using/events", },
+    { route: "/using/custom", title: "4.6 - Implementing Custom Controls", up: "/using", },
+    { route: "/using/custom/unicode", title: "4.6.1 - Unicode Support", up: "/using/custom", },
+    { route: "/using/custom/inherit", title: "4.6.2 - Inheriting from Existing Elements", up: "/using/custom", },
+    { route: "/using/custom/compose", title: "4.6.3 - Compound Elements", up: "/using/custom", },
+    { route: "/using/custom/full", title: "4.6.4 - Fully-Custom Elements", up: "/using/custom", },
+    { route: "/using/dispatcher", title: "4.7 - The NWindows Dispatcher", up: "/using", },
+    { route: "/apis", title: "5.0 - NWindows API Reference", up: "/documentation", },
+    { route: "/apis/defines", title: "5.1 - Defines", up: "/apis", },
+    { route: "/apis/constants", title: "5.2 - Constants", up: "/apis", },
+    { route: "/apis/typedefs", title: "5.3 - Type Definitions", up: "/apis", },
+    { route: "/apis/enums", title: "5.4 - Enums", up: "/apis", },
+    { route: "/apis/structs", title: "5.5 - Structs", up: "/apis", },
+    { route: "/apis/methods", title: "5.6 - Methods", up: "/apis", },
+    { route: "/apis/classes", title: "5.7 - Classes", up: "/apis", },
+    { route: "/apis/classes/NBoxElement", title: "5.7.1 - NBoxElement", up: "/apis/classes" },
+    { route: "/apis/classes/NButtonElement", title: "5.7.2 - NButtonElement", up: "/apis/classes" },
+    { route: "/apis/classes/NButtonBaseElement", title: "5.7.3 - NButtonBaseElement", up: "/apis/classes" },
+    { route: "/apis/classes/NCheckboxElement", title: "5.7.4 - NCheckboxElement", up: "/apis/classes" },
+    { route: "/apis/classes/NColor", title: "5.7.5 - NColor", up: "/apis/classes" },
+    { route: "/apis/classes/NColorPair", title: "5.7.6 - NColorPair", up: "/apis/classes" },
+    { route: "/apis/classes/NContainerElement", title: "5.7.7 - NContainerElement", up: "/apis/classes" },
+    { route: "/apis/classes/NDropdownElement", title: "5.7.8 - NDropdownElement", up: "/apis/classes" },
+    { route: "/apis/classes/NElement", title: "5.7.9 - NElement", up: "/apis/classes" },
+    { route: "/apis/classes/NEvent", title: "5.7.10 - NEvent<T>", up: "/apis/classes" },
+    { route: "/apis/classes/NHorizontalStackElement", title: "5.7.11 - NHorizontalStackElement", up: "/apis/classes" },
+    { route: "/apis/classes/NMenuElement", title: "5.7.12 - NMenuElement", up: "/apis/classes" },
+    { route: "/apis/classes/NMessageWindow", title: "5.7.13 - NMessageWindow", up: "/apis/classes" },
+    { route: "/apis/classes/NPopupWindow", title: "5.7.14 - NPopupWindow", up: "/apis/classes" },
+    { route: "/apis/classes/NPopupMenuWindow", title: "5.7.15 - NPopupMenuWindow", up: "/apis/classes" },
+    { route: "/apis/classes/NRadioGroupElement", title: "5.7.16 - NRadioGroupElement", up: "/apis/classes" },
+    { route: "/apis/classes/NTextElement", title: "5.7.17 - NTextElement", up: "/apis/classes" },
+    { route: "/apis/classes/NTextEditElement", title: "5.7.18 - NTextEditElement", up: "/apis/classes" },
+    { route: "/apis/classes/NVerticalStackElement", title: "5.7.19 - NVerticalStackElement", up: "/apis/classes" },
+    { route: "/apis/classes/NWindow", title: "5.7.20 - NWindow", up: "/apis/classes" },
+
     // XXX Delete me!
     { route: "/index_builder", title: "Index Builder", up: "/documentation", },
     { route: "/index", title: "Index", up: "/documentation", },
@@ -495,15 +522,15 @@ export function WhereToGoFromHere() {
         treeNodeId = 0;
     }
     return (
-        <div style={{marginLeft: 0}}>
+        <div style={{ marginLeft: 0 }}>
             {DocsLink("/documentation")}
             <div style={{ marginLeft: 32 }}>
-            {tree.children.map((node) => {
+                {tree.children.map((node) => {
 
-                return (<div key={treeNodeId++}>
-                    {DocsLink(node.page.route)}
-                </div>);
-            })}
+                    return (<div key={treeNodeId++}>
+                        {DocsLink(node.page.route)}
+                    </div>);
+                })}
             </div>
         </div>
     );

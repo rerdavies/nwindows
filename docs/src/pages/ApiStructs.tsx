@@ -27,7 +27,7 @@ import {
     ClassSectionHead, ConstantDescription, MethodDescription, MethodDescriptions, StructDescription,
     FieldDefinitionList, FieldDescriptions, FieldEntry, OperatorDescriptions, ConstructorDescriptions
 } from '../ClassDescription';
-import M, {ML} from '../M';
+import M, { ML } from '../M';
 
 function ApiStructs() {
 
@@ -171,12 +171,12 @@ function ApiStructs() {
                 <FieldDescriptions>
                     <FieldDefinitionList>
                         <FieldEntry type={`NElement::ptr`} name="NEventArgsBase::source" >
-                        <div>The source of the event.</div>
+                            <div>The source of the event.</div>
                         </FieldEntry>
 
                         <FieldEntry type={`NWindow::ptr`} name="NEventArgsBase::window" >
                             <div>The window that the source element is attached to.
-                        </div>
+                            </div>
                         </FieldEntry>
 
                         <FieldEntry type="bool" name="NEventArgsBase::handled" >
@@ -196,10 +196,10 @@ function ApiStructs() {
                     <FieldDescriptions>
                         <FieldDefinitionList>
                             <FieldEntry type={`NElement::ptr`} name="NElement::target" >
-                            <div>The element that has focus in the current window. May be a child of the current
-                                element if the event is bubbling. May be empty if the event is fired on
-                                an <M>NWindow</M> and no element has focus.
-                            </div>
+                                <div>The element that has focus in the current window. May be a child of the current
+                                    element if the event is bubbling. May be empty if the event is fired on
+                                    an <M>NWindow</M> and no element has focus.
+                                </div>
                             </FieldEntry>
 
                             <FieldEntry type={`char32_t`} name="NKeyEventArgs::key" >
@@ -276,6 +276,24 @@ function ApiStructs() {
     bool enabled = true)`} >
                     <p>Constructors sub-menu menu item. the <M>submenu</M> argument takes
                         a <M>std::vector</M> of menu items to display in the submenu flyout.  </p>
+                </MethodDescription>
+                <MethodDescription indexName="NMenuItem::NMenuItem(const std::string&icon, const std::string &label, int item_id, bool enabled)"
+                    method={`NMenuItem(
+    const std::string icon,
+    const std::string text, 
+    int item_id, 
+    bool enabled = true)`} >
+                    <p>Constructors menu item with a Unicode icon. The <M>icon</M> argument should contain a single Unicode character.
+                    </p>
+                </MethodDescription>
+                <MethodDescription indexName="NMenuItem::NMenuItem(bool checked,const std::string &label, int item_id, bool enabled)"
+                    method={`NMenuItem(
+    bool checked,
+    const std::string text, 
+    int item_id, 
+    bool enabled = true)`} >
+                    <p>Constructors menu item with a checkmark. The <M>checked</M> argument determines whether a checkmark is displayed.
+                    </p>
                 </MethodDescription>
 
                 <MethodDescription indexName="static NMenuItem NMenuItem::Divider()"
@@ -506,6 +524,7 @@ function ApiStructs() {
             </StructDescription>
 
             <StructDescription name="NSize">
+
                 <ClassSectionHead text="Constructors" />
                 <MethodDescription indexName="NSize::NSize()" method="NSize()" >
                     <p>Default constructor. Initializes width and height to 0.</p>
@@ -523,7 +542,80 @@ function ApiStructs() {
                         <div />
                     </FieldDefinitionList>
                 </FieldDescriptions>
+                <OperatorDescriptions>
+                    <MethodDescription indexName="bool NSize::operator==(const NSize& other) const"
+                        method="bool operator==(const NSize& other) const;" >
+                    </MethodDescription>
+                </OperatorDescriptions>
             </StructDescription>
+
+            <StructDescription name="NTextSelection">
+                <p>Text selection in an <ML name="NTextEditElement" />. Indices are offsets into a UTF8-encoded <M>std::string</M>. <M>start</M> and <M>start + length</M> must
+                    fall on a boundary between UTF-8 sequences.</p>
+                <ClassSectionHead text="Constructors" />
+                <MethodDescription indexName="NTextSelection::NTextSelection()" method="NTextSelection()" >
+                    <p>Default constructor. Initializes start and length to 0.</p>
+                </MethodDescription>
+                <MethodDescription indexName="NTextSelection::NTextSelection(int start, int length)"
+                    method="NTextSelection(int start, int length)" >
+                </MethodDescription>
+                <FieldDescriptions>
+                    <FieldDefinitionList>
+                        <div>int</div>
+                        <div>start</div>
+                        <div>The index of the starting character in the selection.</div>
+
+                        <div>int</div>
+                        <div>length</div>
+                        <div>The number of characters in the selection. May be negative, indicating a backward selection.</div>
+                    </FieldDefinitionList>
+                </FieldDescriptions>
+                <MethodDescriptions>
+                    <MethodDescription indexName="bool NTextSelection::is_empty() const"
+                        method="bool is_empty() const;" />
+                    <MethodDescription indexName="int NTextSelection::end() const"
+                        method={`int end() const;`} />
+                    <MethodDescription indexName="void NTextSelection::end(int value)"
+                        method={`void end(int value);`} />
+                    <MethodDescription indexName="int NTextSelection::min() const"
+                        method={`int min() const;`} />
+                    <MethodDescription indexName="int NTextSelection::max() const"
+                        method={`int max() const;`} />
+                    <MethodDescription indexName="int NTextSelection::abs_length() const"
+                        method={`int abs_length() const;`} />
+                    <MethodDescription indexName="void NTextSelection::delete_character_at(int utf8_index)"
+                        method={`void delete_character_at(int utf8_index);`} />
+
+                </MethodDescriptions>
+                <OperatorDescriptions>
+                    <MethodDescription indexName="bool NTextSelection::operator==(const NTextSelection& other) const"
+                        method={`bool operator==(const NTextSelection& other) const;`} />
+                </OperatorDescriptions>
+
+            </StructDescription>
+            {/*
+    struct NTextSelection {
+        NTextSelection() : start(0), length(0) {}
+        NTextSelection(int start, int length) : start(start), length(length) {}
+
+        int start;
+        int length;
+
+        bool is_empty() const { return length == 0; }
+        int end() const { return start + length; }
+        void end(int value) { length = value - start; }
+        int min() const { return std::min(start, end()); }
+        int max() const { return std::max(start, end()); }
+        int abs_length() const { return std::abs(length); }
+        void delete_character_at(int utf8_index);
+
+        bool operator==(const NTextSelection& other) const {
+            return start == other.start
+                && length == other.length;
+        }
+    };
+
+            */}
 
             <StructDescription name="NThickness">
                 <ClassSectionHead text="Constructors" />

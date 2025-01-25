@@ -23,7 +23,10 @@
 
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
-import ClassDescription, { MethodDescription, ClassSectionHead, UsingDescription, PropertyList, PropertyEntry, EventDescriptions, EventDescription, TypeDefinitions } from '../ClassDescription';
+import ClassDescription, {
+    CreateDescriptions, MethodDescription, ClassSectionHead, UsingDescription, PropertyList,
+    PropertyEntry, EventDescriptions, EventDescription, TypeDefinitions
+} from '../ClassDescription';
 import M from '../M';
 import CenteredImage from '../CenteredImage';
 
@@ -51,24 +54,25 @@ function ClassNRadioGroupElement() {
                 </TypeDefinitions>
 
 
-                <ClassSectionHead text="Constructors" />
-                <MethodDescription indexName={[
-                    "static NRadioGroupElement::ptr NRadioGroupElement::create(NOrientation orientation, const std::vector<std::string>& labels, int selection)",
-                    "static NRadioGroupElement::ptr NRadioGroupElement::create()",
+                <CreateDescriptions>
+                    <MethodDescription indexName={[
+                        "static NRadioGroupElement::ptr NRadioGroupElement::create(NOrientation orientation, const std::vector<std::string>& labels, int selection)",
+                        "static NRadioGroupElement::ptr NRadioGroupElement::create()",
 
-                ]}
-                    method={`static NRadioGroupElement::ptr create(
+                    ]}
+                        method={`static NRadioGroupElement::ptr create(
     NOrientation orientation,
     const std::vector<std::string>& labels,
     int selection);
 
 static NRadioGroupElement::ptr create();
 `}>
-                    <div>
-                        Return an <M>std::shared_ptr</M> to a newly-created <M>NRadioGroupElement</M>. Optionally set
-                        the orientation, labels and selection properties.
-                    </div>
-                </MethodDescription>
+                        <div>
+                            Return an <M>std::shared_ptr</M> to a newly-created <M>NRadioGroupElement</M>. Optionally set
+                            the <M>orientation</M>, <M>labels</M> and <M>selection</M> properties.
+                        </div>
+                    </MethodDescription>
+                </CreateDescriptions>
 
                 <ClassSectionHead text="Protected Constructor" />
                 <MethodDescription indexName="static NRadioGroupElement::ptr NRadioGroupElement::create()"
@@ -83,8 +87,8 @@ static NRadioGroupElement::ptr create();
                 <PropertyList>
                     <PropertyEntry type="NOrientation" propertyName='NRadioGroupElement::orientation'>
                         <div>
-                            <p>Controls how radio buttons are stacked within the <M>NRadioGroupElement</M>. 
-                            Either <M>NOrientation::Horizontal</M> or <M>NOrientation::Vertical</M>. Defaults to <M>NOrientation::Vertical</M>.
+                            <p>Controls how radio buttons are stacked within the <M>NRadioGroupElement</M>.
+                                Either <M>NOrientation::Horizontal</M> or <M>NOrientation::Vertical</M>. Defaults to <M>NOrientation::Vertical</M>.
                             </p>
                         </div>
                     </PropertyEntry>
@@ -94,15 +98,15 @@ static NRadioGroupElement::ptr create();
                             <p>
                                 Labels for each radio button. The number of labels determines the number of radio buttons.
                             </p><p>
-                                If the '_' character appears in a label, the character which follows is treated as a short-cut key. The 
-                                short-cut key character will be underlined when the radio button is displayed. 
+                                If the '_' character appears in a label, the character which follows is treated as a short-cut key. The
+                                short-cut key character will be underlined when the radio button is displayed.
                                 NWindows performs locale-aware case-insensitive comparison of the short-cut key with keystrokes to
                                 select the radio button.</p>
                         </div>
                     </PropertyEntry>
                     <PropertyEntry type="int" propertyName='NRadioGroupElement::selection'>
                         <div>
-                            The index of the currently selected radio button. Defaults to 0. Set the selection to -1 to 
+                            The index of the currently selected radio button. Defaults to 0. Set the selection to -1 to
                             deselect all radio buttons.
                         </div>
                     </PropertyEntry>
@@ -123,30 +127,30 @@ static NRadioGroupElement::ptr create();
 
                     <PropertyEntry type="std::string" propertyName='NRadioGroupElement::checked_text'>
                         <div>
-                            Provided to allow customization. The prefix text to display when a radio button is checked. Defaults to "", which 
-                            allows the element to choose <M>" ◉  "</M> on terminals that can display the character, and 
+                            Provided to allow customization. The prefix text to display when a radio button is checked. Defaults to "", which
+                            allows the element to choose <M>" ◉  "</M> on terminals that can display the character, and
                             fall back to <M>" (X)  "</M> on terminals that cannot.
-                        </div>  
+                        </div>
                     </PropertyEntry>
                     <PropertyEntry type="std::string" propertyName='NRadioGroupElement::unchecked_text'>
-                    <div>
-                            Provided to allow customization. The prefix text to display when a radio button is unchecked. Defaults to "", which 
-                            allows the element to choose <M>" ○  "</M> on terminals that can display the character, and 
+                        <div>
+                            Provided to allow customization. The prefix text to display when a radio button is unchecked. Defaults to "", which
+                            allows the element to choose <M>" ○  "</M> on terminals that can display the character, and
                             fall back to <M>" ( )  "</M> on terminals that do cannot.
-                        </div>  
+                        </div>
 
                     </PropertyEntry>
                 </PropertyList>
 
                 <EventDescriptions>
-                        <EventDescription indexName="NEvent<void(NRadioButtonGroupElement::ptr source, int selection)> NRadioGroupElement::on_selection_changed"    
-                            event={`NEvent<
+                    <EventDescription indexName="NEvent<void(NRadioButtonGroupElement::ptr source, int selection)> NRadioGroupElement::on_selection_changed"
+                        event={`NEvent<
     void(NRadioButtonGroupElement::ptr source, int selection)
 > on_selection_changed;`}>
-                            <p>
-                                Fired when the selected radio button changes. 
-                            </p>
-                        </EventDescription>
+                        <p>
+                            Fired when the selected radio button changes.
+                        </p>
+                    </EventDescription>
                 </EventDescriptions>
 
             </ClassDescription>

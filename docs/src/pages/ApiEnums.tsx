@@ -25,7 +25,7 @@ import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import { EnumDescription, EnumDefinitionList } from '../ClassDescription';
 import CenteredImage from '../CenteredImage';
-import M from '../M';
+import M, {ML} from '../M';
 
 function ApiEnums() {
 
@@ -132,6 +132,20 @@ function ApiEnums() {
                 </EnumDefinitionList>
                 <p>Controls how <M>NPopupWindow</M>s are positioned with respect to their anchor rectangle.</p>
             </EnumDescription>
+            <EnumDescription enumName="NMessageType">
+                <p>The type of message window to display. See <ML fullName name="NMessageWindow::create"/>.</p>
+                <EnumDefinitionList>
+                    <div>Information</div>
+                    <div>Information message.</div>
+
+                    <div>Warning</div>
+                    <div>Warning message.</div>
+
+                    <div>Error</div>
+                    <div>Error message.</div>
+                </EnumDefinitionList>
+            </EnumDescription>
+
             <EnumDescription enumName='NNavDirection'>
                 <EnumDefinitionList>
                     <div>Up</div>

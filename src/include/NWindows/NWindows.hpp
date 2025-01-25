@@ -119,10 +119,27 @@ namespace nwindows
         Justify
     };
 
+    enum class NMouseButton {
+        None = -1,
+        Left = 0,
+        Middle = 1,
+        Right = 2,
+        Extra = 3,
+    };
+
     struct NMenuItem {
         NMenuItem() {}
         NMenuItem(const std::string& label, int item_id, bool enabled = true)
             : label(label), item_id(item_id), enabled(enabled) {
+        }
+        NMenuItem(const std::string& icon, const std::string& label, int item_id, bool enabled = true)
+            : label(label), item_id(item_id), enabled(enabled), icon(icon) {
+        }
+        NMenuItem(const char* icon, const std::string& label, int item_id, bool enabled = true)
+            : label(label), item_id(item_id), enabled(enabled), icon(icon) {
+        }
+        NMenuItem(bool checked, const std::string& label, int item_id, bool enabled = true)
+            : label(label), item_id(item_id), enabled(enabled), display_check(true), checked(checked) {
         }
         NMenuItem(const std::string& label, const std::vector<NMenuItem>& submenu, bool enabled = true)
             : label(label), item_id(NO_ITEM_ID), enabled(enabled), submenu(submenu) {
@@ -332,10 +349,10 @@ namespace nwindows
 
         NPoint cursor_position = { -1,-1 };
 
-        bool button0_pressed = false;
-        bool button1_pressed = false;
-        bool button2_pressed = false;
-        bool button3_pressed = false;
+        bool left_button_pressed = false;
+        bool middle_button_pressed = false;
+        bool right_button_pressed = false;
+        bool extra_button_pressed = false;
 
         bool shift = false;
         bool alt = false;
@@ -344,7 +361,15 @@ namespace nwindows
 
     };
 
-    class NElement : public std::enable_shared_from_this<NElement>
+    class NObject { 
+    public:
+        using self = NObject;
+        using ptr = std::shared_ptr<self>;
+
+        virtual ~NObject() {}
+
+    };
+    class NElement : public NObject,public std::enable_shared_from_this<NElement>
     {
     private:
         NElement() : NElement("Element") {}
@@ -429,6 +454,10 @@ namespace nwindows
         bool is_cancel() const { return is_cancel_; }
         virtual void is_cancel(bool value) { is_cancel_ = value; }
 
+        NObject::ptr user_data() { return user_data_; }
+        const NObject::ptr user_data() const { return user_data_; }
+        void user_data(NObject::ptr value) { user_data_ = value; }
+
 
         virtual NElement::ptr get_element_at(int x, int y);
         NElement::ptr get_element_at(const NPoint& pt) { return get_element_at(pt.x, pt.y); }
@@ -440,19 +469,53 @@ namespace nwindows
                 find_child_element([id](NElement& element) { return element.id() == id; }));
         }
 
-        NEvent<void(NWindow* window)> on_attached;
-        NEvent<void()> on_detaching;
-        NEvent<void(bool focused)> on_focused;
-        NEvent<void(int button, NClickedEventArgs& event_args)>  on_clicked;
-        NEvent<void(int button, NMouseEventArgs& event_args)> on_mouse_button_pressed;
-        NEvent<void(int button, NMouseEventArgs& event_args)>  on_mouse_button_released;
-        NEvent<void(NMouseEventArgs& event_args)>  on_mouse_move;
-        NEvent<void()>  on_mouse_lost_capture;
-        NEvent<void(NMouseEventArgs& event_args)> on_mouse_enter;
-        NEvent<void(NMouseEventArgs& event_args)> on_mouse_leave;
+        NEvent<
+            void(NWindow* window)
+        > on_attached;
 
-        NEvent<void(NKeyEventArgs& event_args)> on_key;
-        NEvent<void(NKeyCodeEventArgs& event_args)> on_key_code;
+        NEvent<
+            void()
+        > on_detaching;
+
+        NEvent<
+            void(bool focused)
+        > on_focused;
+
+        NEvent<
+            void(NMouseButton button, NClickedEventArgs& event_args)
+        > on_clicked;
+
+        NEvent<
+            void(NMouseButton button, NMouseEventArgs& event_args)
+        > on_mouse_button_pressed;
+
+        NEvent<
+            void(NMouseButton button, NMouseEventArgs& event_args)
+        > on_mouse_button_released;
+
+        NEvent<
+            void(NMouseEventArgs& event_args)
+        > on_mouse_move;
+
+        NEvent<
+            void()
+        > on_mouse_lost_capture;
+
+        NEvent<
+            void(NMouseEventArgs& event_args)
+        > on_mouse_enter;
+
+        NEvent<
+            void(NMouseEventArgs& event_args)
+        > on_mouse_leave;
+
+        NEvent<
+            void(NKeyEventArgs& event_args)
+        > on_key;
+
+        NEvent<
+            void(NKeyCodeEventArgs& event_args)
+        > on_key_code;
 
 #ifdef DEBUG_NELEMENT_LIFECYCLE
         static int64_t allocated_element_count();
@@ -531,10 +594,10 @@ namespace nwindows
     protected:
         virtual bool handle_key(NKeyEventArgs& event_args);
         virtual bool handle_key_code(NKeyCodeEventArgs& event_args);
-        virtual bool handle_clicked(int button, NClickedEventArgs& eventArgs);
-        virtual bool handle_mouse_button_clicked(int button, NMouseEventArgs& event_args);
-        virtual bool handle_mouse_button_pressed(int button, NMouseEventArgs& event_args);
-        virtual bool handle_mouse_button_released(int button, NMouseEventArgs& event_args);
+        virtual bool handle_clicked(NMouseButton button, NClickedEventArgs& eventArgs);
+        virtual bool handle_mouse_button_clicked(NMouseButton button, NMouseEventArgs& event_args);
+        virtual bool handle_mouse_button_pressed(NMouseButton button, NMouseEventArgs& event_args);
+        virtual bool handle_mouse_button_released(NMouseButton button, NMouseEventArgs& event_args);
         // only received after NWindow::mouse_capture() is called.
         virtual bool handle_mouse_move(NMouseEventArgs& event_args);
         virtual void handle_mouse_lost_capture();
@@ -559,11 +622,12 @@ namespace nwindows
 
         virtual void for_each_element(const std::function<void(NElement&)>& callback);
 
-        virtual bool simulate_keyboard_click(NElement* source, int button = 0);
+        virtual bool simulate_keyboard_click(NElement* source, NMouseButton button = NMouseButton::Left);
         bool keyboard_clicking() const { return keyboard_clicking_; }
 
 
     private:
+        NObject::ptr user_data_;
         bool request_initial_focus_ = false;
         friend class NContainerElement;
         virtual void parent(NElement* value) {
@@ -767,7 +831,7 @@ namespace nwindows
         virtual void arrange(const NRect& rect) override;
 
     private:
-        NAlignment alignment_ = NAlignment::Start;
+        NAlignment alignment_ = NAlignment::Justify;
         int row_gap_ = 0;
     };
 
@@ -802,8 +866,8 @@ namespace nwindows
 
         virtual bool handle_mouse_leave(NMouseEventArgs& event_args) override;
         virtual bool handle_mouse_enter(NMouseEventArgs& event_args) override;
-        virtual bool handle_mouse_button_pressed(int button, NMouseEventArgs& event_args) override;
-        virtual bool handle_mouse_button_released(int button, NMouseEventArgs& event_args) override;
+        virtual bool handle_mouse_button_pressed(NMouseButton  button, NMouseEventArgs& event_args) override;
+        virtual bool handle_mouse_button_released(NMouseButton  button, NMouseEventArgs& event_args) override;
         virtual void handle_focused(bool);
         bool pressed() { return pressed_; }
     protected:
@@ -834,6 +898,7 @@ namespace nwindows
         int start;
         int length;
 
+        bool is_empty() const { return length == 0; }
         int end() const { return start + length; }
         void end(int value) { length = value - start; }
         int min() const { return std::min(start, end()); }
@@ -865,12 +930,15 @@ namespace nwindows
         const std::string& text() const { return text_; }
         void text(const std::string& value);
 
-        NEvent<void(NTextEditElement::ptr source, const std::string&)> on_text_changed;
+        void password(bool value);
+        bool password() const { return password_; }
 
-        // In utf8 Unicode canonical form (accents composed)
+
+        // In utf8 Unicode NFC canonical form (accents composed)
         std::string normalized_text() const;
-        // In utf8 Unicode de-composed form (accents de-composed)
+        // In utf8 Unicode NFD canonical form (accents de-composed)
         std::string decomposed_text() const;
+
 
         const NTextSelection& selection() const { return selection_; }
         void selection(const NTextSelection& value);
@@ -879,7 +947,14 @@ namespace nwindows
         // (0,0) is the top-left corner of the element.
         int cursor_position();
 
-        NEvent<void(NTextEditElement::ptr source, NTextSelection selection)> on_selection_changed;
+        NEvent<
+            void(NTextEditElement::ptr source, const std::string&)
+        > on_text_changed;
+
+
+        NEvent<
+            void(NTextEditElement::ptr source, NTextSelection selection)
+        > on_selection_changed;
 
         void select_all();
         void select_start() { selection({ 0, 0 }); }
@@ -888,15 +963,11 @@ namespace nwindows
         void cut();
         void copy();
         void paste();
+        void replace_selection(const std::string&text);
+        void delete_selection() { replace_selection(""); }
 
-        int scroll_x_offset() const { return scroll_x_offset_; }
-        void  scroll_x_offset(int value);
-
-        void password(bool value);
-        bool password() const { return password_; }
-
-        void character_filter(const std::function<bool(char32_t c)>& filter) { character_filter_ = filter; }
-        void character_filter(std::function<bool(char32_t c)>&& filter) { character_filter_ = std::move(filter); }
+        void character_filter(const std::function<bool(char32_t c, int position)>& filter) { character_filter_ = filter; }
+        void character_filter(std::function<bool(char32_t c, int position)>&& filter) { character_filter_ = std::move(filter); }
 
     protected:
         virtual NSize measure(const NSize& available) override;
@@ -911,8 +982,8 @@ namespace nwindows
 
         virtual bool handle_mouse_leave(NMouseEventArgs& event_args) override;
         virtual bool handle_mouse_enter(NMouseEventArgs& event_args) override;
-        virtual bool handle_mouse_button_pressed(int button, NMouseEventArgs& event_args) override;
-        virtual bool handle_mouse_button_released(int button, NMouseEventArgs& event_args) override;
+        virtual bool handle_mouse_button_pressed(NMouseButton  button, NMouseEventArgs& event_args) override;
+        virtual bool handle_mouse_button_released(NMouseButton  button, NMouseEventArgs& event_args) override;
         virtual void handle_focused(bool) override;
 
         virtual bool handle_mouse_move(NMouseEventArgs& event_args) override;
@@ -935,7 +1006,10 @@ namespace nwindows
         void on_blink_timer();
 
     private:
-        std::function<bool(char32_t c)> character_filter_;
+        int scroll_x_offset() const { return scroll_x_offset_; }
+        void  scroll_x_offset(int value);
+
+        std::function<bool(char32_t c, int position)> character_filter_;
         void wrap_text(bool value); // not implemented.
         bool wrap_text() const { return wrap_text_; }
 
@@ -962,7 +1036,7 @@ namespace nwindows
 
     class NCheckboxElement : public NButtonBaseElement {
     protected:
-        NCheckboxElement(const std::string& text, bool checked);
+        NCheckboxElement(const std::string& text, bool checked, const std::string &tagName="Checkbox");
     public:
         using super = NButtonBaseElement;
         using self = NCheckboxElement;
@@ -985,11 +1059,13 @@ namespace nwindows
         void unchecked_text(const std::string& value) { unchecked_text_ = value; invalidate_layout(); }
         std::string unchecked_text() const;
 
-        NEvent<void(NElement::ptr source, bool checked)> on_checked_changed;
+        NEvent<
+            void(NCheckboxElement::ptr source, bool checked)
+        > on_checked_changed;
 
         virtual bool wants_shortcut_key(const std::string& key) override;
     protected:
-        virtual bool handle_clicked(int button, NClickedEventArgs& eventArgs) override;
+        virtual bool handle_clicked(NMouseButton button, NClickedEventArgs& eventArgs) override;
 
         void render() override;
         NSize measure(const NSize& available) override;
@@ -999,9 +1075,9 @@ namespace nwindows
         std::string unchecked_text_ = ""; // ○
         bool checked_;
     };
-    class NButtonElement :public NButtonBaseElement {
-    private:
-        NButtonElement(const std::string& label, int width);
+    class NButtonElement : public NButtonBaseElement {
+    protected:
+        NButtonElement(const std::string& label, int width, const std::string &tagName="Button");
     public:
         virtual ~NButtonElement() {}
 
@@ -1020,14 +1096,15 @@ namespace nwindows
         std::string label() const { return label_; }
         void label(const std::string& value);
 
-        std::string prefix() const;
-        void prefix(const std::string& value);
-
-        std::string suffix() const;
-        void suffix(const std::string& value);
-
         NAlignment label_alignment() const { return label_alignment_; }
         void label_alignment(NAlignment value);
+
+        std::string prefix() const { return prefix_; }
+        void prefix(const std::string& value);
+
+        std::string suffix() const { return suffix_; }
+        void suffix(const std::string& value);
+
         virtual bool wants_shortcut_key(const std::string& key) override;
 
     protected:
@@ -1120,7 +1197,9 @@ namespace nwindows
 
         // Events
 
-        NEvent<void(NRadioGroupElement::ptr source, int value)> on_selection_changed;
+        NEvent<
+            void(NRadioGroupElement::ptr source, int value
+        )> on_selection_changed;
 
         // Customizability.
         std::string checked_text() const;
@@ -1157,27 +1236,35 @@ namespace nwindows
 
     class NMenuElement : public NButtonBaseElement {
     protected:
-        NMenuElement(const std::string& label, std::vector<NMenuItem>&& items, const std::string& tagName = "Menu");
-        NMenuElement(const std::string& label, const std::vector<NMenuItem>& items, const std::string& tagName = "Menu");
+        NMenuElement(const std::string& label, std::vector<NMenuItem>&& menu_items, const std::string& tagName = "Menu");
+        NMenuElement(const std::string& label, const std::vector<NMenuItem>& menu_items, const std::string& tagName = "Menu");
     public:
         using self = NMenuElement;
         using super = NButtonBaseElement;
         using ptr = std::shared_ptr<self>;
 
-        static ptr create(const std::string& label, std::vector<NMenuItem>&& items) { return std::shared_ptr<self>(new self(label, std::move(items))); }
-        static ptr create(const std::string& label, const std::vector<NMenuItem>& items) { return std::shared_ptr<self>(new self(label, items)); }
+        static ptr create(const std::string& label, std::vector<NMenuItem>&& menu_items) { return std::shared_ptr<self>(new self(label, std::move(menu_items))); }
+        static ptr create(const std::string& label, const std::vector<NMenuItem>& menu_items) { return std::shared_ptr<self>(new self(label, menu_items)); }
         static ptr create() { return std::shared_ptr<self>(new self("", std::vector<NMenuItem>())); }
 
-        NEvent<void(NMenuElement::ptr source)> on_opening;
-        NEvent<void(NMenuElement::ptr source)> on_closed;
-        NEvent<void(NMenuElement::ptr source, int selection)> on_item_selected;
+        NEvent<
+            void(NMenuElement::ptr source)
+        > on_opening;
+
+        NEvent<
+            void(NMenuElement::ptr source)
+        > on_closed;
+
+        NEvent<
+            void(NMenuElement::ptr source, int selection)
+        > on_item_selected;
 
         bool open() const { return open_; }
         void open(bool value);
 
-        const std::vector<NMenuItem>& items() const { return items_; }
-        void items(const std::vector<NMenuItem>& value);
-        void items(std::vector<NMenuItem>&& value);
+        const std::vector<NMenuItem>& items() const { return menu_items_; }
+        void menu_items(const std::vector<NMenuItem>& value);
+        void menu_items(std::vector<NMenuItem>&& value);
 
         const std::string& label() { return label_; }
         void label(const std::string& value);
@@ -1195,7 +1282,7 @@ namespace nwindows
 
 
     protected:
-        virtual bool handle_clicked(int button, NClickedEventArgs& eventArgs) override;
+        virtual bool handle_clicked(NMouseButton button, NClickedEventArgs& eventArgs) override;
         virtual NColorPair get_color() override;
 
         virtual void render() override;
@@ -1207,7 +1294,7 @@ namespace nwindows
         std::string suffix_ = " ";
         NAttachment menu_attachment_ = NAttachment::BottomStart;
         bool open_ = false;
-        std::vector<NMenuItem> items_;
+        std::vector<NMenuItem> menu_items_;
     };
 
     class NDropdownElement : public NButtonBaseElement {
@@ -1253,12 +1340,19 @@ namespace nwindows
         void suffix(const std::string& value) { suffix_ = value; }
         std::string suffix() const;
 
-        NEvent<void(NDropdownElement::ptr source, int selection)> on_selection_changed;
-        NEvent<void(NDropdownElement::ptr source)> on_opening;
-        NEvent<void(NDropdownElement::ptr source)> on_closed;
+        NEvent<
+            void(NDropdownElement::ptr source, int selection)
+        > on_selection_changed;
+
+        NEvent<
+            void(NDropdownElement::ptr source)
+        > on_opening;
+        NEvent<
+            void(NDropdownElement::ptr source)
+        > on_closed;
 
     protected:
-        virtual bool handle_clicked(int button, NClickedEventArgs& eventArgs) override;
+        virtual bool handle_clicked(NMouseButton button, NClickedEventArgs& eventArgs) override;
         virtual NColorPair get_color() override;
 
         virtual NSize measure(const NSize& available) override;
@@ -1369,10 +1463,8 @@ namespace nwindows
             height(value.height);
         }
 
-        void refresh()
-        {
-            wrefresh(curses_window_);
-        }
+        NWindow* top_level_window();
+        const NWindow* top_level_window() const;
 
         bool has_colors() const { return has_colors_; }
         int max_colors() const { return max_colors_; }
@@ -1386,36 +1478,10 @@ namespace nwindows
         NColorPair make_color_pair(NColor foreground, NColor background);
 
 
-        void set_attributes(NAttribute attribute, short colorPair = -1);
 
-        void clear_attributes()
-        {
-            //set_attributes(AttributeT::Normal, defaultColorPair);
-        }
-
-
-        bool bubble_event(int x, int y, const std::function<bool(NElement&)>& fn);
-        bool bubble_event(const NPoint& pt, const std::function<bool(NElement&)>& fn)
-        {
-            return bubble_event(pt.x, pt.y, fn);
-        }
-
-        bool bubble_mouse_event(int x, int y, const std::function<bool(NElement&)>& fn);
-        bool bubble_mouse_event(const NPoint& pt, const std::function<bool(NElement&)>& fn)
-        {
-            return bubble_mouse_event(pt.x, pt.y, fn);
-        }
-
-        bool bubble_mouse_event(NElement::ptr element, const std::function<bool(NElement&)>& fn);
-
-        bool bubble_event(NElement::ptr element, const std::function<bool(NElement&)>& fn);
-
-        void handle_window_mouse_move(NMouseEventArgs& event_args);
-        void handle_button_pressed(int x, int y, int button, NMouseEventArgs& event_args);
-        void handle_button_released(int x, int y, int button, NMouseEventArgs& event_args);
-
-
-        NEvent<void(NElement::ptr focusElement)> on_focus_changed;
+        NEvent<
+            void(NElement::ptr focusElement)
+        > on_focus_changed;
 
         bool focus(NElement::ptr element);
         NElement::ptr focus() { return focus_.lock(); };
@@ -1442,12 +1508,16 @@ namespace nwindows
 
         void quit()
         {
-            get_root_window()->close();
+            top_level_window()->close();
         }
+
+        void fatal_error(const std::string&message);
 
         void run();
 
         void mouse_capture(NElement* element);
+        void mouse_capture(NElement::ptr element) { mouse_capture(element.get()); }
+
         NElement::ptr mouse_capture() const { return mouse_capture_.lock(); }
         void mouse_capture_release() { mouse_capture(nullptr); }
         // release mouse capture if the specified element is the current mouse capture.
@@ -1458,10 +1528,12 @@ namespace nwindows
         void color_palette(std::shared_ptr<NColorPalette> color_palette);
 
         virtual void close();
-        bool is_active_window() { return active_window_ == this; }
-        NWindow* get_active_window() { return active_window_; }
+        bool is_active_window() const { return active_window_ == this; }
+        NWindow* active_window() { return active_window_; }
 
-        NEvent<void(NWindow::ptr source, bool activated)> on_is_active_changed;
+        NEvent<
+            void(NWindow::ptr source, bool activated)
+        > on_is_active_changed;
 
 
         bool for_each_child_window(const std::function<bool(NWindow*)>& fn);
@@ -1476,19 +1548,44 @@ namespace nwindows
 
         void move_window(int dx, int dy);
 
-        const NRect& window_bounds() const { return actual_window_position_; }
-
-        UnicodeServices& unicode_services();
         Collator& collator();
-        UnicodeNormalizer& unicode_normalizer();
         const UnicodeNormalizer& unicode_normalizer() const;
 
         std::string normalize_utf8(const std::string& text) const;
+
         std::string decompose_utf8(const std::string& text) const;
+        static constexpr char32_t UNCOMPOSABLE = (char32_t)-1;
+        char32_t compose_characters(char32_t left, char32_t right) const;
+
     protected:
+
+        bool closed() const { return closed_; }
+
+        bool bubble_event(int x, int y, const std::function<bool(NElement&)>& fn);
+        bool bubble_event(const NPoint& pt, const std::function<bool(NElement&)>& fn)
+        {
+            return bubble_event(pt.x, pt.y, fn);
+        }
+
+        bool bubble_mouse_event(int x, int y, const std::function<bool(NElement&)>& fn);
+        bool bubble_mouse_event(const NPoint& pt, const std::function<bool(NElement&)>& fn)
+        {
+            return bubble_mouse_event(pt.x, pt.y, fn);
+        }
+
+
+        // Methods that follow are protected methods used in the implementation of 
+        // NWindows and are not guaranteed to be stable.
+
+        virtual void handle_window_mouse_move(NMouseEventArgs& event_args);
+        virtual void handle_button_pressed(int x, int y, NMouseButton button, NMouseEventArgs& event_args);
+        virtual void handle_button_released(int x, int y, NMouseButton button, NMouseEventArgs& event_args);
+
+
         virtual void handle_is_active_changed(bool activated);
 
         virtual void set_initial_focus();
+
 
         virtual bool handle_default_button();
         virtual bool handle_cancel_button();
@@ -1502,6 +1599,28 @@ namespace nwindows
         virtual void render() override;
 
     private:
+
+        bool processing_exception_ = false;
+        std::string fatal_error_message_;
+
+        bool bubble_mouse_event(NElement::ptr element, const std::function<bool(NElement&)>& fn);
+
+        bool bubble_event(NElement::ptr element, const std::function<bool(NElement&)>& fn);
+
+        UnicodeNormalizer& unicode_normalizer();
+
+        UnicodeServices& unicode_services();
+
+
+        void set_attributes(NAttribute attribute, short colorPair = -1);
+
+        void clear_attributes()
+        {
+            //set_attributes(AttributeT::Normal, defaultColorPair);
+        }
+
+
+
         NPoint last_mouse_position_{ -1,-1 };
         friend class NElement;
         void w_box(const NRect& rect, const std::optional<NColorPair>& colorPair = std::nullopt);
@@ -1596,17 +1715,16 @@ namespace nwindows
         bool update_active_window();
 
         bool attach_windows();
+
         bool closed_ = false;
         WINDOW* curses_window_ = nullptr;
-        WINDOW* root_window_ = nullptr;
+        WINDOW* root_curses_window_ = nullptr;
         PANEL* curses_panel_ = nullptr;
 
         std::vector<PANEL*> panel_stack_; // root level window only.
 
         NWindow* parent_window_ = nullptr;
         std::vector<NWindow::ptr> child_windows_; // for ownership.
-        NWindow* get_root_window();
-        const NWindow* get_root_window() const;
 
         std::string title_;
 
@@ -1713,8 +1831,11 @@ namespace nwindows
             NMessageType message_type,
             const std::string& title,
             const std::string& message,
-            int width = AUTO_SIZE);
+            int message_width = AUTO_SIZE);
 
+        NEvent<
+            void(NMessageWindow::ptr source)
+        > on_closed;
 
     };
     class NPopupWindow : public NWindow {
@@ -1751,7 +1872,7 @@ namespace nwindows
         bool cancellable() const { return cancellable_; }
     protected:
         virtual NRect calculate_window_position(int max_width, int max_height) override;
-        virtual bool handle_mouse_button_pressed(int button, NMouseEventArgs& event_args) override;
+        virtual bool handle_mouse_button_pressed(NMouseButton  button, NMouseEventArgs& event_args) override;
 
     private:
         bool cancellable_ = false;
@@ -1784,8 +1905,13 @@ namespace nwindows
             NAttachment attachment
         );
 
-        NEvent<void(NElement::ptr source, int item_id)> on_item_selected;
-        NEvent<void(NElement::ptr source)> on_cancelled;
+        NEvent<
+            void(NPopupMenuWindow::ptr source, int item_id)
+        > on_item_selected;
+
+        NEvent<
+            void(NPopupMenuWindow::ptr source)
+        > on_cancelled;
 
         virtual void close() override;
     protected:
@@ -1805,7 +1931,7 @@ namespace nwindows
 
     /////////////// Manipulators ///////////////////
 
-    // marker class for manipulators.
+    // marker class for manipulators, prevents operator| from getting carried away.
     class NElementManipulator {
 
     };
@@ -1898,7 +2024,7 @@ namespace nwindows
 
     class on_clicked : public NElementManipulator {
     public:
-        using CallbackT = void(int button, NClickedEventArgs& event_args);
+        using CallbackT = void(NMouseButton button, NClickedEventArgs& event_args);
 
         on_clicked(std::function<CallbackT>&& function) : function_(std::move(function)) {
         }
@@ -2259,8 +2385,9 @@ namespace nwindows
 
     class character_filter : public NElementManipulator {
     public:
-        character_filter(const std::function<bool(char32_t c)>& filter) : value(filter) {}
-        character_filter(std::function<bool(char32_t c)>&& filter) : value(std::move(filter)) {}
+        using  CallbackT = std::function<bool(char32_t c, int position)>;
+        character_filter(const CallbackT& filter) : value(filter) {}
+        character_filter(CallbackT&& filter) : value(std::move(filter)) {}
 
         template<typename T>
         std::shared_ptr<T> apply(std::shared_ptr<T> element) {
@@ -2268,7 +2395,7 @@ namespace nwindows
             return element;
         }
     private:
-        const std::function<bool(char32_t c)> value;
+        CallbackT value;
     };
 
 
@@ -2303,6 +2430,21 @@ namespace nwindows
         P value;
     };
 
+    template <typename P>
+    class on_checked_changed : public NElementManipulator {
+    public:
+
+        on_checked_changed(const P& callback) : value(callback) {}
+        on_checked_changed(P&& callback) : value(std::move(callback)) {}
+
+        template <class T>
+        std::shared_ptr<T> apply(std::shared_ptr<T> element) {
+            element->on_checked_changed.subscribe(value);
+            return element;
+        }
+    private:
+        P value;
+    };
 
 
 

@@ -8,10 +8,10 @@
  *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *   copies of the Software, and to permit persons to whom the Software is
  *   furnished to do so, subject to the following conditions:
- 
+
  *   The above copyright notice and this permission notice shall be included in all
  *   copies or substantial portions of the Software.
- 
+
  *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -62,8 +62,8 @@ void Dialog(NWindow::ptr window) {
                 | width(10)
                 | is_cancel()
                 | on_clicked(
-                    [dlgRef](int button, NClickedEventArgs& event_args) mutable {
-                        if (button == 0)
+                    [dlgRef](NMouseButton button, NClickedEventArgs& event_args) mutable {
+                        if (button == NMouseButton::Left)
                         {
                             event_args.handled = true;
                             dlgRef.lock()->close();
@@ -76,7 +76,7 @@ void Dialog(NWindow::ptr window) {
                 | is_default()
                 | width(10)
                 | on_clicked(
-                    [dlgRef](int button, NClickedEventArgs& event_args) mutable {
+                    [dlgRef](NMouseButton button, NClickedEventArgs& event_args) mutable {
                         event_args.handled = true;
                         dlgRef.lock()->close();
                     }
@@ -243,6 +243,9 @@ void rendering_test_window(NWindow::ptr parent_window)
 
                 container->add_child(
                     NCheckboxElement::create("_Enabled") | width(15) | checked(true)
+                    | on_checked_changed([](NCheckboxElement::ptr source, bool checked) {
+                        // do something.
+                        })
                 );
 
                 container->add_child(
@@ -266,7 +269,7 @@ void rendering_test_window(NWindow::ptr parent_window)
                             })
                         | on_selection_changed([](NTextEditElement::ptr source, const NTextSelection& selection) {
                             // do something.
-                            })  
+                            })
                         | width(15)
                     )
                     | add_child(
@@ -309,7 +312,7 @@ void rendering_test_window(NWindow::ptr parent_window)
             container->add_child(NButtonElement::create("OK")
                 | width(10)
                 | on_clicked([windowRef = window->weak_ptr()](
-                    int button,
+                    NMouseButton button,
                     NClickedEventArgs& args) {
                         auto window = windowRef.lock();
                         if (!window) return;
@@ -320,7 +323,7 @@ void rendering_test_window(NWindow::ptr parent_window)
 
             std::weak_ptr<NWindow> windowRef = window;
             dialogButton->on_clicked.subscribe(
-                [windowRef](int button, NClickedEventArgs& args)
+                [windowRef](NMouseButton button, NClickedEventArgs& args)
                 {
                     Dialog(windowRef.lock());
                 });
@@ -408,7 +411,7 @@ static void box_test_window(NWindow::ptr parentWindow = nullptr)
                     NButtonElement::create("OK")
                     //| is_default()
                     | width(10)
-                    | on_clicked([](int button, NClickedEventArgs& args) {
+                    | on_clicked([](NMouseButton button, NClickedEventArgs& args) {
                         args.handled = true;
                         args.window->close();
                         })
@@ -484,14 +487,16 @@ static void menu_test_window(NWindow::ptr parentWindow = nullptr)
                     NMenuElement::create(
                         "_Edit",
                         {
-                            NMenuItem("_Cut", 20),
-                            NMenuItem("C_opy", 21),
-                            NMenuItem("_Paste", 22),
+                            NMenuItem("✂","_Cut", 20),
+                            NMenuItem("⿻","C_opy", 21),
+                            NMenuItem("\U0001F4CB\uFE0E","_Paste", 22),
                             NMenuItem::Divider(),
                             NMenuItem("Delete", 23),
+                            NMenuItem::Divider(),
+                            NMenuItem(true,"Disable", 23,false),
                         }
                         )
-                    | on_item_selected([](NElement::ptr source, int item_id)
+                    | on_item_selected([](NMenuElement::ptr source, int item_id)
                         {
                             NMessageWindow::create(
                                 source->window()->shared_from_this<NWindow>(),
@@ -510,7 +515,7 @@ static void menu_test_window(NWindow::ptr parentWindow = nullptr)
                             NMenuItem("_About", 31),
                         }
                         )
-                    | on_item_selected([](NElement::ptr source, int item_id)
+                    | on_item_selected([](NMenuElement::ptr source, int item_id)
                         {
                             switch (item_id) {
                             case 30:
@@ -568,8 +573,8 @@ static void menu_test_window(NWindow::ptr parentWindow = nullptr)
     , (int)NAttachment::BottomEnd)
                     | width(25)
                     | on_clicked(
-                        [](int button, NClickedEventArgs& args) {
-                            if (button == 0)
+                        [](NMouseButton button, NClickedEventArgs& args) {
+                            if (button == NMouseButton::Left)
                             {
                                 NDropdownElement::ptr dropdown = std::dynamic_pointer_cast<NDropdownElement>(args.target);
                                 dropdown->menu_items(
@@ -599,7 +604,7 @@ static void menu_test_window(NWindow::ptr parentWindow = nullptr)
                 | add_child(
                     NButtonElement::create("OK")
                     | width(10)
-                    | on_clicked([w = window->weak_ptr()](int button, NClickedEventArgs& args) {
+                    | on_clicked([w = window->weak_ptr()](NMouseButton button, NClickedEventArgs& args) {
                         args.handled = true;
                         w.lock()->close();
                         }
@@ -684,7 +689,7 @@ static void unicode_test_window(NWindow::ptr parentWindow = nullptr)
                     NButtonElement::create("OK")
                     //| is_default()
                     | width(15)
-                    | on_clicked([windowRef = window->weak_ptr()](int button, NClickedEventArgs& args) mutable {
+                    | on_clicked([windowRef = window->weak_ptr()](NMouseButton button, NClickedEventArgs& args) mutable {
                         args.handled = true;
                         windowRef.lock()->close();
                         })
@@ -736,7 +741,7 @@ static void edit_text_test_window(NWindow::ptr parentWindow = nullptr)
                 )
                 | add_child(
                     NTextEditElement::create("")
-                    | character_filter([](wchar_t c) { return iswdigit(c); })
+                    | character_filter([](char32_t c, int position) { return iswdigit(c); })
                     | width(20)
                 )
             )
@@ -752,7 +757,7 @@ static void edit_text_test_window(NWindow::ptr parentWindow = nullptr)
                     NButtonElement::create("OK")
                     //| is_default()
                     | width(15)
-                    | on_clicked([windowRef = window->weak_ptr()](int button, NClickedEventArgs& args) mutable {
+                    | on_clicked([windowRef = window->weak_ptr()](NMouseButton button, NClickedEventArgs& args) mutable {
                         args.handled = true;
                         windowRef.lock()->close();
                         })
@@ -784,13 +789,66 @@ static void edit_text_test_window(NWindow::ptr parentWindow = nullptr)
         window->run();
     }
 }
+
+void error_test_window(NWindow::ptr parentWindow = nullptr) {
+    NWindow::ptr window = NWindow::create(parentWindow, AUTO_SIZE, AUTO_SIZE);
+    NTextElement::ptr keyIndicator;
+
+    window
+        | title("Error Handling")
+        | add_child(
+            NVerticalStackElement::create()
+            | margin({ 2,1,2,1 })
+            | row_gap(1)
+            | add_child(
+                NTextElement::create("This window is used to test error handling.")
+            )
+            | add_child(
+                NButtonElement::create("Throw Error")
+                | width(20)
+                | on_clicked([](NMouseButton button, NClickedEventArgs& args) {
+                    args.handled = true;
+                    throw std::runtime_error("This is a test of exception handling.");
+                    })
+            )
+            | add_child(
+                NButtonElement::create("Fatal Error Message")
+                | width(20)
+                | on_clicked([](NMouseButton button, NClickedEventArgs& args) {
+                    args.handled = true;
+                    args.window->fatal_error("Fatal Error: This is a test of a fatal error message.");
+                    })
+            )
+
+
+            | add_child(
+                NHorizontalStackElement::create()
+                | alignment(NAlignment::End)
+                | column_gap(1)
+                | add_child(
+                    NButtonElement::create("OK")
+                    | width(10)
+                    | on_clicked([windowRef = window->weak_ptr()](NMouseButton button, NClickedEventArgs& args) {
+                        args.handled = true;
+                        windowRef.lock()->close();
+                        })
+                )
+            )
+        );
+
+    if (!parentWindow)
+    {
+        window->run();
+    }
+}
+
 void test_window()
 {
 
     NColorPalette palette;
     palette.DesktopBackground = 0x600060;
 
-    NWindow::ptr window = NWindow::create(60, AUTO_SIZE,&palette);
+    NWindow::ptr window = NWindow::create(60, AUTO_SIZE, &palette);
 
 
     window
@@ -812,7 +870,7 @@ void test_window()
                         NButtonElement::create("_Rendering")
                         | label_alignment(NAlignment::Start)
                         | width(20)
-                        | on_clicked([windowRef = window->weak_ptr()](int button, NClickedEventArgs& args) mutable {
+                        | on_clicked([windowRef = window->weak_ptr()](NMouseButton button, NClickedEventArgs& args) mutable {
                             args.handled = true;
                             rendering_test_window(windowRef.lock());
                             })
@@ -822,7 +880,7 @@ void test_window()
                         NButtonElement::create("_EditText Test")
                         | label_alignment(NAlignment::Start)
                         | width(20)
-                        | on_clicked([windowRef = window->weak_ptr()](int button, NClickedEventArgs& args) mutable {
+                        | on_clicked([windowRef = window->weak_ptr()](NMouseButton button, NClickedEventArgs& args) mutable {
                             args.handled = true;
                             edit_text_test_window(windowRef.lock());
                             })
@@ -832,7 +890,7 @@ void test_window()
                         NButtonElement::create("_Unicode Test")
                         | label_alignment(NAlignment::Start)
                         | width(20)
-                        | on_clicked([windowRef = window->weak_ptr()](int button, NClickedEventArgs& args) mutable {
+                        | on_clicked([windowRef = window->weak_ptr()](NMouseButton button, NClickedEventArgs& args) mutable {
                             args.handled = true;
                             unicode_test_window(windowRef.lock());
                             })
@@ -844,7 +902,7 @@ void test_window()
                         NButtonElement::create("_Menu Test")
                         | label_alignment(NAlignment::Start)
                         | width(20)
-                        | on_clicked([windowRef = window->weak_ptr()](int button, NClickedEventArgs& args) mutable {
+                        | on_clicked([windowRef = window->weak_ptr()](NMouseButton button, NClickedEventArgs& args) mutable {
                             args.handled = true;
                             menu_test_window(windowRef.lock());
                             })
@@ -854,9 +912,19 @@ void test_window()
                         NButtonElement::create("_Box Test")
                         | label_alignment(NAlignment::Start)
                         | width(20)
-                        | on_clicked([windowRef = window->weak_ptr()](int button, NClickedEventArgs& args) mutable {
+                        | on_clicked([windowRef = window->weak_ptr()](NMouseButton button, NClickedEventArgs& args) mutable {
                             args.handled = true;
                             box_test_window(windowRef.lock());
+                            })
+                    )
+                    | add_child(
+
+                        NButtonElement::create("Error Handling")
+                        | label_alignment(NAlignment::Start)
+                        | width(20)
+                        | on_clicked([windowRef = window->weak_ptr()](NMouseButton button, NClickedEventArgs& args) mutable {
+                            args.handled = true;
+                            error_test_window(windowRef.lock());
                             })
                     )
                 )
@@ -869,7 +937,7 @@ void test_window()
                     NButtonElement::create("OK")
                     //| is_default()
                     | width(15)
-                    | on_clicked([windowRef = window->weak_ptr()](int button, NClickedEventArgs& args) {
+                    | on_clicked([windowRef = window->weak_ptr()](NMouseButton button, NClickedEventArgs& args) {
                         args.handled = true;
                         windowRef.lock()->close();
                         })

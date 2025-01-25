@@ -23,9 +23,8 @@
 
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
-import ClassDescription, { MethodDescription, ClassSectionHead, UsingDescription, PropertyList, PropertyEntry, EventDescriptions, EventDescription, MethodDescriptions, TypeDefinitions } from '../ClassDescription';
+import ClassDescription, { MethodDescription, ClassSectionHead, UsingDescription, PropertyList, PropertyEntry, EventDescriptions, EventDescription, MethodDescriptions, TypeDefinitions, CreateDescriptions } from '../ClassDescription';
 import M, { ML } from '../M';
-import CenteredImage from '../CenteredImage';
 
 function ClassNMenuElement() {
 
@@ -40,7 +39,12 @@ function ClassNMenuElement() {
                     Displays a single menu item header. Menu items can be regular menu items, that optionally have Unicode icons,
                     or checkmarks, or they can be submenus, or they can be dividers.
                 </p>
-                <CenteredImage src="/nwindows/image/sample_menuelement.png" alt="Menu Element" />
+                <div style={{ display: "flex", flexFlow: "row nowrap", columnGap: 16, justifyContent: "start", alignItems: "flex-start" }}>
+                    <div style={{ flex: "1 1 0px" }} />
+                    <img src="/nwindows/image/sample_menuelement.png" style={{ flex: "0 1 auto" }} alt="Menu" />
+                    <img src="/nwindows/image/sample_menu_icons.png" style={{ flex: "0 1 auto" }} alt="Menu Icons" />
+                    <div style={{ flex: "1 1 0px" }} />
+                </div>
                 <p><M>MenuItem</M> is very basic implementation, although it is perfectly serviceable as is. <M>MenuItem</M>s currently participate
                     in focus navigation like any other control. A more sophisticated implementation might provide a menu bar element as
                     well, that manages focus trapping (maintaining a separate focus for
@@ -60,41 +64,42 @@ function ClassNMenuElement() {
                 </TypeDefinitions>
 
 
-                <ClassSectionHead text="Constructors" />
+                <CreateDescriptions>
 
-                <MethodDescription indexName={[
-                    "static NMenuElement::ptr NMenuElement::create(const std::string& label, std::vector<NMenuItem>&& items)",
-                    "static NMenuElement::ptr NMenuElement::create(const std::string& label, const std::vector<NMenuItem>& items)",
-                    "static NMenuElement::ptr NMenuElement::create()"
-                ]}
-                    method={`static NMenuElement::ptr create(
+                    <MethodDescription indexName={[
+                        "static NMenuElement::ptr NMenuElement::create(const std::string& label, std::vector<NMenuItem>&& menu_items)",
+                        "static NMenuElement::ptr NMenuElement::create(const std::string& label, const std::vector<NMenuItem>& menu_items)",
+                        "static NMenuElement::ptr NMenuElement::create()"
+                    ]}
+                        method={`static NMenuElement::ptr create(
     const std::string& label,
-    std::vector<NMenuItem>&& items);
+    std::vector<NMenuItem>&& menu_items);
 
 static NMenuElement::ptr create(
     const std::string& label,
-    const std::vector<NMenuItem>& items);    
+    const std::vector<NMenuItem>& menu_items);    
 
 static NMenuElement::ptr create();
     `}
-                >
-                    <div>
-                        Return an <M>std::shared_ptr</M> to a newly-created <M>NMenuElement</M>. Optionally set the label and items properties.
-                    </div>
-                </MethodDescription>
+                    >
+                        <div>
+                            Return an <M>std::shared_ptr</M> to a newly-created <M>NMenuElement</M>. Optionally set the <M>label</M> and <M>menu_items</M> properties.
+                        </div>
+                    </MethodDescription>
+                </CreateDescriptions>
                 <ClassSectionHead text="Protected Constructors" />
                 <MethodDescription indexName={[
-                    "NMenuElement::NMenuElement(const std::string &label, std::vector<NMenuItem>&& items)",
-                    "NMenuElement::NMenuElement(const std::string &label, const std::vector<NMenuItem>& items)"
+                    "NMenuElement::NMenuElement(const std::string &label, std::vector<NMenuItem>&& menu_items)",
+                    "NMenuElement::NMenuElement(const std::string &label, const std::vector<NMenuItem>& menu_items)"
                 ]}
                     method={`NMenuElement(
     const std::string& label,
-    std::vector<NMenuItem>&& items, 
+    std::vector<NMenuItem>&& menu_items, 
     const std::string tagName="Menu");
     
 NMenuElement(
     const std::string& label,
-    const std::vector<NMenuItem>& items, 
+    const std::vector<NMenuItem>& menu_items, 
     const std::string tagName="Menu");
 `}>
                     <div>
@@ -109,7 +114,7 @@ NMenuElement(
                         </div>
                     </PropertyEntry>
                     <PropertyEntry type={`std::vector<
-NMenuItem>`} propertyName='NMenuElement::items'>
+NMenuItem>`} propertyName='NMenuElement::menu_items'>
                         <div><p>The list of menu items that are displayed in the menu element's dropdown.
                             See <ML name="NMenuItem" /> for details on how to specify icons, checkmarks, submenus, and dividers in
                             the dropdown menu.
@@ -129,7 +134,7 @@ NMenuItem>`} propertyName='NMenuElement::items'>
                     <PropertyEntry type={`enum class
 NAttachment`} propertyName='NMenuElement::menu_attachment'>
                         <div>Specifies where the menu will be attached to the parent window. This is used to determine the position of the
-                            menu dropdown. The default is <M>NAttachment::BottomStart</M>. See <ML name="NAttachment"/> for a description 
+                            menu dropdown. The default is <M>NAttachment::BottomStart</M>. See <ML name="NAttachment" /> for a description
                             of choices for window positioning.</div>
                     </PropertyEntry>
                     <PropertyEntry type="std::string" propertyName='NMenuElement::prefix'>
@@ -142,12 +147,12 @@ NAttachment`} propertyName='NMenuElement::menu_attachment'>
 
 
                 <EventDescriptions>
-                    <EventDescription indexName={`NEvent<void(NMenuElement::ptr source)> NMenuElement::on_opening`} 
+                    <EventDescription indexName={`NEvent<void(NMenuElement::ptr source)> NMenuElement::on_opening`}
                         event={`NEvent<
     void(NMenuElement::ptr source)
 > on_opening;`}>
                         <div>Fired before the menu dropdown opens. If you need to update menu items, you can set
-                            the <M>items</M> property in the handler for this event.
+                            the <M>menu_items</M> property in the handler for this event.
                         </div>
                     </EventDescription>
                     <EventDescription indexName={`NEvent<void(NMenuElement::ptr source)> NMenuElement::on_closed`}
@@ -166,16 +171,16 @@ NAttachment`} propertyName='NMenuElement::menu_attachment'>
 
                 </EventDescriptions>
                 <MethodDescriptions>
-                    <MethodDescription 
-                        indexName={`virtual bool NMenuItem::wants_shortcut_key(const std::string& key) override`} 
+                    <MethodDescription
+                        indexName={`virtual bool NMenuItem::wants_shortcut_key(const std::string& key) override`}
                         method={`virtual bool wants_shortcut_key(
     const std::string& key
 ) override;`}>
-                        <div>Overrides <ML name="NElement::wants_shortcut_key"/>. The default implementation 
-                        returns <M>true</M> if the key is the shortcut key for <M>label</M>. {
-                            
-                        }.</div>
-                        </MethodDescription>
+                        <div>Overrides <ML name="NElement::wants_shortcut_key" />. The default implementation
+                            returns <M>true</M> if the key is the shortcut key for <M>label</M>. {
+
+                            }.</div>
+                    </MethodDescription>
                 </MethodDescriptions>
 
             </ClassDescription>

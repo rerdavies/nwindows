@@ -26,6 +26,7 @@ import React from 'react';
 import { KeywordIndexMap } from './SiteIndexData';
 import { useNavigate, useLocation} from 'react-router-dom';
 
+/// Display child content with style for code (monospace, light gray background)
 function M(props: { children: React.ReactNode }) {
     return (
         <span className="mono">{props.children}</span>
@@ -40,11 +41,17 @@ let sharedPtrRegex = /^std::shared_ptr<\s*([^\s>)]+)\s*>$/;
 let optionalRegex = /^std::optional<\s*([^\s>]+)\s*>$/;
 let vectorRegex = /^std::vector<\s*([^\s>]+)\s*>$/;
 let argumentsRegex = /^([^(]*)\(.*\)\s*$/u;
-let elaboratedTypeRegex = /^(?:(?:enum)|(?:class)|(?:typename)|(?:struct))\s+(.*)$/u;
-function reduceTarget(target: string) : string {
+let elaboratedTypeRegex = /^(?:(?:enum)|(?:class)|(?:typename)|(?:constexpr)|(?:static)(?:struct))\s+(.*)$/u;
+export function reduceDeclaration(target: string) : string {
     target = target.replace(whitespaceRegex, " ");
 
     while (true) {
+        let match = target.match(argumentsRegex);
+        if (match) {
+            target = match[1];
+            continue;
+        }
+
         if (target.endsWith("::ptr")) {
             target = target.substring(0, target.length - 5);
             continue;
@@ -57,7 +64,7 @@ function reduceTarget(target: string) : string {
             target = target.substring(0, target.length - 1);
             continue;
         } 
-        let match = target.match(sharedPtrRegex);
+        match = target.match(sharedPtrRegex);
         if (match) {
             target = match[1];
             continue;
@@ -72,11 +79,6 @@ function reduceTarget(target: string) : string {
             target = match[1];
             continue;
         }   
-        match = target.match(argumentsRegex);
-        if (match) {
-            target = match[1];
-            continue;
-        }
         match = target.match(vectorRegex);
         if (match)
         {
@@ -105,9 +107,29 @@ function findIndexEntry(target: string, route: string) {
     }
     return null;
 }
-export function ML(props: { target?: string, name: string }) {
+
+export function A(props: { href: string,target: string, children: React.ReactNode }) {
+    return (
+        <a  className="nlink" href={props.href} target={props.target??"_blank"} rel="noreferrer">{props.children}</a>
+    )
+}
+
+
+// Display a link to a named code entity in the index.
+export function ML(props: { target?: string, name: string, fullName?: boolean }) {
     let target = props.target ? props.target : props.name;
-    target = reduceTarget(target);
+    let fullName = props.fullName ?? false;
+    target = reduceDeclaration(target);
+
+    let name = props.name;
+    if (!fullName) 
+    {
+        name = reduceDeclaration(name);
+        if (name.indexOf("::") != -1) {
+            name = name.substring(name.lastIndexOf("::") + 2);
+        }   
+    }
+    
 
     let navigate = useNavigate();
     let location = useLocation();
@@ -125,18 +147,18 @@ export function ML(props: { target?: string, name: string }) {
                 } else {
                     navigate(index.route, { state: { showElement: index.id } });
                 }
-            }}><span className="mono">{props.name}</span></span>
+            }}><span className="mono">{name}</span></span>
         );
     } else {
         return (
-            <M>{props.name}</M>
+            <M>{name}</M>
         );
     }
 }
 
 export function IL(props: { target?: string, name: string }) {
     let target = props.target ? props.target : props.name;
-    target = reduceTarget(target);
+    target = reduceDeclaration(target);
 
     const location = useLocation();
 

@@ -32,11 +32,11 @@ export default function
         name: string,
         prefix?: string,
         id_tag?: string,
+        text? : string,
         baseClass?: string
     }) {
 
     let id_tag = props.id_tag ?? "class";
-
     let prefix = props.prefix || "class";
     let id = id_tag + "__" + props.name;
     let indexText = (props.prefix ?? "class") + " " + props.name;
@@ -45,8 +45,8 @@ export default function
     return (
         <div id={id} className="nav_target" >
             <h2 className="class-desc-header" >
-                <div>{prefix} {props.name}</div>
-                {props.baseClass && <div style={{opacity: 0.6,marginLeft: 32 }}>extends {props.baseClass}</div>}
+                <div className="preformatted">{props.text ? props.text : (prefix + " " + props.name)}</div>
+                {props.baseClass && <div style={{opacity: 0.6,marginLeft: 32 }}>: <IL name={props.baseClass}/></div>}
             </h2>
 
             <div className="indent">
@@ -77,14 +77,14 @@ export function
 
 
 
-export function PropertyList(props: { children?: React.ReactNode }) {
+export function PropertyList(props: { children?: React.ReactNode, title?: string }) {
     return (
         <div>
-            <ClassSectionHead text="Properties" />
+            <ClassSectionHead text={ props.title?? "Properties"} />
             <div className="property_grid" >
                 <div className="property_grid_title">Type</div>
                 <div className="property_grid_title">Property</div>
-                <div className="property_grid_title">Description</div>
+                <div className="property_grid_title property_grid_description_title">Description</div>
 
                 {props.children}
             </div>
@@ -136,6 +136,53 @@ export function PropertyEntry(props: { propertyName: string, type: string, child
     );
 }
 
+const operatorRegexp = /^operator([\+\-\*\/\%\&\|\^\!\~\=\<\>\[\]\?]{1,2})$/;
+
+const operatorCharNames: { [key: string]: string } = {
+    "+": "plus",
+    "-": "minus",
+    "*": "times",
+    "/": "divide",
+    "%": "modulus",
+    "&": "and",
+    "|": "or",
+    "^": "xor",
+    "!": "not",
+    "~": "bitwise_not",
+    "=": "assign",
+    "<": "less_than",
+    ">": "greater_than",
+    "[": "index",
+    "]": "index",
+    "(": "call",
+    ")": "call",
+    "?": "conditional",
+};
+
+function operatorCharIds(text: string)
+{
+    let result = "_";
+    for (let c of text) {
+        let t = operatorCharNames[c]??"";
+        result += t;
+    }
+    return result;
+}
+
+const templateArgsRegex = /(\b[A-Za-z0-9_]+\b),?\s*(.*)/;
+function templateArgIds(text: string) {
+    let result = "";
+    while (true) 
+    {
+        let match = text.match(templateArgsRegex);
+        if (!match) break;
+        result += "_" + match[1];
+        text = match[2];
+
+    }
+    return result;
+}
+const templateArgsRegexp = /^(\b\w+\b)<(.*)>$/;
 function methodId(tag: string, name: string) {
     name = removeParameters(name);
     let pos = name.indexOf("::");
@@ -143,6 +190,15 @@ function methodId(tag: string, name: string) {
     if (pos >= 0) {
         classNameOnly = name.substring(0, pos);
         name = name.substring(pos + 2);
+    }
+    // operators
+    let match = name.match(operatorRegexp);
+    if (match) {
+        name = "operator" + operatorCharIds(match[1]);
+    }
+    match = name.match(templateArgsRegexp)
+    if (match) {
+        name = "__T" + match[1] + templateArgIds(match[2]);
     }
     return tag + "__" + classNameOnly + "_" + name;
 }
@@ -294,6 +350,14 @@ export function MethodDescriptions(props: { children?: React.ReactNode, title?: 
         </div>
     );
 }
+export function CreateDescriptions(props: { children?: React.ReactNode, title?: string }) {
+    return (
+        <div>
+            <ClassSectionHead text={props.title ?? "Create Methods"} />
+            {props.children}
+        </div>
+    );
+}
 
 export function OperatorDescriptions(props: { children?: React.ReactNode }) {
     return (
@@ -359,6 +423,20 @@ export function MethodCode(props: { text: string }) {
 
 }
 
+export function ConstDescription(
+    props: {
+        indexName: string | string[] | undefined,
+        constant: string, children?: React.ReactNode
+    },) {
+    return MethodDescription(
+        {
+            indexName: props.indexName,
+            method: props.constant,
+            tag: "constexpr",
+            children: props.children
+        });
+}
+
 export function MethodDescription(
     props: {
         indexName: string | string[] | undefined,
@@ -416,7 +494,7 @@ export function MethodDescription(
 export function ParameterList(props: { children: React.ReactNode }) {
     return (
         <div>
-            <h3>Parameters</h3>
+            <ClassSectionHead text="Parameters" />
             <div className="parameter_grid" >
                 {props.children}
             </div>
@@ -443,10 +521,25 @@ export function FieldDefinitionList(props: { children: React.ReactNode }) {
     );
 }
 
+export function IndentedDefinitionList(props: { children: React.ReactNode }) {
+
+    let childArray = React.Children.toArray(props.children);
+
+    let result: React.ReactNode[] = [];
+    for (let i = 0; i < childArray.length; i += 2)
+    {
+        result.push((<div key={i} className="definition_list" >
+            {childArray[i]}
+            { <div key={i+1} className="indent" >{childArray[i + 1]}</div>}
+        </div>))
+    }
+    return (<div> {result} </div>);
+}
+
 export function DefinitionList(props: { children: React.ReactNode, style?: React.CSSProperties }) {
     return (
         <div>
-            <div className="parameter_grid" style={props.style} >
+            <div className="definition_grid" style={props.style} >
                 {props.children}
             </div>
         </div>

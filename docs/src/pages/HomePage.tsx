@@ -22,7 +22,7 @@
  */
 
 
-import CodeDiv from '../Code';
+import Code from '../Code';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import VolunteerLoveIcon from '../assets/volunteer_love_24.svg'
 
@@ -58,7 +58,7 @@ function HomePage() {
                         create users interfaces. The program creates a window
                         with a button that closes the window when clicked:</p>
                     {true &&
-                        <CodeDiv text=
+                        <Code text=
                             {
 
                                 `
@@ -74,7 +74,7 @@ int main(void) {
         | add_child(
             NButtonElement::create("Hello world!")
             | margin({ 2,1,2,1 })
-            | on_click([window](int button, NClickedEventArgs& event)
+            | on_click([window](NMouseButton button, NClickedEventArgs& event)
                 {
                     event.handled = true;
                     event.window->close();

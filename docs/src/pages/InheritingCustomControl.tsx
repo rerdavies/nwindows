@@ -25,7 +25,7 @@ import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import M from '../M';
 import SectionHead from '../SectionHead';
-import CodeDiv, { CodeFragment2 } from '../Code';
+import Code, { CodeFragment2 } from '../Code';
 import CenteredImage from '../CenteredImage';
 
 
@@ -43,7 +43,7 @@ function InheritedCustomControl() {
                 NWindows doesn't provide style-sheets, you could use trivial overrides like this to set properties to values 
                 on input elements in a consistent way if you  find yourself setting the same properties over and over again.
             </p>
-            <CodeDiv showLines text={`class HappyButtonElement : public NButtonElement { 
+            <Code showLines text={`class HappyButtonElement : public NButtonElement { 
 private:
     HappyButtonElement(
         const std::std::string& label, 
@@ -73,7 +73,7 @@ public:
 
             <SectionHead text="ContextEditElement" />
             <p>A more ambitious example might be a class that implements a Text Edit field with a context menu.</p>
-            <CodeDiv showLines text={`#include <NWindows/NWindows.hpp>
+            <Code showLines text={`#include <NWindows/NWindows.hpp>
 
 using namespace nwindows;
 
@@ -113,9 +113,9 @@ protected:
     }
 
     // Show the context menu on right click.
-    virtual bool handle_clicked(int button, NClickedEventArgs& event_args)
+    virtual bool handle_clicked(NMouseButton button, NClickedEventArgs& event_args)
     {
-        if (button == 2) // Right click!
+        if (button == NMouseButton::Right) // Right click!
         {
             NRect anchor;
             if (event_args.is_mouse_click)
@@ -168,7 +168,7 @@ private:
 };
 `} />
         <p>Calling </p>
-        <CodeDiv text={`ContextEditElement::Create(
+        <Code text={`ContextEditElement::Create(
 {
     NMenuItem("Cut",1),
     NMenuItem("Copy",2),

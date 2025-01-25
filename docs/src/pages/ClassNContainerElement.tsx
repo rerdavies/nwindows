@@ -27,7 +27,7 @@ import ClassDescription, { MethodDescription, ClassSectionHead, UsingDescription
 import M from '../M';
 import { Link } from 'react-router-dom';
 import { DocsLink } from '../ClassDescription';
-import CodeDiv from '../Code';
+import Code from '../Code';
 
 function ClassNContainerElement() {
 
@@ -113,7 +113,7 @@ NElement::ptr get_element_at(const NPoint&pt);`}>
                             Get the topmost child element of the current element whose bounds contains the point (x,y). Returns an empty pointer
                             if no element is found at the point. The point is specified in window coordinates. To search the entire visual
                             tree call</p>
-                        <CodeDiv text={'window()->get_element_at(x,y)'} />
+                        <Code text={'window()->get_element_at(x,y)'} />
                     </MethodDescription>
 
                     <MethodDescription indexName="NElement::ptr NContainerElement::find_child_element(const std::function<bool(NElement&)>& predicate);"

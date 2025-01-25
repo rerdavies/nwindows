@@ -27,12 +27,12 @@ class NEvent<void(ARGS...)>;`} />
                     method. Once subscribed, the lambda will be called each time the event fires.
                 </p>
                 <p>A concrete example helps. Consider the declaration</p>
-                <CodeFragment2 text={`NEvent<void(int button, NClickedEvent&event_args)> on_clicked;`} />
+                <CodeFragment2 text={`NEvent<void(NMouseButton button, NClickedEvent&event_args)> on_clicked;`} />
                 <p>Subscribers must supply a c++ lambda that has the a type of</p>
-                <CodeFragment2 text={`std::function<void(int button, NClickedEvent&event_args)>`} />
+                <CodeFragment2 text={`std::function<void(NMouseButton button, NClickedEvent&event_args)>`} />
                 <p>which would look like this:</p>
                 <CodeFragment2 text={`on_clicked.subscribe(
-[] (int button, NClickedEvent&event_args) {
+[] (NMouseButton button, NClickedEvent&event_args) {
     /*DO SOMETHING*/
 }
 );`} />

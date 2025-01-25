@@ -23,7 +23,7 @@
 
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
-import ClassDescription, { MethodDescription, ClassSectionHead, UsingDescription, PropertyList, PropertyEntry, EventDescriptions, EventDescription, MethodDescriptions, TypeDefinitions } from '../ClassDescription';
+import ClassDescription, { MethodDescription, ClassSectionHead, UsingDescription, PropertyList, PropertyEntry, EventDescriptions, EventDescription, MethodDescriptions, TypeDefinitions, CreateDescriptions } from '../ClassDescription';
 import M, { ML } from '../M';
 import CenteredImage from '../CenteredImage';
 
@@ -40,7 +40,7 @@ function ClassNDropdownElement() {
                     Displays a dropdown control. Menu items can be regular menu items, that optionally have Unicode icons,
                     or checkmarks, or they can be dividers. Submenus are not supported.
                 </p>
-                <p>Scrolling of the dropdown is not currently supported, so the number of menu items should be 
+                <p>Scrolling of the dropdown is not currently supported, so the number of menu items should be
                     limited to a modest amount.
                 </p>
                 <CenteredImage src="/nwindows/image/sample_dropdown.png" alt="Menu Element" />
@@ -55,28 +55,28 @@ function ClassNDropdownElement() {
                 </TypeDefinitions>
 
 
-                <ClassSectionHead text="Constructors" />
-
-                <MethodDescription indexName={[
-                    "static NDropdownElement::ptr NDropdownElement::create(const std::vector<NMenuItem>& menu_items, int selected)",
-                    "static NDropdownElement::ptr NDropdownElement::create(std::vector<NMenuItem>&& menu_items, int selected)",
-                    "static NDropdownElement::ptr NDropdownElement::create()"
-                ]}
-                    method={`static NDropdownElement::ptr create(
+                <CreateDescriptions>
+                    <MethodDescription indexName={[
+                        "static NDropdownElement::ptr NDropdownElement::create(const std::vector<NMenuItem>& menu_items, int selected)",
+                        "static NDropdownElement::ptr NDropdownElement::create(std::vector<NMenuItem>&& menu_items, int selected)",
+                        "static NDropdownElement::ptr NDropdownElement::create()"
+                    ]}
+                        method={`static NDropdownElement::ptr create(
     const std::vector<NMenuItem>& menu_items, 
     int selected);
 
 static NDropdownElement::ptr create(
-    const std::vector<NMenuItem>& menu_items, 
+    std::vector<NMenuItem>&& menu_items, 
     int selected;    
 
 static NDropdownElement::ptr create();
     `}
-                >
-                    <div>
-                        Return an <M>std::shared_ptr</M> to a newly-created <M>NDropdownElement</M>. Optionally set the <M>menu_items</M> and <M>selected</M> properties.
-                    </div>
-                </MethodDescription>
+                    >
+                        <div>
+                            Return an <M>std::shared_ptr</M> to a newly-created <M>NDropdownElement</M>. Optionally set the <M>menu_items</M> and <M>selected</M> properties.
+                        </div>
+                    </MethodDescription>
+                </CreateDescriptions>
                 <ClassSectionHead text="Protected Constructors" />
                 <MethodDescription indexName={[
                     `NDropdownElement::NDropdownElement(const std::vector<NMenuItem>& menu_items, int selected, const std::string&tagName="Dropdown")`,
@@ -100,31 +100,31 @@ NDropdownElement(const std::string&tagName="Dropdown");
                 <PropertyList>
                     <PropertyEntry type={`std::vector<
 NMenuItem>`} propertyName='NDropdownElement::menu_items'>
-                        <div>The menu items in the dropdown. See <ML name="NMenuItem"/> for information on how to 
-                        add dividers, and Unicode menu items. If the <M>label</M> of the menu item contains 
-                        a '_' character, the character which follows in the label will be underlined, and treated as a 
-                        short-cut key for the menu item. <M>NDropdownElement</M> displays the currently-selected 
-                        item when showing the popup by setting focus to the selected item, so checkmarks are 
-                        not required, or really appropriate; however, <M>NDropdownElement</M> will display checkmarks
-                        if <M>NMenuItems</M> have been configured to do so. </div>
+                        <div>The menu items in the dropdown. See <ML name="NMenuItem" /> for information on how to
+                            add dividers, and Unicode menu items. If the <M>label</M> of the menu item contains
+                            a '_' character, the character which follows in the label will be underlined, and treated as a
+                            short-cut key for the menu item. <M>NDropdownElement</M> displays the currently-selected
+                            item when showing the popup by setting focus to the selected item, so checkmarks are
+                            not required, or really appropriate; however, <M>NDropdownElement</M> will display checkmarks
+                            if <M>NMenuItems</M> have been configured to do so. </div>
                     </PropertyEntry>
                     <PropertyEntry type="bool" propertyName='NDropdownElement::open'>
                         <div>True if the dropdown menu is open. Set to <M>true</M> to open the menu, or <M>false</M> to close it.
                         </div>
                     </PropertyEntry>
                     <PropertyEntry type="int" propertyName='NDropdownElement::selected'>
-                        <div>The <ML target="NMenuItem::item_id" name="item_id"/>  of the selected menu item. 
-                        Set to <ML name="NO_MENU_ITEM" /> if no item is selected. Set the value of the property to 
-                        control which item is selected when the dropdown is opened.
+                        <div>The <ML target="NMenuItem::item_id" name="item_id" />  of the selected menu item.
+                            Set to <ML name="NO_MENU_ITEM" /> if no item is selected. Set the value of the property to
+                            control which item is selected when the dropdown is opened.
                         </div>
                     </PropertyEntry>
                     <PropertyEntry type="NAttachment" propertyName='NDropdownElement::dropdown_attachment'>
-                        <div>The attachment point of the dropdown menu. Defaults to <M>NAttachment::BottomEnd</M>. The actual position of 
-                        the dropdown may be adjusted to keep it onscreen.</div>
+                        <div>The attachment point of the dropdown menu. Defaults to <M>NAttachment::BottomEnd</M>. The actual position of
+                            the dropdown may be adjusted to keep it onscreen.</div>
                     </PropertyEntry>
                     <PropertyEntry type="std::string" propertyName='NDropdownElement::suffix'>
                         <div>Allows customization. The decorator text used to display the dropdown icon. Defaults to "", which allows <M>NDropdownElement</M>
-                        to display <M>" ⏷ "</M> if the current terminal supports that character, or <M>" v "</M> if not.</div>
+                            to display <M>" ⏷ "</M> if the current terminal supports that character, or <M>" v "</M> if not.</div>
                     </PropertyEntry>
                 </PropertyList>
 
@@ -141,9 +141,9 @@ NMenuItem>`} propertyName='NDropdownElement::menu_items'>
                         event={`NEvent< 
     void(NDropdownElement::ptr source)
 > on_opening;`}>
-                        <div>Fired just before the dropdown menu is opened. Event handlers for this event can 
+                        <div>Fired just before the dropdown menu is opened. Event handlers for this event can
                             set the <M>menu_item</M> property in order to change the menu items displayed if needed.
-                         </div>
+                        </div>
                     </EventDescription>
                     <EventDescription indexName={`NEvent<void(NDropdownElement::ptr source)> NDropdownElement::on_closed`}
                         event={`NEvent<
@@ -154,16 +154,16 @@ NMenuItem>`} propertyName='NDropdownElement::menu_items'>
 
                 </EventDescriptions>
                 <MethodDescriptions>
-                    <MethodDescription 
-                        indexName={`virtual bool NMenuItem::wants_shortcut_key(const std::string& key) override`} 
+                    <MethodDescription
+                        indexName={`virtual bool NDropdownElement::wants_shortcut_key(const std::string& key) override`}
                         method={`virtual bool wants_shortcut_key(
     const std::string& key
 ) override;`}>
-                        <div>Overrides <ML name="NElement::wants_shortcut_key"/>. The default implementation 
-                        returns <M>true</M> if the key is the shortcut key for <M>label</M>. {
-                            
-                        }.</div>
-                        </MethodDescription>
+                        <div>Overrides <ML fullName name="NElement::wants_shortcut_key" />. The default implementation
+                            returns <M>true</M> if the key is the shortcut key for <M>label</M>. {
+
+                            }.</div>
+                    </MethodDescription>
                 </MethodDescriptions>
 
             </ClassDescription>

@@ -21,34 +21,42 @@
  *   SOFTWARE.
  */
 
-import CodeDiv from '../Code';
+import Code from '../Code';
+import { DocsTitle } from '../DocsNav';
 import DocsPage from '../DocsPage';
 import M from '../M';
 import Name from '../Name';
+import SectionHead from '../SectionHead';
 
 
 
 function InstallingNWindows() {
+    let route = "/installing";
     return (
-        <DocsPage route="/installing">
+        <DocsPage route={route}>
             <div>
-                <h1>2.0 - Installing NWindows</h1>
-                <h2>Prerequisites</h2>
-                <p>
-                    <Name>NWindows</Name> requires the following development libraries to be installed.
-                </p>
-                <p>
-                    <ul>
-                        <li>ncursesw development headers and libraries.</li>
-                        <li>Optionally, <M>xclip</M></li>. NWindows uses <M>xclip</M> to copy and paste text to and from the Linux clipboard.
-                        <li>Headers and binaries for the ICU unicode libraries.</li>
-                    </ul>
-                </p>
-                <p>On Debian-based systems (including Ubuntu), you can install the dependencies using the following commands:</p>
-                <CodeDiv text={
-                    `sudo apt install libncursesw5-dev xclip libicu-dev
+                <h1>{DocsTitle(route)}</h1> <h2>Prerequisites</h2> <p>
+                <Name>NWindows</Name> requires the following
+                development libraries to be installed. </p> <p>
+                <ul> <li>ncursesw development headers and
+                libraries.</li> <li>Optionally, <M>xclip</M>.
+                NWindows uses the <M>xclip</M> program to copy
+                and paste text to and from the Linux clipboard.
+                If not installed, clipboard operations will work,
+                but will not be able to copy and paste text to
+                and from other applications. </li> <li>Headers
+                and binaries for the ICU unicode libraries.</li>
+                </ul> </p> <p>On Debian-based systems (including
+                Ubuntu), you can install the dependencies using
+                the following commands:</p> <Code text={ `sudo
+                apt install libncursesw5-dev xclip libicu-dev
 `               }
                 />
+                <p>If you intend to build the NWindows documentation set, you will have to install Node.js and npm.</p>
+                <Code text={`sudo apt install nodejs npm`} />
+                <p>Then execute the following commands to install documentation pre-requisites</p>
+                <Code text={`cd docs
+npm install`} />
                 <h2>Linking with NWindows</h2>
                 <p>
                     To incorporate NWindows in your project, you have two alternatives: you can either install NWindows as a github submodule in
@@ -57,7 +65,7 @@ function InstallingNWindows() {
                     <M>libnwindows.a</M> static library to <M>/usr/local/lib</M>.
                 </p>
                 <p>
-                    Because NWindows is a C++ library, you will ned to statically link with <M>libnwindows.a</M>. Compile-time
+                    Because NWindows is a C++ library, you will need to statically link with <M>libnwindows.a</M>. Compile-time
                     C++ APIs should remain fairly stable; but any extension to NWindows would break a <M>libnwindows.so</M> shared library.</p>
                 <p>
                     To add NWindows as a git submodule of your own project, follow this procedure:
@@ -71,14 +79,14 @@ function InstallingNWindows() {
                     </li>
                     <li>
                         Issue the following command to install NWindows as a submodule of your project:
-                        <CodeDiv style={{ marginTop: 16,marginBottom: 16 }} text={
+                        <Code style={{ marginTop: 16,marginBottom: 16 }} text={
                             `git submodule add https:://github.com/rerdavies/nwindows.git`
                         }
                         />
                     </li>
                     <li>If you are using a <M>CMake</M> build system, you can neatly incorporate NWindows into your project by adding the following
                         line to the <M>CMakeList.txt</M> file in the root of your project, before you include your own build steps:
-                        <CodeDiv style={{ marginTop: 16, marginBottom: 16 }} text={
+                        <Code style={{ marginTop: 16, marginBottom: 16 }} text={
                             `add(nwindows)`
                         }
                         />
@@ -86,7 +94,7 @@ function InstallingNWindows() {
                         The <M>target_link_libraries</M> statement adds all necessary  compiler flags, include
                         directories, and linker commands to your project compile commands in a single step.
 
-                        <CodeDiv style={{ marginTop: 16, marginBottom: 16 }} text={
+                        <Code style={{ marginTop: 16, marginBottom: 16 }} text={
                             `project(your_project your_files.cpp)
         
 target_link_libraries(your_project PRIVATE nwindows)
@@ -99,21 +107,36 @@ target_link_libraries(your_project PRIVATE nwindows)
                 <p>To, instead, build and install NWindows as a development component, follow these steps:</p>
                 <ul>
                     <li>Clone the NWindows project from Github:
-                        <CodeDiv style={{ marginTop: 16, marginBottom: 16 }} text={
+                        <Code style={{ marginTop: 16, marginBottom: 16 }} text={
                             `mkdir ~/src
 cd ~/src     #or wherever you want to put the project
 git clone https://github.com/rerdavies/nwindows.git`
                         } />
                     </li>
                     <li>Change to the root directory of cloned project and issue the following commands:
-                        <CodeDiv style={{ marginTop: 16, marginBottom: 16 }} text={
+                        <Code style={{ marginTop: 16, marginBottom: 16 }} text={
                             `./configure.sh   # Configures the CMake build system
 ./build.sh       # Builds NWindows
 ./install.sh     # Installs NWindows in /usr/local/include and /usr/local/lib`
                         } />
                     </li>
                 </ul>
+                <SectionHead text="Building the Documentation" />
+                <p>
+                    NWindows uses Typescript, React, and Vite to build its documentation set. The documentation is built in the <M>docs</M> directory of the NWindows
+                    project. The documentation build procedure is run when performing release builds, but not during debug builds.
+                </p>
+                <p>To build the documentation, follow these steps:</p>
+                <Code text={`cd docs
+./build.sh`} />
+                <p>To debug the documentation, and run a development web server, </p>
+                <Code text={`cd docs
+./debug.sh`} />
+            <p>You will want to install React developer tools in your browser. Debug the documentation using Chrome developer tools within the browser.</p>
+            <p>If you are using CMake, and building NWindows as a submodule, you can disable the documentation build by setting the <M>NWINDOWS_BUILD_DOCUMENTATION</M> variable to <M>OFF</M> in your top-level <M>CMakeLists.txt</M> file.</p>
+            <Code text={`set(NWINDOWS_BUILD_DOCUMENTATION OFF)`} />
             </div>
+            
 
         </DocsPage>
     );

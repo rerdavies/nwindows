@@ -24,7 +24,7 @@ int main(void) {
                 | add_child(
                     NButtonElement::create("OK")
                     | width(10)
-                    | on_clicked([](int button, NClickedEventArgs& event)
+                    | on_clicked([](NMouseButton button, NClickedEventArgs& event)
                         {
                             event.handled = true;
                             event.window->close();

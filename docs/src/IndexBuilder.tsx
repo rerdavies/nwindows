@@ -23,7 +23,7 @@
 
 import React, { useLayoutEffect } from "react";
 import { DocsTitle, IndexedComponents, RoutePaths } from "./DocsNav";
-import CodeDiv from "./Code";
+import Code from "./Code";
 import M from "./M";
 import IndexData, { IndexEntry, IndexReference, IndexLink } from "./IndexData";
 import Paper from "@mui/material/Paper";
@@ -65,11 +65,16 @@ function SetRegisterIndexPageRoute(route: string) {
     registerIndexPageRoute = route;
 }
 
+const invalidIdCharactersRegex = /[^a-zA-Z0-9_]/;
+
 export function RegisterIndexEntry(
     searchName: string,
     elementId: string,
     text?: string) {
     if (collectIndexEntries) {
+        if (elementId.match(invalidIdCharactersRegex)) {
+            throw new Error("Invalid element id: " + elementId);
+        }
         let indexEntry = new RegisteredIndexEntry(
             searchName,
             registerIndexPageRoute,
@@ -317,15 +322,22 @@ done
             <Paper className="app_body">
                 <div style={{ margin: 32, overflowY: "auto" }}>
                     <h1>Index Builder</h1>
+                    <p>Builds index data files for the project. Redo this procedure each time documentation files are edited.</p>
+                    <p>Copy the results into the named source files verbatim.</p>
                     {this.state.complete ?
                         (
                             <div>
-                                <p><M>SiteIndexData.tsx</M></p>
-                                <CodeDiv language="ts" text={this.state.indexText} />
+                                <p><M>docs/src/SiteIndexData.tsx</M></p>
+                                <div style={{maxHeight: 240, overflowY: "auto", paddingRight: 8}}>
+                                        
+                                    <Code language="text" text={this.state.indexText}   />
+                                </div>
 
                                 <p></p>
-                                <p><M>make_route_pages.sh</M></p>
-                                <CodeDiv language="bash" text={this.make_copy_route_pages()} />
+                                <p><M>docs/make_route_pages.sh</M></p>
+                                <div style={{maxHeight: 240, overflowY: "auto", paddingRight: 8}}>
+                                    <Code language="text" text={this.make_copy_route_pages()} />
+                                </div>
                             </div>
                         )
                         : (

@@ -30,7 +30,7 @@ protected:
     {
         if (event_args.key == L'\0') // ctrl+space!
         {
-            simulate_keyboard_click(this, 2);
+            simulate_keyboard_click(this, NMouseButton::Right);
             event_args.handled = true;
             return true;
         }
@@ -38,9 +38,9 @@ protected:
     }
 
     // Show the context menu on right click.
-    virtual bool handle_clicked(int button, NClickedEventArgs& event_args)
+    virtual bool handle_clicked(NMouseButton button, NClickedEventArgs& event_args)
     {
-        if (button == 2) // Right click!
+        if (button == NMouseButton::Right) // Right click!
         {
             NRect anchor;
             if (event_args.is_mouse_click)
@@ -171,9 +171,9 @@ int main(void)
                     NButtonElement::create("OK")
                     | width(10)
                     | on_clicked(
-                        [](int button, NClickedEventArgs& event_args)
+                        [](NMouseButton button, NClickedEventArgs& event_args)
                         {
-                            if (button == 0)
+                            if (button == NMouseButton::Left)
                             {
                                 event_args.window->close();
                                 event_args.handled = true;

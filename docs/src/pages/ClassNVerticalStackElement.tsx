@@ -24,9 +24,10 @@
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import ClassDescription, { MethodDescription, ClassSectionHead, UsingDescription,
-    PropertyList, PropertyEntry, MethodDescriptions, DefinitionList, 
+    PropertyList, PropertyEntry, MethodDescriptions, 
+    IndentedDefinitionList,
     TypeDefinitions} from '../ClassDescription';
-import M from '../M';
+import M, {ML} from '../M';
 
 function ClassNVerticalStackElement() {
 
@@ -50,7 +51,7 @@ function ClassNVerticalStackElement() {
                 </TypeDefinitions>
 
 
-                <ClassSectionHead text="Constructors" />
+                <ClassSectionHead text="Create Methods" />
                 <MethodDescription indexName="static NVerticalStackElement::ptr NVerticalStackElement::create()"
                     method={`static NVerticalStackElement::ptr create();`}>
                     <div>
@@ -67,39 +68,28 @@ function ClassNVerticalStackElement() {
                 </MethodDescription>
 
                 <PropertyList>
-                    <PropertyEntry type="NAlignment" propertyName='NVerticalStackElement::alignment'>
+                <PropertyEntry type="NAlignment" propertyName='NVerticalStackElement::alignment'>
                         <div>
-                            <p>Controls how child elements are aligned within the <M>NVerticalStackElement</M>.</p>
-                            <p>alignment can take the following values:</p>
-                            <DefinitionList>
+                            <p>Controls how child elements are aligned within the <M>NVerticalStackElement</M>. The <M>alignment</M> property
+                            can take the following values:</p>
+                            <IndentedDefinitionList>
                                 <div><M>NAlignment::Start</M></div>
-                                <div>Aligns child elements to the start of
-
-                                    the <M>NVerticalStackElement</M>.</div>
-
+                                <p >Aligns child elements to the start of the <M>NVerticalStackElement</M>.</p>
+                                <div><M>NAlignment::End</M></div>
+                                <p>Right-justifies child elements within available space.</p>
                                 <div><M>NAlignment::Center</M></div>
-                                <div>Centers child elements within the <M>NVerticalStackElement</M>.</div>
-
-                                <div><M>NAlignment::End</M></div> 
-                                <div>Aligns
-                                    child elements to the end of the <M>NVerticalStackElement</M>.</div>
-
+                                <p>Centers child elements within the <M>NVerticalStackElement</M>.</p>
                                 <div><M>NAlignment::Justify</M></div>
-                                <div><p>Calculates
-                                    the maximum width of all child elements, and then
-                                    arranges each child element with the same width as the widest element.
-                                </p>
-                                <p>This is useful for case like listboxes, radio button groups, and menus, where you want 
-                                    all child elements to have the same width.
-                                </p>
-                                </div>
-                            </DefinitionList>
+                                <p>Calculates the maximum width of all child elements, and then arranges all child elements 
+                                    with the same width as the widest element.</p>
+                            </IndentedDefinitionList>
                             <p>
-                                If the <M>width</M> property of the <M>NVerticalStackElement</M> is set to <M>AUTO_SIZE</M>, the <M>NVerticalStackElement</M> will
-                                automatically resize to fit the width of the widest child element, if the alignment is set to <M>Start</M> or <M>Justify</M>;
-                                and will expand to fill available width if the alignment is set to <M>Center</M> or <M>End</M>.
+                                If the <M>width</M> property of the <M>NVerticalStackElement</M> is set to <M>AUTO_SIZE</M>, <M>NVerticalStackElement</M> expands
+                                to fit available space if the width of the element is constrained, and will otherwise
+                                resize to fit the width of its widest child element. The width of an <M>NVerticalStackElement</M> is constrained 
+                                if any of the parents of the <M>NVerticalStackElement</M> have their width set to something 
+                                other than <ML name="AUTO_SIZE" />.
                             </p>
-
                         </div>
                     </PropertyEntry>
                     <PropertyEntry type="int" propertyName='NVerticalStackElement::row_gap'>

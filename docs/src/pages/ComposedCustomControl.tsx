@@ -25,7 +25,7 @@ import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import M from '../M';
 import SectionHead from '../SectionHead';
-import CodeDiv from '../Code';
+import Code from '../Code';
 
 
 
@@ -68,7 +68,7 @@ function ComposedCustomControl() {
             methods. The default <M>NContainerElement</M> implementation doesn't implement complex layout. However, it deals with one 
             and only one child element perfectly well, wrapping itself tightly around the child control. And you can use 
             NWindows layout elements to provide  more complex layout of your custom element's children.</p>
-            <CodeDiv showLines text={`class BulletListElement {
+            <Code showLines text={`class BulletListElement {
 private: 
     BulletListElement(): NContainerElement("BulletList") { }
     void Init(int width) {
@@ -140,7 +140,7 @@ private:
     NVerticalStackElement::ptr child_container_;
 };`} />
             <p>Here's how you might use the <M>BulletListElement</M> class:</p>
-            <CodeDiv showLines text={`auto bullet_list = BulletListElement::create(200);
+            <Code showLines text={`auto bullet_list = BulletListElement::create(200);
 
 };`} />
 

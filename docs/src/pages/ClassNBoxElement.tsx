@@ -51,7 +51,7 @@ function ClassNBoxElement() {
                     </UsingDescription>
                 </TypeDefinitions>
 
-                <ClassSectionHead text="Constructors" />
+                <ClassSectionHead text="Create Methods" />
                 <MethodDescription indexName={
                     ["static NBoxElement::ptr NBoxElement::create()"
                     ]

@@ -15,6 +15,7 @@ strings=(\
      "/licenses"\
      "/support"\
      "/installing"\
+     "/packaging"\
      "/using"\
      "/using/fundamentals"\
      "/using/hello"\
@@ -39,6 +40,9 @@ strings=(\
      "/apis/methods"\
      "/apis/classes"\
      "/apis/classes/NBoxElement"\
+     "/apis/classes/NButtonElement"\
+     "/apis/classes/NButtonBaseElement"\
+     "/apis/classes/NCheckboxElement"\
      "/apis/classes/NColor"\
      "/apis/classes/NColorPair"\
      "/apis/classes/NContainerElement"\
@@ -46,8 +50,12 @@ strings=(\
      "/apis/classes/NElement"\
      "/apis/classes/NHorizontalStackElement"\
      "/apis/classes/NMenuElement"\
+     "/apis/classes/NMessageWindow"\
+     "/apis/classes/NPopupWindow"\
+     "/apis/classes/NPopupMenuWindow"\
      "/apis/classes/NRadioGroupElement"\
      "/apis/classes/NTextElement"\
+     "/apis/classes/NTextEditElement"\
      "/apis/classes/NVerticalStackElement"\
      "/apis/classes/NWindow"\
      "/index_builder"\

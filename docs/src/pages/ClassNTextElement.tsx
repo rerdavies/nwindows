@@ -46,7 +46,7 @@ function ClassNTextElement() {
                     </UsingDescription>
                 </TypeDefinitions>
 
-                <ClassSectionHead text="Constructors" />
+                <ClassSectionHead text="Create Methods" />
                 <MethodDescription indexName={
                     ["static NTextElement::ptr NTextElement::create()",
                     "static NTextElement::ptr NTextElement::create(const std::string& text)",
@@ -57,8 +57,7 @@ function ClassNTextElement() {
 
 static NTextElement::ptr create(const std::string& text);
 
-static NTextElement::ptr 
-create(
+static NTextElement::ptr create(
     const std::string& text, 
     NAttribute attribute);
 `} >
@@ -71,7 +70,7 @@ create(
                     </PropertyEntry>
 
 
-                    <PropertyEntry type="NColorPair" propertyName='NTextElement::color'>
+                    <PropertyEntry type={`NColorPair`} propertyName='NTextElement::color'>
                         <div>Actually of type <M>std::optional&lt;NColorPair&gt;</M>. The foreground and background
                             colors to use when displaying the text. See <M>NWindow::make_color</M>. Defaults to unset.
                         </div>

@@ -6,6 +6,8 @@ project(monitor_gpu
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+set(NWINDOWS_BUILD_DOCUMENTATION ON CACHE BOOL "Build the Vite Documentation website?")
+
 add_subdirectory("src")
 
 

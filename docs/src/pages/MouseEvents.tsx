@@ -25,7 +25,7 @@ import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import M from '../M';
 import ClassDescription, { EventDescription } from '../ClassDescription';
-import CodeDiv, { CodeFragment2 } from '../Code';
+import Code, { CodeFragment2 } from '../Code';
 
 
 
@@ -36,24 +36,24 @@ function NWindowsEvents() {
             <ClassDescription name="NElement">
                 <EventDescription 
                     indexName={[
-                        "NEvent<void (int button,NClickedEventArgs&event_args)> NElement::on_clicked",
-                        "NEvent<void (int button,NMouseEventArgs&event_args)> NElement::on_mouse_button_pressed",
-                        "NEvent<void (int button,NMouseEventArgs&event_args)> NElement::on_mouse_button_released",
+                        "NEvent<void (NMouseButton button,NClickedEventArgs&event_args)> NElement::on_clicked",
+                        "NEvent<void (NMouseButton button,NMouseEventArgs&event_args)> NElement::on_mouse_button_pressed",
+                        "NEvent<void (NMouseButton button,NMouseEventArgs&event_args)> NElement::on_mouse_button_released",
                         "NEvent<void (NMouseEventArgs&event_args)> NElement::on_mouse_move",
                         "NEvent<void ()>  NElement::on_mouse_lost_capture",
                         "NEvent<void (NMouseEventArgs&event_args)> NElement::on_mouse_enter",
                         "NEvent<void (NMouseEventArgs&event_args)> NElement::on_mouse_leave",
                     ]}
                 event={`NEvent<
-    void (int button,NClickedEventArgs&event_args)
+    void (NMouseButton button,NClickedEventArgs&event_args)
 > on_clicked;
 
 NEvent<
-    void (int button,NMouseEventArgs&event_args)
+    void (NMouseButton button,NMouseEventArgs&event_args)
 > on_mouse_button_pressed;
 
 NEvent<
-    void (int button, NMouseEventArgs&event_args)
+    void (NMouseButton button, NMouseEventArgs&event_args)
 > on_mouse_button_released;
  
 NEvent<
@@ -73,6 +73,9 @@ NEvent<
 > on_mouse_leave;
  
 `} >
+                    <p>Pay attention to the <M>button</M> argument when handling mouse button events. The button argument is an integer 
+                        that represents the mouse button that was pressed or released or clicked. 
+                        The value is 0 for the left button, 1 for the middle button, 2 for the right button, and 3 for potential 4th mouse buttons. </p>
                     <p><M>on_mouse_move</M> only fires on elements that have captured the mouse
                         using <M>NWindow::mouse_capture(NElement*)</M>.
                     </p>
@@ -82,7 +85,7 @@ NEvent<
                     <p><M>on_clicked</M> is fired on elements whose <M>clickable</M> property is set to <M>true</M> after an
                         appropriate on_mouse_button_pressed/on_mouse_button_released sequence. Handling either of the pressed or released
                         events will prevent the click event from firing. NWindows also generates on <M>on_click</M> events
-                        when the space or enter key is pressed and a clickable element has keyboard focus.
+                        when the space or enter key is pressed and a clickable element has keyboard focus. 
                     </p>
                     <p><M>on_mouse_enter</M> and <M>on_mouse_leave</M> events fire as the mouse cursor enters or
                         leaves the layout bounds of an element. The events are non-cancellable.</p>
@@ -108,7 +111,7 @@ NEvent<
 `} />
                     <p>The <M>cursor_position</M> is in window coordinates (0,0, is at the top left corner of the
                         containing <M>NWindow</M>). To convert to element-relative coordinates, use</p>
-                    <CodeDiv text={`NPoint position = screen_to_element(event_args.cursor_position);`} />
+                    <Code text={`NPoint position = screen_to_element(event_args.cursor_position);`} />
                     <p>If the mouse cursor is outside the bounds of the current <M>NWindow</M>, <M>cursor_position</M> will
                         be set to <M>{"{-1,-1}"}</M>
                     </p>

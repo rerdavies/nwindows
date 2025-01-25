@@ -21,58 +21,75 @@
  *   SOFTWARE.
  */
 
-import CodeDiv from '../Code';
 import DocsPage from '../DocsPage';
 import M from '../M';
-import Name from '../Name';
+import { DocsTitle } from '../DocsNav';
 
 
 
-function InstallingNWindows() {
+function PackagingNWindows() {
+    let route = "/packaging"
     return (
-        <DocsPage route="/installing">
+        <DocsPage route={route}>
             <div>
-                <h1>Installing NWindows</h1>
-                <h2>Prerequisites</h2>
+                <h1>{DocsTitle(route)}</h1>
+                <p>This section describes issues relating to building of Debian packages for NWindows applications.</p>
                 <p>
-                    <Name>NWindows</Name> requires the following development libraries to be installed. 
+                    The core NWindows libraries need to be statically linked, so there are no direct packaging for NWindows libraries. However, NWindows 
+                    has implicit dependencies on two additional packages that package-builder utilities will not detect automatically.
                 </p>
-                <p>
-                    <ul>
-                        <li>ncursesw development headers and libraries.</li>
-                        <li>Optionally, <M>xclip</M></li>. NWindows uses <M>xclip</M> to copy and paste text to and from the Linux clipboard.
-                        <li>Headers and binaries for the ICU unicode libraries.</li>
-                    </ul>
+                <ul>
+                    <li><M>xclip</M> - a command-line utility that NWindows uses to transfer content to and from the X11 clipboard
+                    when performing clipboard operations.</li>
+                    <li>The <a href="https://icu.unicode.org/">ICU Unicode library</a>, which NWindows uses to perform locale-aware case-insensitive 
+                    comparison of menu shortcuts and to perform composition of Unicode accent characters when editing text.
+                    </li>
+                </ul>
+                <p>When you package an NWindows application, you should, therefore, declare explicit dependencies on the following two packages in 
+                    your package control file:</p>
+                <ul>
+                    <li><M>xclip</M></li>
+                    <li><M>libicu-dev</M> (a discussion of alternatives can be found later in this section)</li>
+                </ul>
+                <p>The <M>xclip</M> dependency is optional. If the <M>xclip</M> utility is not installed, NWindows clipboard operations will continue to work, but 
+                clipboard content will not be shared with other applications. <M>xclip</M> is not typically pre-installed 
+                on most Linux distributions.</p>
+                <p>The <M>libicu-dev</M> dependency is also probably optional. If you are unhappy with including additional files 
+                and headers that the <M>-dev</M> package installs, a discussion of why this is done, and alternatives to including 
+                the <M>-dev</M> package follows.</p>
+                <p>NWindows dynamically loads the ICU library at runtime, instead of linking directly to it, in order to avoid 
+                    challenging versioning problems with the ICU package. Direct linking to the ICU library would require you 
+                    to build separate packages for pretty much every version of every Linux distribution you plan to target, which seems 
+                    untenable. Static linking of the ICU packages would add an additional 30MB of data to a package file, 
+                    so this is also not a practical option. Because the ICU libraries are dynamically loaded, package builders will 
+                    not detect a dependency on  the ICU libraries.</p>
+                <p> NWindows uses a very small subset of the ICU APIs, all of which are marked as <i>stable</i> in 
+                    official ICU documentation, and are therefore guaranteed to be present in current and future versions of ICU,
+                    so ignoring the version of the ICU libraries seems reasonable.
                 </p>
-                <p>On Debian-based systems (including Ubuntu), you can install the dependencies using the following commands:</p>
-                <CodeDiv text={
-`sudo apt install libncursesw5-dev xclip libicu-dev
-`               }
-                />
-                <p>NWindows was originally developed using Visual Studio Code. If you are using Visual Studio code, all you 
-                    need to do is fetch the project from GitHub, and open the folder contain the project in Visual Studio Code. 
-                    VSCode will automatically detect the CMakeLists.txt file and configure the project for you. You can then build the 
-                    project using CMake build procedures. 
+                <p>The ICU libraries are pre-installed on most Linux distributions, so you can probably safely ignore the 
+                    implicit dependency that NWindows has on the ICU libraries. If you want to be cautious, you can add an 
+                    a manual dependency to your package control files. However, doing so runs into the same versioning problems that 
+                    direct linking to the ICU libraries has. The package name for libicu takes the form of <M>libicuNN</M> where 
+                    NN is a version number that increases at an alarming rate. You can reasonably expect to find versions of libicu 
+                    with a version number that varies from 60 to 85 in the field, and should reasonably expect that you will find packages 
+                    of the ICU libraries with higher versions in the near future. The version number varies from distribution to distribution, 
+                    and varies between different versions of the same distribution. 
                 </p>
-                <p><b>Important note:</b> when creating packages for your project, you should know that NWindows libraries do not have
-                    explicit linkage to either <M>xclip</M> or <M>libicu</M>, so automated packaging tools will not pick up these dependencies. 
-                    The <b>xclip</b> package is optional, but when installed, it allows NWindows to copy and paste to and from the Linux clipboard. 
-                    <M>libicu</M> is almost always installed by default on most Linux distributions. If you find that NWindows complains about
-                    not being able to find <M>libicu</M>, you can manually add a dependency to the appropriate libicu package for your platform.</p>
-                <p>
-                    Unfortunately, the standard system package for libicu is tightly versioned, with version numbers that are guaranteed to be 
-                    different from distribution to distribution, and from version to version within each of those distributions. On Ubuntu 10.4, for example,
-                    the ICU package is called <M>libicu47</M>; and on Raspberry Pi OS, it is called <M>libicu42</M>. You can follow the lead of the 
-                    Mono project, whose package declares that it will be happy wih any one of <M>libicu40</M>, 
-                    <M>libicu41</M>, <M>libicu42</M>, ... <M>libicu99</M>. Or you can use a simpler, 
-                    and only slightly unfortunate alternative and declare that your package depends on <M>libicu-dev</M> 
-                    (which will install the correct version of <M>libicuNN</M> as a dependency). NWindows searches for and dynamically links to the currently installed 
-                    <M>libicu.so</M> library at runtime. The ICU development team guarantees that all of the 
-                    APIs that NWindows uses are stable and will not change in future versions of ICU, so this appears to be a safe procedure.
-                    </p>
+                <p>One possible solution is to have your package declare dependencies on any one of the possible ICU library 
+                    versions that you may reasonably expect to see in the field. Authors of the Mono project have taken this 
+                    approach, and declare a package dependency on any one of the <M>libicu60</M> through <M>libicu100</M> packages. They use a script to 
+                    generate their package control files.
+                </p>
+                <p>Thus the pragmatic approach:  to declare a dependency on <M>libicu-dev</M> instead. This package installs 
+                additional headers and libraries that are not required, but will also install the correct platform version of <M>libicu</M> as 
+                a side-effect, without having to declare a version-specific dependency, on all reasonably recent versions of 
+                Debian-derived Linux distributions. This is the approach that the author 
+                of NWindows takes when building packages for his own NWindows applications.
+                </p>
             </div>
         </DocsPage>
     );
 }
 
-export default InstallingNWindows;
+export default PackagingNWindows;

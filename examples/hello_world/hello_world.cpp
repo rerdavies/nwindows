@@ -9,7 +9,7 @@ int main(void) {
         | add_child(
             NButtonElement::create("Hello world!")
             | margin({ 2,1,2,1 })
-            | on_clicked([](int button, NClickedEventArgs& event)
+            | on_clicked([](NMouseButton button, NClickedEventArgs& event)
                 {
                     event.handled = true;
                     event.window->close();

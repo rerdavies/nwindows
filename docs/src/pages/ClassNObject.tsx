@@ -22,22 +22,23 @@
  */
 
 import DocsPage from '../DocsPage';
+import M, {ML } from '../M';
 import { DocsTitle } from '../DocsNav';
-import { Link } from 'react-router-dom';
+import ClassDescription from '../ClassDescription';
 
-
-function UsingNWindows() {
+function ClassNObject() {
+    let route = "/apis/classes/NObject";
     return (
-        <DocsPage route="/using">
-            <h1>{DocsTitle("/using")}</h1>
-            <p>This section discusses how to use NWindows. Descriptions of classes in this chapter have 
-                been abridged to only describe those properties,  methods and events that are germane to the 
-                topic being discussed.
-            </p>
-            <p>For complete documentation of the NWindows API, please refer to the <Link to="/apis"><i>NWindows API Reference</i></Link> section 
-            of this document.</p>
+        <DocsPage route={route}>
+            <h1>{DocsTitle(route)}</h1>
+
+            <ClassDescription name="NObject" >
+                <p>A base class for objects stored in <ML name="NElement::user_data"/>. <M>NObject</M> declares 
+                a virtual destructor, which allows derived classes to be used in <M>std::shared_ptr&lt;&gt;</M>s.</p>
+            </ClassDescription>
+
         </DocsPage>
+
     );
 }
-
-export default UsingNWindows;
+export default ClassNObject;

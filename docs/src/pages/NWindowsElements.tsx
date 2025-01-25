@@ -23,97 +23,34 @@
 
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
-import M from '../M';
-import ClassDescription, { EnumDescription, PropertyEntry, PropertyList, EnumDefinitionList } from '../ClassDescription';
-import CodeDiv from '../Code';
+import M, { ML } from '../M';
+import ClassDescription, {
+    MethodDescription, ClassSectionHead, EnumDescription, PropertyEntry,
+    CreateDescriptions, PropertyList, EnumDefinitionList,
+    IndentedDefinitionList
+} from '../ClassDescription';
+import Code from '../Code';
 import SectionHead from '../SectionHead';
 import CenteredImage from '../CenteredImage';
+import { Link } from 'react-router-dom';
 
 
 function NWindowsElements() {
     return (
         <DocsPage route="/using/elements">
             <h1>{DocsTitle("/using/elements")}</h1>
-            <p>This section describes elements used for UI composition, and only those properties
-                used in layout and rendering of elements.
-            </p><p>
-                Discussion of other properties, such as those involved with events are
-                deferred to a later section.
+            <p>This section describes elements used for UI composition in NWindows. Descriptions of classes in this section are abridged. They contain
+                documentation only on those properties and methods germane to controlling layout and display of NWindows elements.
             </p>
-
-            <SectionHead text="Properties and Manipulators" />
-            <p>Each property on an NWindows element has a getter and (usually) a setter method. Getters and setters use the
-                following convention:
-            </p>
-            <CodeDiv white text={`const std::string&text() const; // the getter for the the text property
-void text(const std::string&value); // the setter.`} />
-
-            <p>Each property has a corresponding <i>manipulator</i> which can be used to set the property using <i>manipulator</i> syntax.</p>
-            <CodeDiv white text={`NTextElement element = NTextElement::create()
-    | text("Hello world.");`} />
-            <p>Manipulators are actually classes, which use a scheme similar to (but better than) <M>iomanip</M> manipulators. They capture
-                values, and then apply them to an object pointer on the left-hand side of an "|" operator.
-                The <M>operator|</M> overload for manipulators then returns an object pointer of the exact same type as the
-                object on its left-hand side. This allows one or more <i>manipulator</i> operations to be chained together
-                into a single expression.</p>
-            <CodeDiv white text={`NTextElement element = NTextElement::create()
-    | width(15)
-    | alignment(NAlignment::End)
-    | margin({2,1,2,1})
-    | text("Hello world.");`} />
-
-            <p>Here's a sample implementation of a manipulator, in order to help give you a sense of what's happening under the covers.</p>
-            <CodeDiv white text={`    class text : public NElementManipulator {
-    public:
-        text(const std::string& value) : value(value) {
-        }
-        template<typename T>
-        std::shared_ptr<T> apply(std::shared_ptr<T> element) const {
-            element->text(this->value);
-            return element;
-        }
-    private:
-        std::string value;
-
-    };
-`} />
-
-            <p>And then this dense little piece of code provides the <M>operator</M> | overload:</p>
-            <CodeDiv white text={
-                `template<typename ELEMENT, typename MANIPULATOR>
-    requires std::derived_from<ELEMENT, NElement>
-    && std::derived_from<MANIPULATOR, NElementManipulator>
-std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATOR value)
-{
-    value.apply(element);
-    return element;
-}
-`} />
-            <p>You don't need to completely understand the implementation details. Just know that the implementation is relative
-                efficient and safe, and that applying a manipulator using <M>operator |</M> returns a shared pointer of the exact
-                same type as the left-hand object, which can then be used to chain another manipulator operation if
-                required.
+            <p>Event handling is discussed in the <Link to="/using/events">NWindows Events</Link> section of this document; and a complete unabridged description
+                of each of these classes is provided in the <Link to="/apis">NWindows API Reference</Link> section of this document.
             </p>
 
             <SectionHead text="General Layout" />
             <p>All NWindows elements have a <M>width</M>, a <M>height</M>, and a <M>margin</M> property. <M>width</M>,
                 and <M>height</M> properties default to a value of <M>AUTO_SIZE</M>, which generally means that the element
-                will be sized to fit its content. The <M>margin</M> property is of type  <M>NThickness</M>
-            </p>
-            <CodeDiv white text={`
-            struct NThickness
-    {
-        NThickness() : left(0), top(0), right(0), bottom(0) {}
-        NThickness(int thickness) : left(thickness), top(thickness), right(thickness), bottom(thickness) {}
-        NThickness(int left, int top, int right, int bottom) : left(left), top(top), right(right), bottom(bottom) {}
-
-        int left, top, right, bottom;
-
-        bool operator==(const NThickness& other) const;
-    };
-`} />
-            <p> and defaults to <M>NThickness(0,0,0,0)</M>. Setting <M>margin</M> to a non-zero value will add blank space around the
-                element. <M>width</M> and <M>height</M> properties, if specified, are exclusive of margin space.
+                will be sized to fit its content. The <M>margin</M> property is of type  <ML name="NThickness" />
+                which specifies the width of the top, left, right and bottom margins.
             </p>
 
             <SectionHead text="Properties Shared by All Elements" />
@@ -137,8 +74,9 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                     </PropertyEntry>
 
                     <PropertyEntry type="NSize" propertyName='NElement::size'>
-                        <div>Controls the height of the element. If set to <M>AUTO_SIZE</M>, the height of the
-                            element will adjust to fit the height of its content at layout time.</div>
+                    <div>A convenience property that gets and sets both <M>width</M> and <M>height</M> properties at the
+                            same time.
+                        </div>
                     </PropertyEntry>
 
                     <PropertyEntry type="NRect" propertyName='NElement::margin'>
@@ -146,24 +84,16 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                             the element do not include space allocated for margins. Defaults to <M>NRect(0,0,0,0)</M></div>
                     </PropertyEntry>
 
-                    <PropertyEntry type="int" propertyName="NElement::actual_width">
-                        (Read only). The actual layout width of the element. Not valid until layout has completed.
-                    </PropertyEntry>
-                    <PropertyEntry type="int" propertyName="NElement::actual_height">
-                        (Read only). The actual layout height of the element. Not valid until layout has completed.
-                    </PropertyEntry>
-                    <PropertyEntry type="NSize" propertyName="NElement::actual_size">
-                        (Read only). The actual layout width and height of the element. Not valid until layout has completed.
-                    </PropertyEntry>
-
-                    <PropertyEntry type="NRect" propertyName="NElement:bounds">
-                        (Read only). The actual position of the element inside the window in window coordinates. Only valid
-                        after layout has completed.
-                    </PropertyEntry>
                     <PropertyEntry type="bool" propertyName='NElement::disabled'>
                         <div>Present on all objects, but Only has effect for input controls elements. Has no effect for elements of other types.
                             Setting disabled to true will gray out the control to which it is applied. Discussion of effects on event handling
                             for the object will be deferred to a later section. Set to <M>false</M> by default. </div>
+                    </PropertyEntry>
+                    <PropertyEntry type="bool" propertyName='NElement::request_initial_focus'>
+                        <div>Present on all objects, but Only has effect for focusable elements. Has no effect for elements of other types.
+                            NWindows will focus the first element in the window that has <M>request_initial_focus</M> set to <M>true</M> when
+                            the window is first created. If no element has this property set, NWindows will give initial focus to the
+                            first focusable element in the visual tree. Defaults to <M>false</M>.</div>
                     </PropertyEntry>
                 </PropertyList>
             </ClassDescription>
@@ -171,36 +101,41 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
 
             <SectionHead text="Layout Elements" />
 
-            <ClassDescription name="NVerticalStackElement">
+            <ClassDescription name="NVerticalStackElement" baseClass="NContainerElement">
                 <p>
-                    The <M>NVerticalStackElement</M> stacks child elements vertically.
+                    <M>NVerticalStackElement</M> stacks child elements vertically.
                 </p>
+                <ClassSectionHead text="Create Methods" />
+                <MethodDescription indexName="static NVerticalStackElement::ptr NVerticalStackElement::create()"
+                    method={`static NVerticalStackElement::ptr create();`}>
+                    <div>
+                        Creates a new <M>NVerticalStackElement</M>, and returns a shared_ptr to it.
+                    </div>
+                </MethodDescription>
+
                 <PropertyList>
                     <PropertyEntry type="NAlignment" propertyName='NVerticalStackElement::alignment'>
                         <div>
-                            Controls how child elements are aligned within the <M>NVerticalStackElement</M>. The <M>alignment</M> property
-                            is of type
-                            <CodeDiv white text={`enum class NAlignment {
-    Start,
-    Center,
-    End,
-    Justify
-};
-`}
-                            />
+                            <p style={{marginTop: 0}}>Controls how child elements are aligned within the <M>NVerticalStackElement</M>. 
+                            The <M>alignment</M> property can take the following values:</p>
+                            <IndentedDefinitionList>
+                                <div><M>NAlignment::Start</M></div>
+                                <p >Aligns child elements to the start of the <M>NVerticalStackElement</M>.</p>
+                                <div><M>NAlignment::End</M></div>
+                                <p>Right-justifies child elements within available space.</p>
+                                <div><M>NAlignment::Center</M></div>
+                                <p>Centers child elements within the <M>NVerticalStackElement</M>.</p>
+                                <div><M>NAlignment::Justify</M></div>
+                                <p>Calculates the maximum width of all child elements, and then arranges all child elements 
+                                    with the same width as the widest element.</p>
+                            </IndentedDefinitionList>
                             <p>
-                                <M>Start</M> alignment aligns child elements to the start of the <M>NVerticalStackElement</M>. <M>Center</M> alignment
-                                centers child elements within the <M>NVerticalStackElement</M>. <M>End</M> alignment aligns child elements to the end of the
-                                <M>NVerticalStackElement</M>. <M>Justify</M> alignment calculates the maximum width of all child elements, and then
-                                arranges child elements with the same width as the widest element. <M>Justify</M> alignment is useful for
-                                case like radio button groups, lists, and menu items, where you want all child elements to have the same width.
+                                If the <M>width</M> property of the <M>NVerticalStackElement</M> is set to <M>AUTO_SIZE</M>, <M>NVerticalStackElement</M> expands
+                                to fit available space if the width of the element is constrained, and will otherwise
+                                resize to fit the width of its widest child element. The width of an <M>NVerticalStackElement</M> is constrained 
+                                if any of the parents of the <M>NVerticalStackElement</M> have their width set to something 
+                                other than <ML name="AUTO_SIZE" />.
                             </p>
-                            <p>
-                                If the <M>width</M> property of the <M>NVerticalStackElement</M> is set to <M>AUTO_SIZE</M>, the <M>NVerticalStackElement</M> will
-                                automatically resize to fit the width of the widest child element, if the alignment is set to <M>Start</M> or <M>Justify</M>,
-                                and will expand to fill available width if the alignment is set to <M>Center</M> or <M>End</M>.
-                            </p>
-
                         </div>
                     </PropertyEntry>
                     <PropertyEntry type="int" propertyName='NVerticalStackElement::row_gap'>
@@ -212,36 +147,50 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                 </PropertyList>
 
             </ClassDescription>
-            <ClassDescription name="NHorizontalStackElement">
+            <ClassDescription name="NHorizontalStackElement" >
                 <p>
-                    The <M>NHorizontalStackElement</M> stacks child elements horizontally.
+                    <M>NHorizontalStackElement</M> stacks child elements horizontally.
                 </p>
+
+                <ClassSectionHead text="Create Methods" />
+                <MethodDescription indexName="static NHorizontalStackElement::ptr NHorizontalStackElement::create()"
+                    method={`static NHorizontalStackElement::ptr create();`}>
+                    <div>
+                        Creates a new <M>NHorizontalStackElement</M>, and returns a shared_ptr to it.
+                    </div>
+                </MethodDescription>
+
                 <PropertyList>
                     <PropertyEntry type="NAlignment" propertyName='NHorizontalStackElement::alignment'>
                         <div>
                             <p>
-                                Controls how child elements are aligned within the <M>NHorizontalStackElement</M>. The <M>alignment</M> property is of type
+                                Controls how child elements are aligned within the <M>NHorizontalStackElement</M>. 
+                                The <M>alignment</M> property can take any of the following values:
                             </p>
-                            <CodeDiv white text={`enum class NAlignment {
-    Start,  
-    Center,
-    End,
-    Justify
-};
-`}
-                            />
-                            <p>
-                                <M>Start</M> alignment aligns child elements to the start of the <M>NHorizontalStackElement</M>. <M>Center</M> alignment
-                                centers child elements within the <M>NHorizontalStackElement</M>. <M>End</M> alignment aligns child elements to the end of the
-                                <M>NHorizontalStackElement</M>. <M>Justify</M> alignment is not supported by <M>NHorizontalStackElement</M>, and the behavior
-                                is undefined.
+                            <IndentedDefinitionList>
+                                <div><M>NAlignment::start</M></div>
+                                <p>Aligns child elements to the start of the <M>NHorizontalStackElement</M>.</p>
+                                <M>NAlignment::end</M>
+                                <p>Right-justifies child elements within available space.</p>
+                                <M>NAlignment::Center</M>
+                                <p>Centers child elements within available space.</p>
+                                <M>NAlignment::Justify</M>
+                                <p>Not allowed. Behavior is undefined.</p>
+                            </IndentedDefinitionList>
+                            <p>When the alignment of an <M>NHorizontalStackElement</M> is set to <M>NAlignment::Center</M>,
+                                or <M>NAlignment::end</M>, the width of the <M>NHorizontalStackElement</M> must be be constrained.
+                                The width of an <M>NHorizontalStackElement</M> is constrained if any of the following conditions is true:
                             </p>
-                            <p>
-                                If the <M>width</M> property of the <M>NHorizontalStackElement</M> is set to <M>AUTO_SIZE</M>, the <M>NHorizontalStackElement</M> will
-                                automatically resize to fit the sum of the widths of child elements, if the alignment is set to <M>Start</M> or <M>Justify</M>,
-                                and will expand to fill available width if the alignment is set to <M>Center</M> or <M>End</M>. For expansion to take effect,
-                                the width of the <M>NHorizontalStackElement</M> must be constrained by a parent element.
-                            </p>
+                            <ul>
+                                <li>
+                                    The width of the element is set to a value other than <M>AUTO_SIZE</M>.
+                                </li>
+                                <li>
+                                    The width of one of the element's parents is set to a value other than <M>AUTO_SIZE</M>.
+                                </li>
+                                <li>One of the element's parents is an <ML name="NVerticalStackElement" /> whose alignment
+                                    has been set to <M>NAlignment::Justify</M></li>
+                            </ul>
 
                         </div>
                     </PropertyEntry>
@@ -260,15 +209,35 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                 <p>
                     The <M>NTextElement</M> displays text.
                 </p>
+                <ClassSectionHead text="Create Methods" />
+                <MethodDescription indexName={
+                    ["static NTextElement::ptr NTextElement::create()",
+                        "static NTextElement::ptr NTextElement::create(const std::string& text)",
+                        "static NTextElement::ptr NTextElement::create(const std::string& text, NAttribute attribute)"
+                    ]
+                }
+                    method={`static NTextElement::ptr create();
+
+static NTextElement::ptr create(const std::string& text);
+
+static NTextElement::ptr create(
+    const std::string& text, 
+    NAttribute attribute);
+`} >
+                    Create a new NTextElement, returning a shared_ptr. Optionally, set the <M>text</M> and <M>text_attribute</M> properties.
+                </MethodDescription>
+
+
                 <PropertyList>
                     <PropertyEntry type="std::string" propertyName='NTextElement::text'>
                         <div>The text to display. The contents of the string are treated as UTF-8-encoded text.</div>
                     </PropertyEntry>
 
 
-                    <PropertyEntry type="NColorPair" propertyName='NTextElement::color'>
-                        <div>Actually of type <M>std::optional&lt;NColorPair&gt;</M>. The foreground and background
-                            colors to use when displaying the text. See <M>NWindow::make_color</M>. Defaults to unset.
+                    <PropertyEntry type={`std::optional<
+  NColorPair>`} propertyName='NTextElement::color'>
+                        <div>The foreground and background
+                            colors to use when displaying the text. See <ML fullName name="NWindow::make_color_pair" />. Defaults to unset.
                         </div>
                     </PropertyEntry>
 
@@ -347,6 +316,16 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                     src="/nwindows/image/sample_box.png"
                     alt="Sample box"
                 />
+                <ClassSectionHead text="Create Methods" />
+                <MethodDescription indexName={
+                    ["static NBoxElement::ptr NBoxElement::create()"
+                    ]
+                }
+                    method={`static NBoxElement::ptr create();`} >
+                    Create a new NBoxElement, returning a shared_ptr.
+                </MethodDescription>
+
+
                 <PropertyList>
                     <PropertyEntry type="std::string" propertyName='NBoxElement::title'>
                         <div>Optionally, displays a title on the borders of the box. Defaults to "" (no title).</div>
@@ -371,6 +350,7 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                     src="/nwindows/image/sample_button.png"
                     alt="Sample button"
                 />
+
                 <p>
                     If <M>width</M> is <M>AUTO_SIZE</M>, the
                     button wraps the label of the button tightly. Generally, it's a good idea to
@@ -381,6 +361,26 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                     case-insensitive, and locale-aware. So, for example, "a" and "A" are considered to be the same key, but in a
                     Turkish locale, "i" and "I" are considered to be different keys.
                 </p>
+
+                <CreateDescriptions>
+
+                    <MethodDescription indexName={[
+                        `static NButtonElement::ptr create(const std::string& label, int width = AUTO_SIZE)`,
+                        `static NButtonElement::ptr create()`
+                    ]}
+                        method={`static NButtonElement::ptr create();
+
+static NButtonElement::ptr create(
+const std::string& title, 
+int width = AUTO_SIZE);`}
+                    >
+                        <div>
+                            Return an <M>std::shared_ptr</M> to a newly-created <M>NButtonElement</M>. Optionally set
+                            the <ML name="NButtonElement::label" /> and <ML name="NElement::width" /> properties.
+                        </div>
+                    </MethodDescription>
+                </CreateDescriptions>
+
                 <PropertyList>
                     <PropertyEntry type="std::string" propertyName='NButtonElement::label'>
                         <div>The text to display on the button.</div>
@@ -397,7 +397,7 @@ std::shared_ptr<ELEMENT> operator |(std::shared_ptr<ELEMENT> element, MANIPULATO
                     <PropertyEntry type="std::string" propertyName='NButtonElement::prefix'>
                         <div><p>Text to display before the label. Could be used to display UTF-8 icons
                             in a button. For example, </p>
-                            <CodeDiv white text={`
+                            <Code white text={`
 NButtonElement::create()
     | width(10)
     | alignment(NAlignment::Start)
@@ -426,10 +426,11 @@ NButtonElement::create()
                     src="/nwindows/image/sample_textedit.png"
                     alt="Sample NTextEditElement"
                 />
+
                 <p>
                     The <M>text</M> property of
                     the <M>NTextEditElement</M> is the text displayed in the text box. While editing,
-                    text is maintained in canonical form (combining accents are combined with the
+                    text is maintained in Unicode NFC canonical form (combining accents are combined with the
                     preceding letter on the fly).
                 </p><p>
                     <M>NTextEditElement</M> supports the Linux X11/Wayland clipboard when running on an <M>xterm</M>-like terminal
@@ -439,15 +440,15 @@ NButtonElement::create()
                     You can control which characters may be entered in a <M>NTextEditElement</M> using
                     the following methods (and their corresponding manipulator):
                 </p>
-                <CodeDiv white text={
-                    `void character_filter(const std::function&lt;bool(char32_t c)&gt;& filter);
-        void character_filter(std::function&lt;bool(char32_t c)&gt;&& filter);
+                <Code white text={
+                    `void character_filter(const std::function<bool(char32_t c, int position)>& filter);
+void character_filter(std::function<bool(char32_t c, int position)>&& filter);
 `} />
                 <p>So you could, for example, restrict the text of an edit box to (European) digits only using the following code:</p>
-                <CodeDiv white text={
+                <Code white text={
                     `NTextEditElement::create()
     | character_filter(
-        [](char32_t c) {
+        [](char32_t c, int _) {
             return c >= L'0' && c <= L'9'; 
         }
     )
@@ -460,7 +461,7 @@ NButtonElement::create()
                     <M>NTextEditElement</M> provides the following methods to deal with
                     simple selection operations:
                 </p>
-                <CodeDiv white text={
+                <Code white text={
                     `void select_all();
 void select_start();
 void select_end();
@@ -468,7 +469,24 @@ void select_end();
 
                 <p><M>width</M> must be set to an explicit value, and must not be set to AUTO_SIZE.
                     For <M>NTextEditElements</M>s, <M>width</M> defaults to 10, but the expectation is that you
-                    will explicitly set an appropriate width.</p>
+                    will explicitly set a more appropriate width.</p>
+
+                <CreateDescriptions>
+                    <MethodDescription indexName={
+                        [
+                            "static NTextEditElement::ptr NTextEditElement::create(const std::string& defaultText)",
+                        ]
+                    }
+                        method={`static NTextEditElement::ptr create(
+    const std::string& defaultText = ""
+);`} >
+                        <div>
+                            Return a std::shared_ptr to a newly-created <M>NTextEditElement</M>. Optionally, set the <M>text</M> property to an initial value.
+                        </div>
+                    </MethodDescription>
+                </CreateDescriptions>
+
+
                 <PropertyList>
                     <PropertyEntry type="std::string" propertyName='NTextEditElement::text'>
                         <div>The text to display in the text box.</div>
@@ -511,6 +529,26 @@ void select_end();
                 <p>Checkmarks are displayed with Unicode characters on xterm-like devices. <M>NCheckboxElement</M>falls back to
                     using ASCII characters on terminals that do not have full Unicode support.
                 </p>
+
+                <CreateDescriptions>
+
+                    <MethodDescription indexName={[
+                        `static NCheckboxElement::ptr NCheckboxElement::create(const std::string& label, bool checked = false)`,
+                        `static NCheckboxElement::ptr NCheckboxElement::create()`
+                    ]}
+                        method={`static NCheckboxElement::ptr create(
+    const std::string& label, 
+    bool checked = false);
+
+static NCheckboxElement::ptr create();`
+                    }
+                    >
+                        <div>
+                            Return an <M>std::shared_ptr</M> to a newly-created <M>NCheckboxElement</M>. Optionally set 
+                            the <ML name="NCheckboxElement::label"/> and <ML name="NCheckboxElement::checked" /> properties.
+                        </div>
+                    </MethodDescription>
+                </CreateDescriptions>
 
                 <PropertyList>
                     <PropertyEntry type="std::string" propertyName='NCheckboxElement::label'>
@@ -556,56 +594,83 @@ void select_end();
                 <p>Checkmarks are display with Unicode characters on xterm-like devices. <M>NRadioGroupElement</M> falls back to using ASCII characters
                     on terminals that do not have full Unicode support.
                 </p>
+                <CreateDescriptions>
+                    <MethodDescription indexName={[
+                        "static NRadioGroupElement::ptr NRadioGroupElement::create(NOrientation orientation, const std::vector<std::string>& labels, int selection)",
+                        "static NRadioGroupElement::ptr NRadioGroupElement::create()",
+
+                    ]}
+                        method={`static NRadioGroupElement::ptr create(
+    NOrientation orientation,
+    const std::vector<std::string>& labels,
+    int selection);
+
+static NRadioGroupElement::ptr create();
+`}>
+                        <div>
+                            Return an <M>std::shared_ptr</M> to a newly-created <M>NRadioGroupElement</M>. Optionally set
+                            the <M>orientation</M>, <M>labels</M> and <M>selection</M> properties.
+                        </div>
+                    </MethodDescription>
+                </CreateDescriptions>
+
                 <PropertyList>
-                    <PropertyEntry type="NOrientation" propertyName='NRadioGroupElement::orientation'>
-                        <div>Controls the stacking of radio buttons in the group. Either <M>NOrientation::Horizontal</M>, or <M>NOrientation::Vertical</M>.</div>
-                    </PropertyEntry>
-
-                    <PropertyEntry type={`std::vector<
-  std::string>`} propertyName='NRadioGroupElement::labels'>
-                        <div>The labels for the radio buttons in the group. If a label contains a '_' character, the following character
-                            is treated as a shortcut key. See <M>NButtonElement</M> for a detailed discussion of how
-                            shortcut keys are handled.</div>
-                    </PropertyEntry>
-
-                    <PropertyEntry type="int" propertyName='NRadioGroupElement::value'>
-                        <div>The index of the selected radio button. Defaults to 0 (the first item selected).
-                            Set to -1 to select none of the radio buttons.
+                <PropertyEntry type="NOrientation" propertyName='NRadioGroupElement::orientation'>
+                        <div>
+                            <p>Controls how radio buttons are stacked within the <M>NRadioGroupElement</M>.
+                                Either <M>NOrientation::Horizontal</M> or <M>NOrientation::Vertical</M>. Defaults to <M>NOrientation::Vertical</M>.
+                            </p>
                         </div>
                     </PropertyEntry>
-
-                    <PropertyEntry type="int" propertyName='NRadioGroupElement::column_gap'>
-                        <div>The number of spaces to put between radio buttons in the group when oriented horizontally. Defaults to 1.</div>
+                    <PropertyEntry type={`std::vector<
+    std::string>`} propertyName="labels">
+                        <div>
+                            <p>
+                                Labels for each radio button. The number of labels determines the number of radio buttons.
+                            </p><p>
+                                If the '_' character appears in a label, the character which follows is treated as a short-cut key. The
+                                short-cut key character will be underlined when the radio button is displayed.
+                                NWindows performs locale-aware case-insensitive comparison of the short-cut key with keystrokes to
+                                select the radio button.</p>
+                        </div>
                     </PropertyEntry>
-
+                    <PropertyEntry type="int" propertyName='NRadioGroupElement::selection'>
+                        <div>
+                            The index of the currently selected radio button. Defaults to 0. Set the selection to -1 to
+                            deselect all radio buttons.
+                        </div>
+                    </PropertyEntry>
                     <PropertyEntry type="int" propertyName='NRadioGroupElement::row_gap'>
-                        <div>The number of blank lines to put between radio buttons in the group when oriented vertically. Defaults to 0.</div>
+                        <div>
+                            Controls how many blank lines to put between each radio button when the orientation is vertical. Defaults to 0.
+                        </div>
                     </PropertyEntry>
-
+                    <PropertyEntry type="int" propertyName='NRadioGroupElement::column_gap'>
+                        <div>
+                            Controls how many blank display columns to put between each radio button when the orientation is horizontal.
+                            Defaults to 1.
+                        </div>
+                    </PropertyEntry>
                     <PropertyEntry type="bool" propertyName='NRadioGroupElement::disabled'>
-                        <div>(Inherited from NElement). When true, the entire radio group is disabled, and grayed out.</div>
+                        When set to <M>true</M> the radio button group is disabled, and all radio buttons are grayed out.
                     </PropertyEntry>
 
                     <PropertyEntry type="std::string" propertyName='NRadioGroupElement::checked_text'>
-                        <div>Allows customization of the control. The utf-8 text to display for the checkmark when the control is checked. Defaults to "",
-                            which allows the control to decide for itself whether it wants to use Unicode characters or ASCII text
-                            to display the checkmark. <M>checked_text</M> and <M>unchecked_text</M> should both have the same
-                            display length.
+                        <div>
+                            Provided to allow customization. The prefix text to display when a radio button is checked. Defaults to "", which
+                            allows the element to choose <M>" ◉  "</M> on terminals that can display the character, and
+                            fall back to <M>" (X)  "</M> on terminals that cannot.
                         </div>
                     </PropertyEntry>
-
                     <PropertyEntry type="std::string" propertyName='NRadioGroupElement::unchecked_text'>
-                        <div>Allows customization of the control. The utf-8 text to display for the checkmark when the control is unchecked. Defaults to "",
-                            which allows the control to decide for itself whether it wants to use Unicode characters or ASCII text
-                            to display the checkmark.
+                        <div>
+                            Provided to allow customization. The prefix text to display when a radio button is unchecked. Defaults to "", which
+                            allows the element to choose <M>" ○  "</M> on terminals that can display the character, and
+                            fall back to <M>" ( )  "</M> on terminals that do cannot.
                         </div>
+
                     </PropertyEntry>
-
-                    <PropertyEntry type="bool" propertyName='NRadioGroupElement::disabled'>
-                        <div>(Inherited from NElement). When true, the radio group is disabled, and grayed out.</div>
-                    </PropertyEntry>
-
-
+ 
                 </PropertyList>
             </ClassDescription>
             <ClassDescription name="NDropdownElement">
@@ -617,8 +682,8 @@ void select_end();
                     the <M>item_id</M> of the selected menu item, and the <M>on_selection_changed</M> event
                     is fired.
                 </p>
-                <p>You only need to set a label and an item_id in each menu item.
-                    <M>NDropdownElement</M> will focus the currently selected menu item when the
+                <p>You only need to set a label and an item_id in each menu 
+                    item. <M>NDropdownElement</M> will focus the currently selected menu item when the
                     dropdown opens. However, <M>NDropdownElement</M> does support advanced features
                     that <M>NMenuItem</M> provides, such as icons, checkmarks, submenus, and dividers.
                     See the <M>NMenuItem</M> documentation for more information, should you improbably decided
@@ -627,6 +692,31 @@ void select_end();
 
                 <p><M>NDropdownElement</M> does not support scrolling in the dropdown popup, so the size of the <M>menu_items</M> list
                     should be kept modest.</p>
+
+
+                    <CreateDescriptions>
+                    <MethodDescription indexName={[
+                        "static NDropdownElement::ptr NDropdownElement::create(const std::vector<NMenuItem>& menu_items, int selected)",
+                        "static NDropdownElement::ptr NDropdownElement::create(std::vector<NMenuItem>&& menu_items, int selected)",
+                        "static NDropdownElement::ptr NDropdownElement::create()"
+                    ]}
+                        method={`static NDropdownElement::ptr create(
+    const std::vector<NMenuItem>& menu_items, 
+    int selected);
+
+static NDropdownElement::ptr create(
+    std::vector<NMenuItem>&& menu_items, 
+    int selected;    
+
+static NDropdownElement::ptr create();
+    `}
+                    >
+                        <div>
+                            Return an <M>std::shared_ptr</M> to a newly-created <M>NDropdownElement</M>. Optionally set the <M>menu_items</M> and <M>selected</M> properties.
+                        </div>
+                    </MethodDescription>
+                </CreateDescriptions>
+
                 <PropertyList>
                     <PropertyEntry type={`std::vector<
   NMenuItem>`} propertyName='NDropdownElement::menu_items'>
@@ -646,15 +736,49 @@ void select_end();
 
             <ClassDescription name="NMenuElement" baseClass="NButtonBaseElement">
                 <p><M>NMenuElement</M> menu header for a single menu item, displays a popup menu
-                    when clicked, or when the hot key is pressed. Submenus are supported, as are menu items
+                    when clicked, or when the hot key is pressed. Submenus are supported, as are menu menu_items
                     with checkmarks, or with icons.
                 </p>
+                <div style={{ display: "flex", flexFlow: "row nowrap", columnGap: 16, justifyContent: "start", alignItems: "flex-start" }}>
+                    <div style={{ flex: "1 1 0px" }} />
+                    <img src="/nwindows/image/sample_menuelement.png" style={{ flex: "0 1 auto" }} alt="Menu" />
+                    <img src="/nwindows/image/sample_menu_icons.png" style={{ flex: "0 1 auto" }} alt="Menu Icons" />
+                    <div style={{ flex: "1 1 0px" }} />
+                </div>
+                <CreateDescriptions>
+
+                    <MethodDescription indexName={[
+                        "static NMenuElement::ptr NMenuElement::create(const std::string& label, std::vector<NMenuItem>&& menu_items)",
+                        "static NMenuElement::ptr NMenuElement::create(const std::string& label, const std::vector<NMenuItem>& menu_items)",
+                        "static NMenuElement::ptr NMenuElement::create()"
+                    ]}
+                        method={`static NMenuElement::ptr create(
+    const std::string& label,
+    std::vector<NMenuItem>&& menu_items);
+
+static NMenuElement::ptr create(
+    const std::string& label,
+    const std::vector<NMenuItem>& menu_items);    
+
+static NMenuElement::ptr create();
+    `}
+                    >
+                        <div>
+                            Return an <M>std::shared_ptr</M> to a newly-created <M>NMenuElement</M>. Optionally set the <M>label</M> and <M>menu_items</M> properties.
+                        </div>
+                    </MethodDescription>
+                </CreateDescriptions>
+
                 <PropertyList>
                     <PropertyEntry type="std::string" propertyName='NMenuElement::label'>
                         <div>The text to display for the menu item. If there is a '_' character
                             in the label, the following character is treated as a hot key. See <M>NButtonElement</M> for a detailed discussion of how
                             hot keys are handled.</div>
                     </PropertyEntry>
+                    <PropertyEntry type={`std::vector<
+    NMenuItem>`} propertyName='NMenuElement::menu_items'>
+                            <div>The list of menu items to display in the menu. See <M>NMenuItem</M> for details on how to create menu items.</div> 
+                        </PropertyEntry>
                     <PropertyEntry type="bool" propertyName='NMenuElement::disabled'>
                         <div>(Inherited from NElement). When true, the menu item is disabled, and grayed out.</div>
                     </PropertyEntry>
@@ -673,11 +797,11 @@ void select_end();
                 other elements, and are used when building custom elements. Their proper use will be
                 covered in subsequent sections, but they are mentioned here for completeness. Neither
                 element is directly useful when composing user interfaces.</p>
-            <p><M>NButtonBaseElement</M> is a base class for button-like elements that
+            <p><ML name="NButtonBaseElement"/> is a base class for button-like elements that
                 can be clicked or focused, and must show clicked, or selected, or focused state when
                 rendered.
             </p>
-            <p><M>NContainerElement</M> is the base class for all <M>NElement</M>s that have
+            <p><ML name="NContainerElement" /> is the base class for all <M>NElement</M>s that have
                 child elements.
             </p>
         </DocsPage>

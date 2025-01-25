@@ -23,9 +23,9 @@
 
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
-import ClassDescription, { MethodDescription, ClassSectionHead, UsingDescription, PropertyList, PropertyEntry, MethodDescriptions, DefinitionList, TypeDefinitions } from '../ClassDescription';
+import ClassDescription, { MethodDescription, ClassSectionHead, UsingDescription, PropertyList, PropertyEntry, MethodDescriptions, TypeDefinitions, IndentedDefinitionList } from '../ClassDescription';
 import M, { ML } from '../M';
-import CodeDiv from '../Code';
+import Code from '../Code';
 
 function ClassNHorizontalStackElement() {
 
@@ -50,7 +50,7 @@ function ClassNHorizontalStackElement() {
                 </TypeDefinitions>
 
 
-                <ClassSectionHead text="Constructors" />
+                <ClassSectionHead text="Create Methods" />
                 <MethodDescription indexName="static NHorizontalStackElement::ptr NHorizontalStackElement::create()"
                     method={`static NHorizontalStackElement::ptr create();`}>
                     <div>
@@ -69,18 +69,36 @@ function ClassNHorizontalStackElement() {
                 <PropertyList>
                     <PropertyEntry type="NAlignment" propertyName='NHorizontalStackElement::alignment'>
                         <div>
-                            <p>Controls how child elements are aligned within the <M>NHorizontalStackElement</M>.</p>
-                            <p>alignment can take the following values:</p>
+                            <p>Controls how child elements are aligned within the <M>NHorizontalStackElement</M>. The <M>alignment</M> property
+                            can take the following values:</p>
+                            <IndentedDefinitionList>
+                                <div><M>NAlignment::start</M></div>
+                                <p>Aligns child elements to the start of the <M>NHorizontalStackElement</M>.</p>
+                                <M>NAlignment::end</M>
+                                <p>Right-justifies child elements within available space.</p>
+                                <M>NAlignment::Center</M>
+                                <p>Centers child elements within available space.</p>
+                                <M>NAlignment::Justify</M>
+                                <p>Not allowed. Behavior is undefined.</p>
+                            </IndentedDefinitionList>
+
                             <p>When the alignment of an <M>NHorizontalStackElement</M> is set to <M>NAlignment::Center</M>,
                                 or <M>NAlignment::end</M>, the width of the <M>NHorizontalStackElement</M> must be be constrained.
-                                The width my be constrained, either by setting <M>width</M> property of the element, or one
-                                of its parents to something other than <M>AUTO_SIZE</M>, or by ensuring that one of the parents
-                                of the current element is an <ML name="NVerticalStackElement" /> whose alignment has been
-                                set to <M>NAlignment::Justify</M>. Setting the alignment of an <M>NVerticalStackElement</M> to
-                                justify will cause the width of all child elements to be constrained to the width of its widest
-                                child element. Consider the following example:
+                                The width of an <M>NHorizontalStackElement</M> is constrained if any of the following conditions is true:
                             </p>
-                            <CodeDiv showLines text={`NVerticalStackElement::create()
+                            <ul>
+                                <li>
+                                    The width of the element is set to a value other than <M>AUTO_SIZE</M>.
+                                </li>
+                                <li>
+                                    The width of one of the element's parents is set to a value other than <M>AUTO_SIZE</M>.
+                                </li>
+                                <li>One of the element's parents is an <ML name="NVerticalStackElement" /> whose alignment
+                                    has been set to <M>NAlignment::Justify</M></li>
+                            </ul>
+                            <p>Consider the following example:</p>
+
+                            <Code showLines text={`NVerticalStackElement::create()
     | alignment(NAlignment::Justify)
     | margins(2,0,2,0)
     | addChild(
@@ -113,24 +131,6 @@ function ClassNHorizontalStackElement() {
                                 edge of the  <M>NButtonElement</M> will line up with the
                                 end of the long text line when displayed.
                             </p>
-                            <p>The <M>alignment</M> property can be assigned the following values:</p>
-                            <DefinitionList>
-                                <div><M>NAlignment::Start</M></div>
-                                <div>Aligns child elements to the start of
-
-                                    the <M>NHorizontalStackElement</M>.</div>
-
-                                <div><M>NAlignment::Center</M></div>
-                                <div>Centers child elements within the <M>NHorizontalStackElement</M>.</div>
-
-                                <div><M>NAlignment::End</M></div>
-                                <div>Aligns
-                                    child elements to the end of the <M>NHorizontalStackElement</M>.</div>
-
-                                <div><M>NAlignment::Justify</M></div>
-                                <div><p>Not currently a valid value. Behavior is undefined.
-                                </p></div>
-                            </DefinitionList>
 
                         </div>
                     </PropertyEntry>

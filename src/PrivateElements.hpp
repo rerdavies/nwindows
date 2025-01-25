@@ -90,7 +90,7 @@ namespace nwindows::private_elements
         void open(bool value);
 
     protected:
-        virtual bool handle_clicked(int button, NClickedEventArgs& eventArgs) override;
+        virtual bool handle_clicked(NMouseButton button, NClickedEventArgs& eventArgs) override;
         virtual void handle_attached(NWindow* window) override;
     private:
         std::shared_ptr<NPopupMenuWindow> popup_window_;

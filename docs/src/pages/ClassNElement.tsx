@@ -32,7 +32,7 @@ import ClassDescription, {
 
 } from '../ClassDescription';
 import M, { ML } from '../M';
-import CodeDiv, { CodeFragment2 } from '../Code';
+import Code, { CodeFragment2 } from '../Code';
 
 function ClassNElement() {
 
@@ -40,7 +40,7 @@ function ClassNElement() {
         <DocsPage route="/apis/classes/NElement">
 
             <h1>{DocsTitle("/apis/classes/NElement")}</h1>
-            <ClassDescription name="NElement" >
+            <ClassDescription name="NElement" baseClass="NObject" >
                 <p><M>NElement</M> is the base class for all NWindows elements and windows. NElement and classes
                     derived from it are not copyable or movable.</p>
 
@@ -134,7 +134,7 @@ function ClassNElement() {
                         Read only.  The actual layout width and height of the element. Not valid until layout has completed.
                     </PropertyEntry>
 
-                    <PropertyEntry type="NRect" propertyName="NElement:bounds">
+                    <PropertyEntry type="NRect" propertyName="NElement::bounds">
                         Read only.  The actual position of the element inside the window in window coordinates. Only valid
                         after layout has completed.
                     </PropertyEntry>
@@ -204,69 +204,98 @@ function ClassNElement() {
                             have child elements. If true, references to the element can be cast to type NContainerElement.
                         </p>
                     </PropertyEntry>
+                    <PropertyEntry type="NObject::ptr" propertyName="NElement::user_data">
+                        A pointer to user data that can be attached to the element. The user data is not used by NWindows, and is
+                        intended to be used by the application to store any data that needs to be associated with the element. User data 
+                        should inherit from <ML name="NObject" /> in order to ensure that user data is properly deleted 
+                        when the owning element is deleted.
+                    </PropertyEntry>
 
                 </PropertyList>
                 <EventDescriptions>
                     <EventDescription
                         indexName={[
-                            "NEvent<void (int button,NClickedEventArgs&event_args)> NElement::on_clicked",
-                            "NEvent<void (int button,NMouseEventArgs&event_args)> NElement::on_mouse_button_pressed",
-                            "NEvent<void (int button,NMouseEventArgs&event_args)> NElement::on_mouse_button_released",
-                            "NEvent<void (NMouseEventArgs&event_args)> NElement::on_mouse_move",
-                            "NEvent<void ()>  NElement::on_mouse_lost_capture",
+                            "NEvent<void (NMouseButton button,NClickedEventArgs&event_args)> NElement::on_clicked"
+                        ]}
+                        event={`NEvent<
+    void (NMouseButton button,NClickedEventArgs&event_args)
+> on_clicked;`}><p>
+        Fires when an element is clicked. NWindows also fires on_click events when the space key is pressed.
+    </p>
+    <p>
+        The <M>button</M> argument is of type <ML name="NMouseButton"/> and specifies which mouse button was clicked. 
+        The <M>event_args</M> argument is of type <ML name="NClickedEventArgs" /> and  provides the state of the mouse buttons, and modifier keys. 
+    </p>
+    <p>Elements received on_click events only if their <ML name="NElement::clickable" /> and <ML name="NElement::focusable"/> properties
+    are set to <M>true</M>, and if their <ML name="NElement::disabled"/> property is set to <M>false</M>.</p>
+    <p>Handling either of the <M>on_mouse_button_pressed</M> or <M>on_mouse_button_released</M> events will prevent the <M>on_clicked</M> event from 
+    firing.</p>
+                    </EventDescription>
+                    <EventDescription indexName={[
+                            "NEvent<void (NMouseButton button,NMouseEventArgs&event_args)> NElement::on_mouse_button_pressed",
+                            "NEvent<void (NMouseButton button,NMouseEventArgs&event_args)> NElement::on_mouse_button_released",
+                    ]} event={`NEvent<
+    void (NMouseButton button,NMouseEventArgs&event_args)
+> on_mouse_button_pressed;
+NEvent<
+    void (NMouseButton button,NMouseEventArgs&event_args)
+> on_mouse_button_released;                                
+ `} >
+    <p>Fires whenever a mouse button is pressed or released. The <M>button</M> argument is of
+    type <ML name="NMouseButton" /> and specifies which mouse button was clicked. The <M>event_args</M> argument is of 
+    type <ML name="NMouseEventArgs" /> and provides the current mouse position, 
+    in window coordinates, and the state of mouse buttons, and modifier keys.
+    </p>
+    <p>Elements that hold mouse capture will receive <M>on_mouse_button_pressed</M> and <M>on_mouse_button_released</M> events
+    regardless of the position of the mouse cursor. Elements that do not hold the mouse capture will only receive these events
+    when the mouse cursor is over the element.</p>
+                    </EventDescription>
+                    <EventDescription                         indexName={[
                             "NEvent<void (NMouseEventArgs&event_args)> NElement::on_mouse_enter",
                             "NEvent<void (NMouseEventArgs&event_args)> NElement::on_mouse_leave",
                         ]}
-                        event={`NEvent<
-    void (int button,NClickedEventArgs&event_args)
-> on_clicked;
-
-NEvent<
-    void (int button,NMouseEventArgs&event_args)
-> on_mouse_button_pressed;
-
-NEvent<
-    void (int button,NMouseEventArgs&event_args)
-> on_mouse_button_released;
-
-NEvent<
-    void (NMouseEventArgs&event_args)
-> on_mouse_move;
-
-NEvent<
-    void ()
->  on_mouse_lost_capture;
-
-NEvent<
+                        event={
+`NEvent<
     void (NMouseEventArgs&event_args)
 > on_mouse_enter;
 
 NEvent<void (
     NMouseEventArgs&event_args)
 > on_mouse_leave;
+`} 
+                            >
+                        <p>Fires when the mouse cursor enters or leaves the layout bounds of the element. The events are non-cancellable.</p>
+                        <p>The <M>event_args</M> argument is of type <ML name="NMouseEventArgs" /> and provides the current mouse position,
+                        in window coordinates, and the state of mouse buttons, and modifier keys.
+                        </p>
+                    </EventDescription>
+                        
+                    <EventDescription
+                        indexName={[
+                            "NEvent<void (NMouseEventArgs&event_args)> NElement::on_mouse_move",
+                        ]}
+                        event={`
+NEvent<
+    void (NMouseEventArgs&event_args)
+> on_mouse_move;
 `} >
                         <p><M>on_mouse_move</M> only fires on elements that have captured the mouse
-                            using <M>NWindow::mouse_capture(NElement*)</M>.
+                            using <ML fullName name="NWindow::mouse_capture()" />. However, it 
+                            also fires on the currently active <ML name="NWindow" />. 
                         </p>
-                        <p><M>on_mouse_button_pressed</M>, and <M>on_mouse_button_released</M> fire on the topmost element
-                            under the mouse cursor whose <M>clickable</M> property has been set to <M>true</M>, and bubbles up the
-                            element tree from there.</p>
-                        <p><M>on_clicked</M> is fired on elements whose <M>clickable</M> property is set to <M>true</M> after an
-                            appropriate on_mouse_button_pressed/on_mouse_button_released sequence. Handling either of the pressed or released
-                            events will prevent the click event from firing. NWindows also generates on <M>on_click</M> events
-                            when the space or enter key is pressed and a clickable element has keyboard focus.
-                        </p>
-                        <p><M>on_mouse_enter</M> and <M>on_mouse_leave</M> events fire as the mouse cursor enters or
-                            leaves the layout bounds of an element. The events are non-cancellable.</p>
-
-                        <p>Each event provides an  <ML name="NMouseEventArgs" /> argument,
-                            which provides the current <ML target="NMouseEventArgs::cursor_position" name="cursor_position" /> along with member variables that define the current state
-                            of mouse buttons, and the shift, alt and ctrl keys.</p>
-                        <p>The <M>cursor_position</M> is in window coordinates (0,0, is at the top left corner of the
-                            containing <M>NWindow</M>). To convert to element-relative coordinates, use</p>
-                        <CodeDiv text={`NPoint position = screen_to_element(event_args.cursor_position);`} />
-                        <p>If the mouse cursor is outside the bounds of the current <M>NWindow</M>, <M>cursor_position</M> will
-                            be set to <M>{"{-1,-1}"}</M>
+                    </EventDescription>
+                    <EventDescription indexName={[
+                        "NEvent<void ()>  NElement::on_mouse_lost_capture",
+                    ]}
+                    event={`NEvent<
+                            void ()
+                        >  on_mouse_lost_capture;
+                        
+                        `} >
+                        <p>Fires on the event which has mouse capture if capture is lost. This 
+                            occurs if the state of mouse buttons changes while the mouse is outside the bounds of the 
+                            terminal window, or if some other element captures the mouse.
+                            xxx;
                         </p>
                     </EventDescription>
                     <EventDescription indexName={[
@@ -396,7 +425,7 @@ NElement::ptr get_element_at(const NPoint&pt);`}>
                             Get the topmost child element of the current element whose bounds contains the point (x,y). Returns an empty pointer
                             if no element is found at the point. The point is specified in window coordinates. To search the entire visual
                             tree call</p>
-                        <CodeDiv white text={'window()->get_element_at(x,y)'} />
+                        <Code white text={'window()->get_element_at(x,y)'} />
                     </MethodDescription>
                     <MethodDescription indexName="bool NElement::take_focus()" method="bool take_focus()" >
                         <p>Attempt to take keyboard focus. Returns <M>true</M> if the element successfully takes focus.</p>
@@ -565,7 +594,7 @@ void vertical_line(int x, int y, int height);`} >
                         <p>Print a character from the <M>ncurses</M> alternate character set. Typically, these are box drawing characters. For example,
                             the following code displays the top-left corner of a box:
                         </p>
-                        <CodeDiv text={`print_acs(0,0,ACS_ULCORNER);`} />
+                        <Code text={`print_acs(0,0,ACS_ULCORNER);`} />
                         <p>see the ACS_* literals in <M>ncurses.h</M> for a complete lists of alternate-character-set characters.</p>
                         <p>Prefer this method for ACS line-drawing characters, because <M>ncurses</M> provides fallback
                             behavior for terminal devices that don't have line-drawing characters.
@@ -759,8 +788,8 @@ find_child_element(
                         <p>Recursively enumerate the element and all its child elements, executing the <M>callback</M> function for each. Elements are enumerated
                             in depth-first order.</p>
                     </MethodDescription>
-                    <MethodDescription indexName="virtual bool NElement::simulate_keyboard_click(NElement* source, int button = 0)"
-                        method={`virtual bool simulate_keyboard_click(NElement* source, int button = 0);`} >
+                    <MethodDescription indexName="virtual bool NElement::simulate_keyboard_click(NElement* source, NMouseButton button = 0)"
+                        method={`virtual bool simulate_keyboard_click(NElement* source, NMouseButton button = 0);`} >
                         <p>Simulate a keyboard click on the element. The <M>source</M> argument is the element that is provided as a source in
                             mouse event arguments during the simulated click, and would typically be the owning window of the element (which is the
                             case for actual mouse events).</p>
@@ -795,19 +824,19 @@ find_child_element(
 virtual bool handle_key_code(NKeyCodeEventArgs& event_args);
 
 virtual bool handle_clicked(
-    int button, 
+    NMouseButton button, 
     NClickedEventArgs& eventArgs);
 
 virtual bool handle_mouse_button_clicked(
-    int button, 
+    NMouseButton button, 
     NMouseEventArgs& event_args);
 
 virtual bool handle_mouse_button_pressed(
-    int button, 
+    NMouseButton button, 
     NMouseEventArgs& event_args);
 
 virtual bool handle_mouse_button_released(
-    int button, 
+    NMouseButton button, 
     NMouseEventArgs& event_args);
 
 virtual bool handle_mouse_move(NMouseEventArgs& event_args);

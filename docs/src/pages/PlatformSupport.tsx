@@ -22,7 +22,7 @@
  */
 
 import DocsPage from '../DocsPage';
-import M from '../M';
+import M, {ML} from '../M';
 import Name from '../Name';
 
 
@@ -65,7 +65,9 @@ function PlatformSupport() {
                 </ul>
                 <p>Unicode support in NWindows has the following limitations:</p>
                 <ul>
-                    <li>There is no support for bi-direction characters at all.</li>
+                    <li>There is no currently no support for bi-direction layout at all.</li>
+                    <li>Text composition rules in <ML name="NTextEditElement"/>, while adequate for European locales, may not 
+                    be adequate for locales that have more complex character composition rules.</li>
                     <li>Locales and scripts that require advanced Unicode features are probably not supported.</li>
                     <li>On Ubuntu, xterm, and system libraries are not fully synched with latest Unicode standards. As a result, some
                         new double-width emoji and extended Unicode characters incorrectly display as single-width characters. The same

@@ -26,7 +26,7 @@ import { DocsTitle } from '../DocsNav';
 import M from '../M';
 import ClassDescription, { MethodDescription, EventDescription, EnumDefinitionList, EnumDescription } from '../ClassDescription';
 import SectionHead from '../SectionHead';
-import CodeDiv, { CodeFragment2 } from '../Code';
+import Code, { CodeFragment2 } from '../Code';
 
 
 function FullCustomControl() {
@@ -107,7 +107,7 @@ virtual void on_attach(NWindow*) override {
     NElement::ptr thisElement = this->shared_from_this();
 
     this->on_mouse_move.subscribe(
-        [thisElement,textElement](int button, NMouseMoveEvent& event_args) mutable {
+        [thisElement,textElement](NMouseButton button, NMouseMoveEvent& event_args) mutable {
             /* DO SOMETHING */
         }
     
@@ -204,7 +204,7 @@ virtual void arrange(const NRect& bounds);`} />
             </p>
             <p>Implementing <M>measure</M> for elements that don't have children is fairly straightforward. It should look
                 something like this:</p>
-            <CodeDiv text={`NSize measure(const NSize& available) {
+            <Code text={`NSize measure(const NSize& available) {
     NSize result = { 
         measure_text(this->text()), 1 
     };
@@ -238,7 +238,7 @@ virtual void arrange(const NRect& bounds);`} />
 
             <p>Measuring elements that have children is a bit more complicated. The actual code for <M>NVerticalStackElement::measure</M> serves as a good example of
                 how <M>measure</M> should be implemented.</p>
-            <CodeDiv text={`NSize measure(const NSize& available)
+            <Code text={`NSize measure(const NSize& available)
 {
     NSize constrainedWidth = { 
         available.width, 
@@ -295,7 +295,7 @@ virtual void arrange(const NRect& bounds);`} />
                 margins excluded &mdash; (0,0) is at the top-left corner of the owning <M>NWindow</M>.</p>
             <p>The actual code for <M>NVerticalStackElement</M> serves as a good example of what an implementation
                 of <M>arrange</M> should look like.</p>
-            <CodeDiv text={`void arrange(const NRect& rect)
+            <Code text={`void arrange(const NRect& rect)
 {
     NElement::arrange(rect);
     int y = rect.y;
@@ -443,7 +443,7 @@ void vertical_line(int x, int y, int height);`} >
                     <p>Print a character from the <M>ncurses</M> alternate character set. Typically, these are box drawing characters. For example,
                         the following code displays the top-left corner of a box:
                     </p>
-                    <CodeDiv text={`print_acs(0,0,ACS_ULCORNER);`} />
+                    <Code text={`print_acs(0,0,ACS_ULCORNER);`} />
                     <p>see the ACS_* literals in <M>ncurses.h</M> for a complete lists of alternate-character-set characters.</p>
                     <p>Prefer this method for ACS line-drawing characters, because <M>ncurses</M> provides fallback
                         behavior for terminal devices that don't have line-drawing characters.

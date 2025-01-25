@@ -1,5 +1,5 @@
-- Add creation methods in NElement section.
-- Add principle events in NElement section.
-- Check that NMenuElement is in the NElement section.
-- Add NPopupWindow events in NWindow section.
-- NButton default and cancel properties.
+
+Blog examples:
+
+    int button
+    lost_mouse_capture

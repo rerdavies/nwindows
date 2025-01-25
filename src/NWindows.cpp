@@ -8,10 +8,10 @@
  *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *   copies of the Software, and to permit persons to whom the Software is
  *   furnished to do so, subject to the following conditions:
- 
+
  *   The above copyright notice and this permission notice shall be included in all
  *   copies or substantial portions of the Software.
- 
+
  *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -169,12 +169,12 @@ void NElement::print_menu_text(const std::string& text, int width, bool show_und
     }
 }
 
-void NElement::print(const std::string&text, NAlignment alignment, int display_columns)
+void NElement::print(const std::string& text, NAlignment alignment, int display_columns)
 {
     int textWidth = measure_text(text);
     int extra = display_columns - textWidth;
     if (extra < 0) {
-        print(text,display_columns);
+        print(text, display_columns);
         return;
     }
     int left_extra = 0, right_extra = 0;
@@ -496,7 +496,7 @@ bool NWindow::handle_window_key_code(int key)
         case KEY_ENTER:
             this->handle_default_button();
             break;
-        
+
         case KEY_LEFT:
             navigate_focus(NNavDirection::Left);
             event_args.handled = true;
@@ -534,16 +534,16 @@ bool NWindow::handle_window_key_code(int key)
         break;
 
         case 01052: // ctl-left
-            get_active_window()->move_window(-1, 0);
+            active_window()->move_window(-1, 0);
             break;
         case 01071:
-            get_active_window()->move_window(1, 0);
+            active_window()->move_window(1, 0);
             break;
         case 01077: // ctl-UP
-            get_active_window()->move_window(0, -1);
+            active_window()->move_window(0, -1);
             break;
         case 01026: // ctl-DOWN
-            get_active_window()->move_window(0, 1);
+            active_window()->move_window(0, 1);
             break;
 #endif
 
@@ -619,9 +619,9 @@ void NWindow::run()
                 break;
             case OK:
                 // we have a unicode character.
-                if (get_active_window())
+                if (active_window())
                 {
-                    get_active_window()->handle_window_key((wchar_t)wint);
+                    active_window()->handle_window_key((wchar_t)wint);
                 }
                 break;
 
@@ -647,9 +647,9 @@ void NWindow::run()
                 }
                 else
                 {
-                    if (get_active_window())
+                    if (active_window())
                     {
-                        get_active_window()->handle_window_key_code(keycode);
+                        active_window()->handle_window_key_code(keycode);
                     }
                 }
                 break;
@@ -674,8 +674,21 @@ void NWindow::run()
     }
     catch (const std::exception& e)
     {
-        close();
-        std::cout << "Error: " << e.what() << std::endl;
+        try {
+            close();
+        }
+        catch (const std::exception& _)
+        {
+            // ignore.
+        }
+        std::cerr << std::format("Error: Unhandled exception. {}", e.what()) << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    if (fatal_error_message_.length() > 0)
+    {
+        std::wstring wMessage = utf8_to_wstring(fatal_error_message_);
+        std::wcerr << wMessage << std::endl;
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -687,7 +700,7 @@ bool NWindow::handle_default_button() {
     {
         NClickedEventArgs event_args(this, element.get(), element->bounds(), false);
         event_args.target = element;
-        return element->handle_clicked(0, event_args);
+        return element->handle_clicked(NMouseButton::Left, event_args);
     }
     else {
         auto focus = focus_.lock();
@@ -707,7 +720,7 @@ bool NWindow::handle_cancel_button() {
     {
         NClickedEventArgs event_args(this, element.get(), element->bounds(), false);
         event_args.target = element;
-        return element->handle_clicked(0, event_args);
+        return element->handle_clicked(NMouseButton::Left, event_args);
     }
     return false;
 }
@@ -723,11 +736,6 @@ void NWindow::close()
         return;
     }
     closed_ = true;
-
-    while (this->child_windows_.size() > 0)
-    {
-        child_windows_[child_windows_.size() - 1]->close();
-    }
 
 
     this->set_window(nullptr);
@@ -766,7 +774,7 @@ void NWindow::close()
             delwin(curses_window_);
 
             update_panels();
-            werase(root_window_);
+            werase(root_curses_window_);
             curs_set(1);
 
             endwin(); /* End curses mode		  */
@@ -890,7 +898,7 @@ bool NWindow::update_window_size()
         if (this->actual_window_position_.width != bounds.width || this->actual_window_position_.height != bounds.height)
         {
             // resize the window.   
-            wclear(this->root_window_);
+            wclear(this->root_curses_window_);
 
             auto old_window = this->curses_window_;
 
@@ -906,7 +914,7 @@ bool NWindow::update_window_size()
                 this->curses_window_ = nullptr;
             }
 
-            get_root_window()->redraw_all_windows_ = true;
+            top_level_window()->redraw_all_windows_ = true;
             changed = true;
         }
         else {
@@ -929,7 +937,7 @@ bool NWindow::update_window_size()
 
 void NWindow::redraw_all_windows() {
     redraw_all_windows_ = false;
-    get_root_window()->for_each_child_window_parent_first([](NWindow* child) {
+    top_level_window()->for_each_child_window_parent_first([](NWindow* child) {
         wclear(child->curses_window_);
         child->invalidate_layout();
         // force panel manager to order windows correctly.
@@ -959,7 +967,7 @@ bool NWindow::update_active_window()
 
                     // Notify the child of the current mouse position 
                     // so that it can restore hover state.
-                    auto rootWindow = child->get_root_window();
+                    auto rootWindow = child->top_level_window();
 
                     if (rootWindow->last_mouse_position_.x != -1 && rootWindow->last_mouse_position_.y != -1)
                     {
@@ -1156,7 +1164,7 @@ bool NWindow::remove_child_window(NWindow* child)
     return false;
 }
 
-NWindow* NWindow::get_root_window()
+NWindow* NWindow::top_level_window()
 {
     NWindow* window = this;
     while (window->parent_window_ != nullptr)
@@ -1165,7 +1173,7 @@ NWindow* NWindow::get_root_window()
     }
     return window;
 }
-const NWindow* NWindow::get_root_window() const
+const NWindow* NWindow::top_level_window() const
 {
     const NWindow* window = this;
     while (window->parent_window_ != nullptr)
@@ -1259,8 +1267,8 @@ void NWindow::init_root_window()
 
 
     ESCDELAY = 25;
-    root_window_ = initscr(); /* Start curses mode 		  */
-    if (root_window_ == nullptr)
+    root_curses_window_ = initscr(); /* Start curses mode 		  */
+    if (root_curses_window_ == nullptr)
     {
         throw std::runtime_error("Error initialising ncurses.");
     }
@@ -1282,7 +1290,7 @@ void NWindow::init_root_window()
 
         if (color_palette_->DesktopBackground != color_palette_->Black) {
             auto desktopColor = make_color_pair(color_palette_->DesktopBackground, color_palette_->DesktopBackground);
-            wbkgd(root_window_, desktopColor.attribute());
+            wbkgd(root_curses_window_, desktopColor.attribute());
         }
 
 
@@ -1320,7 +1328,7 @@ NWindow::ptr NWindow::create_(NWindow::ptr parentWindow, int x, int y, int width
 {
     // create in two steps because we need a shared_ptr to establish parent/child relationship.
     auto result = std::shared_ptr<self>(new NWindow(
-        x, y, width, height,"Window", color_palette));
+        x, y, width, height, "Window", color_palette));
     if (parentWindow)
     {
         parentWindow->add_child_window(result);
@@ -1333,7 +1341,7 @@ NWindow::ptr NWindow::create_(NWindow::ptr parentWindow, int x, int y, int width
 
 NWindow::NWindow(
     int x, int y, int width, int height,
-    const std::string&tagName,
+    const std::string& tagName,
     NColorPalette* color_palette)
     : super(tagName)
 {
@@ -1341,7 +1349,8 @@ NWindow::NWindow(
     if (color_palette == nullptr)
     {
         this->color_palette_ = std::make_shared<NColorPalette>();
-    } else {
+    }
+    else {
         this->color_palette_ = std::make_shared<NColorPalette>(*color_palette);
     }
 
@@ -1362,6 +1371,9 @@ NSize NTextElement::measure(const NSize& available)
         else
         {
             width = this->width();
+        }
+        if (width == AUTO_SIZE) {
+            throw std::runtime_error("NTextElement or one of its parents must have a width set if text_wrap is set to true.");
         }
         this->lines_ = utf8_line_wrap(text_, width);
         height = (int)lines_.size();
@@ -1428,7 +1440,7 @@ void NTextEditElement::scroll_adjust()
 
 
     if (selection_.end() < 0) {
-       throw std::runtime_error("Invalid selection.");
+        throw std::runtime_error("Invalid selection.");
     }
     size_t selectionEnd = (size_t)selection_.end();
 
@@ -1873,9 +1885,9 @@ PostHandle NWindow::post(clock_t::duration delay, std::function<void(void)>&& fn
 }
 PostHandle NWindow::post(clock_t::time_point when, std::function<void(void)>&& fn)
 {
-    if (this != get_root_window())
+    if (this != top_level_window())
     {
-        return get_root_window()->post(when, std::move(fn));
+        return top_level_window()->post(when, std::move(fn));
     }
 
     std::lock_guard lock(post_entry_mutex);
@@ -1892,9 +1904,9 @@ PostHandle NWindow::post(std::function<void(void)>&& fn)
 
 bool NWindow::cancel_post(PostHandle handle)
 {
-    if (this != get_root_window())
+    if (this != top_level_window())
     {
-        return get_root_window()->cancel_post(handle);
+        return top_level_window()->cancel_post(handle);
     }
 
     std::lock_guard lock(post_entry_mutex);
@@ -2004,9 +2016,9 @@ static short ToNCursesColor(int value)
 
 NColor NWindow::make_color(uint32_t rrggbb)
 {
-    if (this != get_root_window())
+    if (this != top_level_window())
     {
-        return get_root_window()->make_color(rrggbb);
+        return top_level_window()->make_color(rrggbb);
     }
     if (rrggbb == 0x000000)
     {
@@ -2064,18 +2076,18 @@ NColor NWindow::make_color(uint32_t rrggbb)
 
 NColorPair NWindow::make_color_pair(uint32_t rrggbbFg, uint32_t rrggbbBg)
 {
-    if (this->get_root_window() != this)
+    if (this->top_level_window() != this)
     {
-        return get_root_window()->make_color_pair(rrggbbFg, rrggbbBg);
+        return top_level_window()->make_color_pair(rrggbbFg, rrggbbBg);
     }
     return make_color_pair(make_color(rrggbbFg), make_color(rrggbbBg));
 }
 
 NColorPair NWindow::make_color_pair(NColor foreground, NColor background)
 {
-    if (this->get_root_window() != this)
+    if (this->top_level_window() != this)
     {
-        return get_root_window()->make_color_pair(foreground, background);
+        return top_level_window()->make_color_pair(foreground, background);
     }
 
     for (auto entry : color_pairs_)
@@ -2253,19 +2265,12 @@ void NWindow::handle_window_mouse_move(NMouseEventArgs& event_args)
             return;
         }
         // only the capture gets the event.
-        // else {
-        //     bubble_mouse_event(event_args.x, event_args.y,
-        //         [&](NElement& element)
-        //         {
-        //             return element.handle_mouse_move(event_args);
-        //         });
-        // }
     }
     on_mouse_move.fire(event_args);
 
 }
 
-void NWindow::handle_button_released(int x, int y, int button, NMouseEventArgs& event_args_)
+void NWindow::handle_button_released(int x, int y, NMouseButton button, NMouseEventArgs& event_args_)
 {
     // fires on all child windows; but click only happens on the active window.
 
@@ -2282,8 +2287,12 @@ void NWindow::handle_button_released(int x, int y, int button, NMouseEventArgs& 
 
 
     event_args.handled = false;
-    NElement::ptr button_down_element = button_down_elements_[button];
-    button_down_elements_[button] = nullptr;
+    size_t iButton = (size_t)button;
+    if (iButton >= button_down_elements_.size()) {
+        throw std::runtime_error("Value out of range.");
+    }
+    NElement::ptr button_down_element = button_down_elements_[iButton];
+    button_down_elements_[iButton] = nullptr;
 
     bool handled = false;
     if (button_down_element) {
@@ -2309,7 +2318,7 @@ void NWindow::handle_button_released(int x, int y, int button, NMouseEventArgs& 
 
 }
 
-void NWindow::handle_button_pressed(int x, int y, int button, NMouseEventArgs& event_args_)
+void NWindow::handle_button_pressed(int x, int y, NMouseButton button, NMouseEventArgs& event_args_)
 {
     // only fires on the active window.
     if (this->active_window_ != this)
@@ -2351,21 +2360,23 @@ void NWindow::handle_button_pressed(int x, int y, int button, NMouseEventArgs& e
 
     if (!handled)
     {
-        if (button >= MAX_BUTTON) {
+        size_t iButton = (size_t)button;
+        if (iButton >= button_down_elements_.size()) {
             throw std::runtime_error("Invalid argument.");
         }
-        button_down_elements_[button] = element;
+        button_down_elements_[iButton] = element;
     }
 }
+
 
 bool NWindow::handle_mouse_event(MEVENT& event)
 {
     NMouseEventArgs event_args(this);
 
-    event_args.button0_pressed = (event.bstate & BUTTON1_PRESSED) != 0;
-    event_args.button1_pressed = (event.bstate & BUTTON2_PRESSED) != 0;
-    event_args.button2_pressed = (event.bstate & BUTTON3_PRESSED) != 0;
-    event_args.button3_pressed = (event.bstate & BUTTON4_PRESSED) != 0;
+    event_args.left_button_pressed = (event.bstate & BUTTON1_PRESSED) != 0;
+    event_args.middle_button_pressed = (event.bstate & BUTTON2_PRESSED) != 0;
+    event_args.right_button_pressed = (event.bstate & BUTTON3_PRESSED) != 0;
+    event_args.extra_button_pressed = (event.bstate & BUTTON4_PRESSED) != 0;
 
 
     event_args.alt = (event.bstate & BUTTON_ALT) != 0;
@@ -2374,83 +2385,86 @@ bool NWindow::handle_mouse_event(MEVENT& event)
 
     if (event.bstate & REPORT_MOUSE_POSITION)
     {
-        last_mouse_position_ = { event.x,event.y };
+        if (last_mouse_position_.x != event.x || last_mouse_position_.y != event.y)
+        {
+            last_mouse_position_ = { event.x,event.y };
 
-        for_each_child_window([&](NWindow* child) {
-            if (child->is_active_window_)
-            {
-                NMouseEventArgs child_event_args(event_args);
-                child_event_args.window = child->shared_from_this<NWindow>();
-                child_event_args.source = child_event_args.window;
-                int x = event.x;
-                int y = event.y;
-                if (!wmouse_trafo(child->curses_window_, &y, &x, FALSE))
+            for_each_child_window([&](NWindow* child) {
+                if (child->is_active_window_)
                 {
-                    x = -1;
-                    y = -1;
-                }
-                child_event_args.cursor_position = { x,y };
-                child->handle_window_mouse_move(child_event_args);
+                    NMouseEventArgs child_event_args(event_args);
+                    child_event_args.window = child->shared_from_this<NWindow>();
+                    child_event_args.source = child_event_args.window;
+                    int x = event.x;
+                    int y = event.y;
+                    if (!wmouse_trafo(child->curses_window_, &y, &x, FALSE))
+                    {
+                        x = -1;
+                        y = -1;
+                    }
+                    child_event_args.cursor_position = { x,y };
+                    child->handle_window_mouse_move(child_event_args);
 
-            }
-            else {
-                NMouseEventArgs child_event_args(event_args);
-                child_event_args.window = child->shared_from_this<NWindow>();
-                child_event_args.source = child_event_args.window;
-                child_event_args.cursor_position = { -1,-1 };
-                child->handle_window_mouse_move(child_event_args);
-            }
-            });
+                }
+                else {
+                    NMouseEventArgs child_event_args(event_args);
+                    child_event_args.window = child->shared_from_this<NWindow>();
+                    child_event_args.source = child_event_args.window;
+                    child_event_args.cursor_position = { -1,-1 };
+                    child->handle_window_mouse_move(child_event_args);
+                }
+                });
+        }
     }
 
     if (event.bstate & BUTTON1_PRESSED)
     {
-        handle_button_pressed(event.x, event.y, 0, event_args);
+        handle_button_pressed(event.x, event.y, NMouseButton::Left, event_args);
 
     }
     if (event.bstate & BUTTON2_PRESSED)
     {
-        handle_button_pressed(event.x, event.y, 1, event_args);
+        handle_button_pressed(event.x, event.y, NMouseButton::Middle, event_args);
     }
     if (event.bstate & BUTTON3_PRESSED)
     {
-        handle_button_pressed(event.x, event.y, 2, event_args);
+        handle_button_pressed(event.x, event.y, NMouseButton::Right, event_args);
     }
     if (event.bstate & BUTTON3_PRESSED)
     {
-        handle_button_pressed(event.x, event.y, 3, event_args);
+        handle_button_pressed(event.x, event.y, NMouseButton::Extra, event_args);
     }
 
     if (event.bstate & BUTTON1_RELEASED)
     {
-        event_args.button0_pressed = false;
+        event_args.left_button_pressed = false;
 
         for_each_child_window([&](NWindow* child) {
-            child->handle_button_released(event.x, event.y, 0, event_args);
+            child->handle_button_released(event.x, event.y, NMouseButton::Left, event_args);
             });
     }
     if (event.bstate & BUTTON2_RELEASED)
     {
-        event_args.button1_pressed = false;
+        event_args.middle_button_pressed = false;
 
         for_each_child_window([&](NWindow* child) {
-            child->handle_button_released(event.x, event.y, 1, event_args);
+            child->handle_button_released(event.x, event.y, NMouseButton::Middle, event_args);
             });
     }
     if (event.bstate & BUTTON3_RELEASED)
     {
-        event_args.button2_pressed = false;
+        event_args.right_button_pressed = false;
 
         for_each_child_window([&](NWindow* child) {
-            child->handle_button_released(event.x, event.y, 2, event_args);
+            child->handle_button_released(event.x, event.y, NMouseButton::Right, event_args);
             });
     }
     if (event.bstate & BUTTON4_RELEASED)
     {
-        event_args.button2_pressed = false;
+        event_args.right_button_pressed = false;
 
         for_each_child_window([&](NWindow* child) {
-            child->handle_button_released(event.x, event.y, 3, event_args);
+            child->handle_button_released(event.x, event.y, NMouseButton::Extra, event_args);
             });
     }
     return true;
@@ -2575,18 +2589,18 @@ void NButtonBaseElement::handle_focused(bool value)
     invalidate_render();
 }
 
-bool NButtonBaseElement::handle_mouse_button_pressed(int button, NMouseEventArgs& event_args)
+bool NButtonBaseElement::handle_mouse_button_pressed(NMouseButton button, NMouseEventArgs& event_args)
 {
-    if (button == 0)
+    if (button == NMouseButton::Left)
     {
         pressed_ = true;
         invalidate_render();
     }
     return super::handle_mouse_button_pressed(button, event_args);
 }
-bool NButtonBaseElement::handle_mouse_button_released(int button, NMouseEventArgs& event_args)
+bool NButtonBaseElement::handle_mouse_button_released(NMouseButton button, NMouseEventArgs& event_args)
 {
-    if (button == 0)
+    if (button == NMouseButton::Left)
     {
         pressed_ = false;
         invalidate_render();
@@ -2619,8 +2633,8 @@ NElement::ptr NWindow::get_clickable_element_at(int x, int y)
     return nullptr;
 }
 
-NButtonElement::NButtonElement(const std::string& label, int width)
-    :NButtonBaseElement("Button")
+NButtonElement::NButtonElement(const std::string& label, int width, const std::string& tagName)
+    :NButtonBaseElement(tagName)
     , label_(label)
 {
     this->width(width);
@@ -2735,7 +2749,7 @@ void NWindow::actual_focus(NElement::ptr element)
     }
 }
 
-bool NElement::simulate_keyboard_click(NElement* source, int button)
+bool NElement::simulate_keyboard_click(NElement* source, NMouseButton button)
 {
     if (!clickable() || disabled()) return false;
 
@@ -2781,7 +2795,7 @@ bool NButtonBaseElement::handle_key(
     }
     if (event_args.key == L'\0') // ctrl+space
     {
-        event_args.handled = simulate_keyboard_click(event_args.source.get(), 2);
+        event_args.handled = simulate_keyboard_click(event_args.source.get(), NMouseButton::Right);
         return event_args.handled;
 
     }
@@ -2812,8 +2826,8 @@ void NElement::cancel_keyboard_clicking_timer()
     }
 }
 
-NCheckboxElement::NCheckboxElement(const std::string& text, bool checked)
-    : super("Checkbox")
+NCheckboxElement::NCheckboxElement(const std::string& text, bool checked, const std::string& tagName)
+    : super(tagName)
     , label_(text)
     , checked_(checked)
 {
@@ -2903,12 +2917,12 @@ void NCheckboxElement::checked(bool value)
     if (value != checked_)
     {
         checked_ = value;
-        this->on_checked_changed.fire(shared_from_this(), checked_);
+        this->on_checked_changed.fire(shared_from_this<NCheckboxElement>(), checked_);
         invalidate_render();
     }
 }
 
-bool NCheckboxElement::handle_clicked(int button, NClickedEventArgs& event_args)
+bool NCheckboxElement::handle_clicked(NMouseButton button, NClickedEventArgs& event_args)
 {
     if (super::handle_clicked(button, event_args))
     {
@@ -2921,10 +2935,10 @@ bool NCheckboxElement::handle_clicked(int button, NClickedEventArgs& event_args)
 
 
 NRadioGroupElement::NRadioGroupElement(
-    NOrientation orientation, 
-    const std::vector<std::string>& labels, 
+    NOrientation orientation,
+    const std::vector<std::string>& labels,
     int selection,
-    const std::string&tagName)
+    const std::string& tagName)
     : NContainerElement(tagName)
     , orientation_(orientation)
     , labels_(labels)
@@ -3043,7 +3057,7 @@ void NRadioGroupElement::update_child_elements()
         radio_buttons_.push_back(radioBox);
 
         radioBox->on_clicked.subscribe(
-            [this, ix](int button, NClickedEventArgs& event_args) {
+            [this, ix](NMouseButton button, NClickedEventArgs& event_args) {
                 this->selection(ix);
                 event_args.handled = true;
                 return true;
@@ -3349,7 +3363,7 @@ void NWindow::render() {
     if (title_.length() != 0)
     {
         this->move(1, 1);
-        this->print(title_,  NAlignment::Center,std::max(0, this->bounds().width - 2));
+        this->print(title_, NAlignment::Center, std::max(0, this->bounds().width - 2));
         move(0, 2);
         print_acs(0, 2, ACS_LTEE);
         horizontal_line(1, 2, std::max(0, this->bounds().width - 2));
@@ -3524,7 +3538,7 @@ void NButtonElement::suffix(const std::string& value) {
 #include <atomic>
 static std::atomic<int64_t> g_allocated_element_count_;
 
-/*static*/ int64_t NEelement::allocated_element_count() { return g_allocated_element_count_; }
+/*static*/ int64_t NElement::allocated_element_count() { return g_allocated_element_count_; }
 
 #endif
 
@@ -3552,13 +3566,13 @@ bool NElement::handle_key_code(NKeyCodeEventArgs& event_args)
     on_key_code.fire(event_args);
     return event_args.handled;
 }
-bool NElement::handle_clicked(int button, NClickedEventArgs& event_args)
+bool NElement::handle_clicked(NMouseButton button, NClickedEventArgs& event_args)
 {
     cancel_keyboard_clicking_timer();
     on_clicked.fire(button, event_args);
     return event_args.handled;
 }
-bool NElement::handle_mouse_button_clicked(int button, NMouseEventArgs& event_args)
+bool NElement::handle_mouse_button_clicked(NMouseButton button, NMouseEventArgs& event_args)
 {
     take_focus();
     NClickedEventArgs clicked_event_args(event_args.source.get(), this, NRect(event_args.cursor_position, NSize(0, 0)), true);
@@ -3573,12 +3587,12 @@ bool NElement::handle_mouse_button_clicked(int button, NMouseEventArgs& event_ar
     }
     return event_args.handled;
 }
-bool NElement::handle_mouse_button_pressed(int button, NMouseEventArgs& event_args)
+bool NElement::handle_mouse_button_pressed(NMouseButton button, NMouseEventArgs& event_args)
 {
     on_mouse_button_pressed.fire(button, event_args);
     return event_args.handled;
 }
-bool NElement::handle_mouse_button_released(int button, NMouseEventArgs& event_args)
+bool NElement::handle_mouse_button_released(NMouseButton button, NMouseEventArgs& event_args)
 {
     on_mouse_button_released.fire(button, event_args);
     return event_args.handled;
@@ -3701,7 +3715,7 @@ NSize NTextEditElement::measure(const NSize& available)
 
 int NTextEditElement::cursor_position()
 {
-    return measure_text(text_.substr(scroll_x_offset_,selection_.end()));
+    return measure_text(text_.substr(scroll_x_offset_, selection_.end()));
 }
 void NTextEditElement::render()
 {
@@ -3740,12 +3754,12 @@ void NTextEditElement::render()
             scrolledSelection.start += adjustment;
             scrolledSelection.length -= adjustment;
         }
-        #ifdef DEBUG
+#ifdef DEBUG
         if (scrolledSelection.min() < 0 || scrolledSelection.max() > (int)scrolledText.length())
         {
             throw std::runtime_error("Invalid selection.");
         }
-        #endif
+#endif
 
 
         if (focused())
@@ -3837,9 +3851,9 @@ void NTextEditElement::render()
             color_off(color);
         }
 
-    }
+        }
 
-}
+    }
 
 static std::string sanitize_paste(const std::string& value)
 {
@@ -3888,6 +3902,21 @@ void NTextEditElement::copy()
     }
 
 }
+
+void NTextEditElement::replace_selection(const std::string& text_)
+{
+    auto text = sanitize_paste(text_);
+    std::string text_tmp = utf8_substr(text_, 0, selection_.min()) + text + utf8_substr(text_, selection_.max());
+
+    NTextSelection selection{ selection_ };
+    selection.start = selection.min() + utf8_length(text);
+    selection.length = 0;
+
+    this->text(text_tmp);
+    this->selection(selection);
+
+}
+
 void NTextEditElement::paste()
 {
     std::string text = window()->get_clipboard_text();
@@ -3941,7 +3970,29 @@ bool NTextEditElement::handle_key(NKeyEventArgs& event_args)
     default:
         if (key >= ' ')
         {
-            if (!character_filter_ || character_filter_(key))
+
+            bool ignoreKey = false;
+            if (character_filter_) {
+                int insertPosition = measure_text(text.substr(0, selection_.min()));
+                auto filterCharacter = key;
+                // check to see whether the character composes!
+                if (selection_.min() != 0) {
+                    auto previousCharacterIndex = utf8_decrement(text_, selection_.min());
+                    char32_t previousCharacter = utf8_char32_at(text_, previousCharacterIndex);
+                    char32_t composedCharacter = this->window()->compose_characters(previousCharacter, filterCharacter);
+                    if (composedCharacter != NWindow::UNCOMPOSABLE)
+                    {
+                        filterCharacter = composedCharacter;
+                        insertPosition -= utf8_wide_character_width(text_, previousCharacterIndex);
+                    }
+                }
+                if (!character_filter_(key, insertPosition))
+                {
+                    ignoreKey = true;
+                }
+
+            }
+            if (!ignoreKey)
             {
                 std::string text_tmp = text_ = utf8_substr(text_, 0, selection_.min()) + text + utf8_substr(text_, selection_.max());
                 this->text(text_tmp);
@@ -4134,18 +4185,18 @@ void NElement::handle_focused(bool focused)
 
 void NWindow::set_clipboard_text(const std::string& text)
 {
-    if (this != get_root_window())
+    if (this != top_level_window())
     {
-        get_root_window()->set_clipboard_text(text);
+        top_level_window()->set_clipboard_text(text);
         return;
     }
     clipboard->set_text(normalize_utf8(text));
 }
 std::string NWindow::get_clipboard_text()
 {
-    if (this != get_root_window())
+    if (this != top_level_window())
     {
-        return get_root_window()->get_clipboard_text();
+        return top_level_window()->get_clipboard_text();
     }
     return normalize_utf8(clipboard->get_text());
 }
@@ -4207,10 +4258,10 @@ bool NTextEditElement::handle_mouse_enter(NMouseEventArgs& event_args)
     invalidate_render();
     return event_args.handled;
 }
-bool NTextEditElement::handle_mouse_button_pressed(int button, NMouseEventArgs& event_args)
+bool NTextEditElement::handle_mouse_button_pressed(NMouseButton button, NMouseEventArgs& event_args)
 {
     super::handle_mouse_button_pressed(button, event_args);
-    if (button == 0 && !disabled())
+    if (button == NMouseButton::Left && !disabled())
     {
         take_focus();
         window()->mouse_capture(this);
@@ -4275,13 +4326,12 @@ void NTextEditElement::handle_mouse_lost_capture()
     super::handle_mouse_lost_capture();
 }
 
-bool NTextEditElement::handle_mouse_button_released(int button, NMouseEventArgs& event_args)
+bool NTextEditElement::handle_mouse_button_released(NMouseButton button, NMouseEventArgs& event_args)
 {
     window()->mouse_capture_release(this);
 
     super::handle_mouse_button_released(button, event_args);
     invalidate_render();
-    window()->mouse_capture_release(this);;
     return event_args.handled;
 }
 void NTextEditElement::handle_focused(bool value) {
@@ -4516,7 +4566,7 @@ void NDropdownElement::open_popup(const NRect& mouseRect)
         });
     popup_window_->on_item_selected.subscribe(
         [thisPtr = this->weak_from_this<NDropdownElement>()]
-        (NElement::ptr source, int item_id) {
+        (NPopupMenuWindow::ptr source, int item_id) {
             auto this_ = thisPtr.lock();
             if (this_)
             {
@@ -4549,9 +4599,9 @@ void NDropdownElement::open(bool value, const NRect& anchorRect)
             open_popup(anchorRect);
         }
         else {
+            NDropdownElement::ptr thisPtr = this->shared_from_this<NDropdownElement>();
             close_popup();
-            this->on_closed.fire(this->shared_from_this<NDropdownElement>());
-
+            this->on_closed.fire(thisPtr);
         }
 
 
@@ -4581,7 +4631,7 @@ NPopupWindow::NPopupWindow(
     NWindow::ptr parentWindow,
     const NRect& anchor,
     NAttachment attachment)
-    : NWindow(AUTO_SIZE, AUTO_SIZE, AUTO_SIZE, AUTO_SIZE,tag,nullptr)
+    : NWindow(AUTO_SIZE, AUTO_SIZE, AUTO_SIZE, AUTO_SIZE, tag, nullptr)
     , anchor_(anchor)
     , attachment_(attachment)
 {
@@ -4597,18 +4647,18 @@ void NDropdownElement::selected(int value)
     }
 }
 
-NDropdownElement::NDropdownElement(const std::string &tagName)
+NDropdownElement::NDropdownElement(const std::string& tagName)
     : NButtonBaseElement(tagName)
 {
 }
-NDropdownElement::NDropdownElement(const std::vector<NMenuItem>& items, int selected,const std::string &tagName)
+NDropdownElement::NDropdownElement(const std::vector<NMenuItem>& items, int selected, const std::string& tagName)
     : NButtonBaseElement(tagName)
     , menu_items_(items)
     , selected_(selected)
 {
 
 }
-NDropdownElement::NDropdownElement(std::vector<NMenuItem>&& items, int selected,const std::string &tagName)
+NDropdownElement::NDropdownElement(std::vector<NMenuItem>&& items, int selected, const std::string& tagName)
     : NButtonBaseElement(tagName)
     , menu_items_(std::move(items))
     , selected_(selected)
@@ -4684,13 +4734,13 @@ void NDropdownElement::render()
 }
 
 
-bool NDropdownElement::handle_clicked(int button, NClickedEventArgs& event_args)
+bool NDropdownElement::handle_clicked(NMouseButton button, NClickedEventArgs& event_args)
 {
     if (super::handle_clicked(button, event_args))
     {
         return true;
     }
-    if (button == 0)
+    if (button == NMouseButton::Left)
     {
         open(true, event_args.location);
         event_args.handled = true;
@@ -4833,12 +4883,12 @@ NPopupWindow::ptr NPopupWindow::create(
 
 NPoint NElement::window_to_screen(const NPoint& point) const
 {
-    return point + window()->window_bounds().top_left();
+    return point + window()->actual_window_position().top_left();
 
 }
 NPoint NElement::screen_to_window(const NPoint& point) const
 {
-    return point - window()->window_bounds().top_left();
+    return point - window()->actual_window_position().top_left();
 }
 NPoint NElement::element_to_screen(const NPoint& point) const
 {
@@ -4846,7 +4896,7 @@ NPoint NElement::element_to_screen(const NPoint& point) const
 }
 NPoint NElement::screen_to_element(const NPoint& point) const
 {
-    return point + bounds().top_left() + window()->window_bounds().top_left();
+    return point + bounds().top_left() + window()->actual_window_position().top_left();
 
 }
 NPoint NElement::element_to_window(const NPoint& point) const
@@ -4860,20 +4910,20 @@ NPoint NElement::window_to_element(const NPoint& point) const
 
 NRect NElement::window_to_screen(const NRect& rect) const
 {
-    return rect + window()->window_bounds().top_left();
+    return rect + window()->actual_window_position().top_left();
 
 }
 NRect NElement::screen_to_window(const NRect& rect) const
 {
-    return rect - window()->window_bounds().top_left();
+    return rect - window()->actual_window_position().top_left();
 }
 NRect NElement::element_to_screen(const NRect& rect) const
 {
-    return rect + bounds().top_left() + window()->window_bounds().top_left();
+    return rect + bounds().top_left() + window()->actual_window_position().top_left();
 }
 NRect NElement::screen_to_element(const NRect& rect) const
 {
-    return rect - bounds().top_left() - window()->window_bounds().top_left();
+    return rect - bounds().top_left() - window()->actual_window_position().top_left();
 
 }
 NRect NElement::element_to_window(const NRect& rect) const
@@ -4887,13 +4937,13 @@ NRect NElement::window_to_element(const NRect& rect) const
 }
 
 
-bool NPopupWindow::handle_mouse_button_pressed(int button, NMouseEventArgs& event_args)
+bool NPopupWindow::handle_mouse_button_pressed(NMouseButton button, NMouseEventArgs& event_args)
 {
     if (super::handle_mouse_button_pressed(button, event_args))
     {
         return true;
     }
-    if (cancellable() && button == 0 && (event_args.cursor_position.x < 0 || event_args.cursor_position.y < 0))
+    if (cancellable() && button == NMouseButton::Left && (event_args.cursor_position.x < 0 || event_args.cursor_position.y < 0))
     {
         close();
         return true;
@@ -4929,19 +4979,19 @@ NSize NMenuItemElement::measure(const NSize& available)
 }
 
 UnicodeServices& NWindow::unicode_services() {
-    return *(get_root_window()->unicode_services_);
+    return *(top_level_window()->unicode_services_);
 }
 Collator& NWindow::collator() {
-    return *(get_root_window()->collator_);
+    return *(top_level_window()->collator_);
 }
 
 UnicodeNormalizer& NWindow::unicode_normalizer()
 {
-    return *(get_root_window()->normalizer_);
+    return *(top_level_window()->normalizer_);
 }
 const UnicodeNormalizer& NWindow::unicode_normalizer() const
 {
-    return *(get_root_window()->normalizer_);
+    return *(top_level_window()->normalizer_);
 }
 
 std::string NWindow::normalize_utf8(const std::string& text) const
@@ -4966,13 +5016,24 @@ std::string NTextEditElement::decomposed_text() const
     return window()->decompose_utf8(text_);
 }
 
+char32_t NWindow::compose_characters(char32_t left, char32_t right) const
+{
+    char32_t result = unicode_normalizer().ComposePair(left, right);
+    if (int32_t(result) < 0)
+    {
+        return NWindow::UNCOMPOSABLE;
+    }
+    return result;
+}
+
 bool NTextEditElement::combine_text_characters(int position)
 {
     if (position == 0)
     {
         return false;
     }
-    auto& normalizer = window()->unicode_normalizer();
+    NWindow* window = this->window();
+
 
     int iPosition = 0;
     size_t i = 0;
@@ -4990,8 +5051,8 @@ bool NTextEditElement::combine_text_characters(int position)
     size_t iPrevious = utf8_decrement(text_, i);
     char32_t previousCharacter = utf8_char32_at(text_, iPrevious);
     char32_t nextCharacter = utf8_char32_at(text_, iNext);
-    auto newChar = normalizer.ComposePair(previousCharacter, nextCharacter);
-    if ((int32_t)newChar < 0)
+    auto newChar = window->compose_characters(previousCharacter, nextCharacter);
+    if (newChar == NWindow::UNCOMPOSABLE)
     {
         return false;
     }
@@ -5237,7 +5298,8 @@ void NWindow::mouse_capture_release(NElement* element)
 {
     auto mouse_capture = this->mouse_capture();
     if (mouse_capture.get() != element) return;
-    this->mouse_capture(nullptr);
+    // don't fire on_lost_capture.
+    this->mouse_capture_ = std::weak_ptr<NElement>();
 }
 
 
@@ -5461,13 +5523,13 @@ NColorPair NDividerMenuItemElement::get_color()
 void NPopupMenuWindow::handle_item_selected(int item_id)
 {
     was_item_selected_ = true;
-    on_item_selected.fire(this->shared_from_this<NElement>(), item_id);
+    on_item_selected.fire(this->shared_from_this<NPopupMenuWindow>(), item_id);
 }
 void NPopupMenuWindow::handle_cancelled()
 {
     if (!was_item_selected_)
     {
-        on_cancelled.fire(this->shared_from_this<NElement>());
+        on_cancelled.fire(this->shared_from_this<NPopupMenuWindow>());
         was_item_selected_ = true;
     }
 }
@@ -5557,7 +5619,7 @@ void NPopupMenuWindow::Init(NWindow::ptr parentWindow, const std::vector<NMenuIt
                 element->disabled(!item.enabled);
                 element->on_clicked.subscribe(
                     [this, item_id = item.item_id]
-                    (int button, NClickedEventArgs& event_args) {
+                    (NMouseButton button, NClickedEventArgs& event_args) {
                         this->handle_item_selected(item_id);
                         this->close();
                     }
@@ -5616,9 +5678,9 @@ NContainerElement::~NContainerElement()
 }
 
 
-bool NSubmenuMenuItemElement::handle_clicked(int button, NClickedEventArgs& eventArgs)
+bool NSubmenuMenuItemElement::handle_clicked(NMouseButton button, NClickedEventArgs& eventArgs)
 {
-    if (button == 0)
+    if (button == NMouseButton::Left)
     {
         open(true);
         return eventArgs.handled = true;
@@ -5686,11 +5748,12 @@ void NSubmenuMenuItemElement::open(bool value)
         else {
             if (popup_window_)
             {
+                auto thisPtr = shared_from_this<self>(); // ensure liveness when on_close is fired.
                 popup_window_->close();
                 popup_window_ = nullptr;
+                on_closed.fire(thisPtr);
 
             }
-            on_closed.fire(shared_from_this<self>());
         }
     }
 }
@@ -5707,15 +5770,15 @@ void NSubmenuMenuItemElement::handle_attached(NWindow* window)
     }
 }
 
-NMenuElement::NMenuElement(const std::string& label, std::vector<NMenuItem>&& items, const std::string&tagName)
+NMenuElement::NMenuElement(const std::string& label, std::vector<NMenuItem>&& items, const std::string& tagName)
     :super(tagName)
     , label_(label)
-    , items_(std::move(items)) {
+    , menu_items_(std::move(items)) {
 }
-NMenuElement::NMenuElement(const std::string& label, const std::vector<NMenuItem>& items, const std::string&tagName)
+NMenuElement::NMenuElement(const std::string& label, const std::vector<NMenuItem>& items, const std::string& tagName)
     :super(tagName)
     , label_(label)
-    , items_(items)
+    , menu_items_(items)
 {
 
 }
@@ -5732,7 +5795,7 @@ void NMenuElement::open(bool value)
 
             popup_window_ = NPopupMenuWindow::create(
                 window()->shared_from_this<NWindow>(),
-                items_,
+                menu_items_,
                 window_to_screen(bounds()),
                 NAttachment::BottomStart
             );
@@ -5762,21 +5825,23 @@ void NMenuElement::open(bool value)
         else {
             if (popup_window_)
             {
+                // ensure liveness when on_closed is fired.
+                auto thisPtr = shared_from_this<NMenuElement>();
                 popup_window_->close();
                 popup_window_ = nullptr;
+                on_closed.fire(thisPtr);
             }
-            on_closed.fire(shared_from_this<NMenuElement>());
         }
     }
 }
 
-bool NMenuElement::handle_clicked(int button, NClickedEventArgs& eventArgs)
+bool NMenuElement::handle_clicked(NMouseButton button, NClickedEventArgs& eventArgs)
 {
     if (super::handle_clicked(button, eventArgs))
     {
         return true;
     }
-    if (button == 0)
+    if (button == NMouseButton::Left)
     {
         open(true);
         eventArgs.handled = true;
@@ -5835,14 +5900,14 @@ void NMenuElement::label(const std::string& value)
 }
 
 
-void NMenuElement::items(const std::vector<NMenuItem>& value)
+void NMenuElement::menu_items(const std::vector<NMenuItem>& value)
 {
-    items_ = value;
+    menu_items_ = value;
     invalidate_layout();
 }
-void NMenuElement::items(std::vector<NMenuItem>&& value)
+void NMenuElement::menu_items(std::vector<NMenuItem>&& value)
 {
-    items_ = std::move(value);
+    menu_items_ = std::move(value);
     invalidate_layout();
 }
 
@@ -5885,7 +5950,7 @@ NMessageWindow::NMessageWindow(
     const std::string& title,
     int width
 )
-    :NWindow(AUTO_SIZE, AUTO_SIZE, AUTO_SIZE, AUTO_SIZE,"MessageWindow",nullptr)
+    :NWindow(AUTO_SIZE, AUTO_SIZE, AUTO_SIZE, AUTO_SIZE, "MessageWindow", nullptr)
 {
     this->title(title);
 }
@@ -5964,8 +6029,10 @@ void NMessageWindow::init(NWindow::ptr parent_window, NMessageType message_type,
                 | nwindows::add_child(
                     NButtonElement::create("OK")
                     | nwindows::width(10)
-                    | nwindows::on_clicked([](int button, NClickedEventArgs& event_args)
+                    | nwindows::on_clicked([](NMouseButton button, NClickedEventArgs& event_args)
                         {
+                            NMessageWindow::ptr thisPtr = std::static_pointer_cast<NMessageWindow>(event_args.window);
+                            thisPtr->on_closed.fire(thisPtr);
                             event_args.window->close();
                         }
                     )
@@ -5990,8 +6057,11 @@ void NMessageWindow::init(NWindow::ptr parent_window, NMessageType message_type,
                 | nwindows::add_child(
                     NButtonElement::create("OK")
                     | nwindows::width(10)
-                    | nwindows::on_clicked([](int button, NClickedEventArgs& event_args)
+                    | nwindows::on_clicked([](NMouseButton button, NClickedEventArgs& event_args)
                         {
+                            NMessageWindow::ptr thisPtr = std::static_pointer_cast<NMessageWindow>(event_args.window);
+                            thisPtr->on_closed.fire(thisPtr);
+
                             event_args.window->close();
                         }
                     )
@@ -6016,4 +6086,27 @@ bool NWindow::can_display_character(char32_t c) const
     // or figure out an alternative.
     static_assert(sizeof(char32_t) == sizeof(wchar_t), "wchar_t must be 32 bits");
     return wcwidth((wchar_t)c) != -1;
+}
+
+
+void NWindow::fatal_error(const std::string& message)
+{
+    if (this != this->top_level_window())
+    {
+        if (!top_level_window())
+        {
+            std::wstring wMessage = utf8_to_wstring(message);
+            std::wcerr << wMessage << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        top_level_window()->fatal_error(message);
+    }
+    if (this->fatal_error_message_.length() != 0)
+    {
+        fatal_error_message_ += "\n" + message;
+    }
+    else {
+        fatal_error_message_ = message;
+    }
+    quit();
 }

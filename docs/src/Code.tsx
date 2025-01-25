@@ -21,63 +21,59 @@
  *   SOFTWARE.
  */
 
-import {CopyBlock, CodeBlock, dracula,github} from 'react-code-blocks'
+//import {SyntaxHigh} from 'react-syntax-highlighter';
+// import cpp from 'react-syntax-highlighter/dist/esm/languages/hljs/cpp';
+// import tsx from 'react-syntax-highlighter/dist/esm/languages/hljs/tsx';
+// import docco from 'react-syntax-highlighter/dist/esm/styles/hljs/docco';
+import {Light as SyntaxHighlighter} from 'react-syntax-highlighter'
+import cpp from 'react-syntax-highlighter/dist/esm/languages/hljs/cpp';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import dracula from 'react-syntax-highlighter/dist/esm/styles/hljs/dracula';
+import IconButton from '@mui/material/IconButton';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
-const whiteTheme = github;
+SyntaxHighlighter.registerLanguage('cpp', cpp);
 
 
-function  CodeDiv (props: {text: string, language?: string, style?: React.CSSProperties, showLines?: boolean, white?: boolean}) {
+function Code(props: { 
+  text: string, 
+  language?: string, 
+  style?: React.CSSProperties, 
+  showLines?: boolean,
+  startingLineNumber?: number,
+  maxHeight?: number,
+   white?: boolean, 
+   show_copy?: boolean }) {
   return (
-    <div style={props.style}>
+    <div style={{position: "relative", marginLeft: 16, ...props.style}}>
+      { (props.show_copy??true) && (
+        <div style={{ position: "absolute", padding: 4, right: 0, top: 0, opacity: 0.6, color: props.white? 'black': 'white' }}>
+          <IconButton onClick={() => navigator.clipboard.writeText(props.text)} color="inherit"    >
+            <ContentCopyIcon htmlColor={ props.white? 'black': 'white'} fontSize={'small'}/>
+          </IconButton>
+        </div>
+      )}
 
-      <CopyBlock 
-        text={props.text} 
-        language={props.language??"cpp" }
-        theme={props.white??false ? whiteTheme : dracula} 
-        wrapLongLines={false} 
-        showLineNumbers={props.showLines??false}
-        customStyle={{overflowX: "auto", width: "90% !important", 
-          paddingBottom: "12px", paddingTop: "12px",paddingLeft: "16px"
-      }}
-      codeContainerStyle={{marginLeft: "16px", marginTop: "8px", marginBottom: "8px", background: "red"}}
-      />
+      <SyntaxHighlighter language={props.language ?? "cpp"} showLineNumbers={props.showLines ?? false}
+        style={props.white? docco: dracula}
+        startingLineNumber={props.startingLineNumber}
+        customStyle={{
+          overflowX: "auto", width: "90% !important",
+          paddingBottom: "12px", paddingTop: "12px", paddingLeft: "16px", borderRadius: 6, maxHeight: props.maxHeight
+        }}
+      >
+        {props.text}
+      </SyntaxHighlighter>
     </div>
   )
 }
 
-export default CodeDiv;
+export default Code;
 
-export function CodeFragment(props: { text: string})
-{
+
+export function CodeFragment2(props: { text: string, style?: React.CSSProperties, showLines?: boolean, white?: boolean }) {
   return (
-    <CodeBlock 
-      text={props.text} 
-      language="cpp" 
-      theme={whiteTheme} 
-      showLineNumbers={false} 
-      codeContainerStyle={{ padding: "0px", margin: "0px"  }}
-      wrapLongLines={false} 
+    <Code text={props.text} language="cpp" style={props.style} showLines={props.showLines} white={props.white??true} show_copy={false}/>
 
-       />
-  )
-}
-
-export function CodeFragment2 (props: {text: string, style?: React.CSSProperties, showLines?: boolean, white?: boolean}) {
-  return (
-    <div style={props.style}>
-
-      <CodeBlock
-        text={props.text} 
-        language={"cpp"}
-        
-        theme={props.white??false ? whiteTheme : dracula} 
-        wrapLongLines={false} 
-        showLineNumbers={props.showLines??false}
-        customStyle={{overflowX: "auto", width: "90% !important", 
-          paddingBottom: "4px", paddingTop: "4px",paddingLeft: "16px"
-      }}
-      codeContainerStyle={{marginLeft: "16px", marginTop: "1px", marginBottom: "1px" }}
-      />
-    </div>
   )
 }

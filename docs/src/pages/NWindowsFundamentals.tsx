@@ -21,7 +21,7 @@
  *   SOFTWARE.
  */
 
-import CodeDiv from '../Code';
+import Code from '../Code';
 import DocsPage from '../DocsPage';
 import M, { ML } from '../M';
 import { DocsTitle } from '../DocsNav';
@@ -39,12 +39,7 @@ function NWindowsFundamentals() {
             <p>
                 This section introduces fundamental principles used by NWindows throughout its API.
                 If you are determined to recklessly charge headfirst into NWindows programming, you
-                need to read this section of the documentation before doing so.
-            </p>
-            <p>
-                If you are planning to read further in the <M>Using NWindows</M> section you might want to 
-                skip to the <Link to="/using/hello"><i>Hello NWindows</i></Link> page, as it lays out most of the information in this 
-                section more generously. 
+                at least read this section of the documentation before doing so.
             </p>
             <SectionHead text="Elements and NWindows and ptrs" />
             <p>NWindows uses <M>std::shared_ptr</M>s throughout its API.</p>
@@ -57,7 +52,7 @@ function NWindowsFundamentals() {
                 rather than using an explicit <M>std::shared_ptr</M> type.
                 For example:
             </p>
-            <CodeDiv text={`NTextElement::ptr = NTextElement::create();`} />
+            <Code text={`NTextElement::ptr = NTextElement::create();`} />
 
             <p>Element
                 lifetimes are determined entirely by whether there are
@@ -96,11 +91,11 @@ function NWindowsFundamentals() {
                 </div>
             </M>
             <p>with argument and return types adjusted depending on whether the
-                property is passed by value or reference.
+                property value is passed by value or by reference.
             </p>
             <p>When properties are set to new values, NWindows elements will invalidate their layout
                 or rendering, which will cause layout or rendering passes to be performed when
-                control returns to the main NWindows event loop. There is no need to explicitly
+                control next returns to the main NWindows event loop. There is no need to explicitly
                 force rendering or layout to take place; elements decide for themselves
                 when they need new layout, or need to be redrawn.
             </p>
@@ -111,7 +106,7 @@ function NWindowsFundamentals() {
                 NWindows manipulators use <M>operator|</M> to set properties on elements
                 that are being manipulated.
             </p>
-            <CodeDiv text={`NTextElement::ptr textElement = NTextElement::create() 
+            <Code text={`NTextElement::ptr textElement = NTextElement::create() 
     | text("Ipsem lorem)
     | margins({2,1,2,1})
     | color(window->make_color_pair(0x000000,0xFF8080));`} />
@@ -123,8 +118,8 @@ function NWindowsFundamentals() {
                 trees of elements, often allowing an entire window to be created and populated
                 with visual elements in a single expression.
             </p>
-            <p>There are also manipulators for handling common events: </p>
-            <CodeDiv text={`NButtonElement okButton = NButtonElement::create()
+            <p>There are also manipulators for handling events: </p>
+            <Code text={`NButtonElement okButton = NButtonElement::create()
     | label("OK")
     | width(10)
     | on_clicked((
@@ -139,10 +134,9 @@ function NWindowsFundamentals() {
                 visual tree.</p>
             <p>If you are determined to build an entire visual tree in a single
                 expression, NWindows provides the <ML name="NElement::get_element_by_id<T>" /> method,
-                which allows you to retrieve elements elsewhere in the visual tree by id.
-                Whether this is a good idea or not... -- I'll leave it to you to decide.
+                which allows you to retrieve elements elsewhere in the visual tree by id. 
             </p>
-            <CodeDiv text={`NButtonElement::create()
+            <Code text={`NButtonElement::create()
     | label("Apply")
     | width(10)
     | on_clicked(
@@ -156,6 +150,12 @@ function NWindowsFundamentals() {
             <p>Note how <M>get_element_by_id</M> is called on the window object
                 in order to search the entire visual tree.
             </p>
+
+            <p>
+                An alternate approach is to use inline assignments to variables in the expression that creates the 
+                visual true, and add event handlers after the visual tree has been constructed. Or you can assemble your 
+                visual tree in pieces.
+            </p>                
 
             <SectionHead text="Events and Handlers" />
             <p>
@@ -181,6 +181,11 @@ NEventHandle buttonChangedHandle =
         }
     );`
             } />
+            <p>Producers fire events as follows:</p>
+            <CodeFragment2 text={`on_button_name_changed.fire(buttonId, text);
+    );`
+            } />
+
             <p>Subscribers can unsubscribe from the event by calling <M>NEvent::unsubscribe</M> with the handle returned
                 by <M>NEvent::subscribe</M>. If the event's lifetime is tied to the lifetime of the element which 
                 has subscribed, there's no compelling reason to unsubscribe; but you may need to do so 
@@ -190,17 +195,59 @@ NEventHandle buttonChangedHandle =
             of event handler lambdas, as captured <M>std::shared_ptr</M>s may create circular shared_ptr 
             references. If you must, it's prudent to do so using a <M>weak_ptr</M> reference to the element.
         </p>
+        <Code text={`/* DO NOT DO THIS!!! ***/ 
+NMessageWindow::ptr messageWindow 
+    = NMessageWindow::create(parentWindow, NMessageType::Information, "Title", "Message");'
+messageWindow.on_closed.subscribe(
+    [messageWindow]  // <--- CIRCULAR REFERENCE!!!
+    (NMessageWindow::ptr source) {
+    });`} />
+    <p>You can avoid the circular reference easily enough. In this example, the most obvious way is to use 
+    the <M>source</M> argument of the event handler instead of capturing a pointer. But you can also break the circular reference using a weak_ptr: </p>
+    <Code text={`NMessageWindow::ptr messageWindow 
+    = NMessageWindow::create(parentWindow, NMessageType::Information, "Title", "Message");'
+messageWindow.on_closed.subscribe(
+    [weak_ptr = messageWindow->weak_from_this<NMessageWindow()]  // Capture a std::weak_ptr
+    (NMessageWindow::ptr source) {
+         NMessageWindow::ptr messageWindow = weak_ptr.lock(); 
+        if (messageWindow) {
+            // do something.
+        }
+    });`} />
+        <p>Actual circular references occur surprisingly rarely in NWindows programming. Even the example 
+            is a bit contrived. However, should they 
+            ever occur, they would be exceedingly difficult to debug. It seems prudent to just take 
+            a weak_ptr if you must, rather than reasoning through whether it's actually safe to do so. </p>
+
         <SectionHead text="The NWindows Dispatcher" />
-        <p>One executes an NWindows application by constructing a top-level <M>NWindow</M>, building a
-        visual tree of elements in the <M>NWindow</M>, and then calling the <ML name="NWindow::run" /> method 
-        on the top-level window.  NWindows itself is single-threaded. All events and actions occur on the 
-        thread on which <ML name="NWindow::run" /> is called.
+        <p>NWindows itself is single-threaded. All events and actions must occur on the 
+        thread on which <ML fullName name="NWindow::run" /> is called.
         </p>
-        <p>NWindows provides a dispatching mechanism that allows code running on another thread to execute 
-            posted actions on the main NWindows thread. See the <Link to="/using/dispatcher"><i>NWindows Dispatcher</i></Link>
-            page for details. The NWindows dispatcher also allows applications to post actions that will be 
-            executed after a delay.
+        <p>The sole exception are the <ML fullName name="NWindow::post"/> methods which which allow 
+            applications to post actions that will be executed on the main thread by the NWindows dispatcher. 
+            thread. See the <Link to="/using/dispatcher"><i>NWindows Dispatcher</i></Link> page 
+            for more details. The NWindows dispatcher also allows applications to post actions that will be 
+            executed after a delay, or post actions that will be executed when control next returns to the 
+            NWindows event loop.
         </p>
+        <SectionHead text="Running an NWindows Application" />
+        <p>Running an NWindows application is simple. One constructs a top-level window, builds a visual tree
+            of elements in the window, and then call the <ML fullName name="NWindow::run" /> method on the window. 
+            The <ML name="NWindow::run" /> method will not return until the window is closed. <ML name="NWindow::run" /> should 
+            be called once on the main window of the application. Child windows use the event loop of the top-level window.
+        </p>
+        <p>Within the <ML name="NWindow::run"/> method, NWindows runs an event loop that handles window management, layout, rendering, dispatching 
+        of posted actions, and servicing of keyboard and mouse events. 
+            When a property 
+            is set on an element that affects its position or rendering onscreen, layout and rendering does not 
+            occur immediately. Instead, elements will call <ML fullName name="NElement::invalidate_layout" /> or <ML fullName name="NElement::invalidate_render"/>, 
+            which trigger a new layout or rendering pass when control next returns to the event loop. Multiple calls to <M>invalidate_layout</M>
+            or <M>invalidate_render</M> are coalesced into a single layout or rendering pass within the event loop. 
+            Calling <ML fullName name="NElement::invalidate_layout" /> also invalidates the rendering of all elements within the 
+            parent window's visual tree.
+        </p>
+
+
         </DocsPage >
     );
 }
