@@ -23,10 +23,10 @@
 
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
-import M from '../M';
-import ClassDescription, { MethodDescription, EventDescription, EnumDefinitionList, EnumDescription } from '../ClassDescription';
+import M, {ML} from '../M';
+import  { SummaryClassDescription,MethodDescription, EventDescription, EnumDefinitionList, EnumDescription } from '../ClassDescription';
 import SectionHead from '../SectionHead';
-import Code, { CodeFragment2 } from '../Code';
+import Code from '../Code';
 
 
 function FullCustomControl() {
@@ -84,66 +84,19 @@ NEvent<void(void)> void on_detaching;
                 opportunity for an element to get access to an <M>NWindow</M> and its properties and methods.</p>
             <p>If you implement either of these methods, make sure you call the superclass's implementation in yours, since the superclass
                 may also need to perform work when attaching or detaching.</p>
-            <p>If you subscribe to an <M>NWindow</M> event, you should add your event subscription in <M>on_attach</M> and
-                unsubscribe in <M>on_detach</M>, because your element's event handlers should not outlive your element.</p>
+            <p>If you need to subscribe to an <M>NWindow</M> event, you should add your event subscription 
+                in <M>on_attach</M> and unsubscribe in <M>on_detach</M>, because your element's event handlers should not outlive your element.</p>
 
             <SectionHead text="Circular shared_ptr References in Event Handlers" />
-            <p>This is probably a good point at which to bring up the problem of circular <M>shared_ptr</M> references in <M>NWindows</M>. Oddly,
-                circular reference chains hardly ever come up when not using custom controls. During ordinary use, most circular reference chains
-                are broken in <M>NWindow::close</M> when <M>NWindow</M>s remove all their child elements. This is not always the case when
-                writing custom elements.</p>
-            <p>The core issue is that if <M>NElement</M> implementations hold a <M>shared_ptr</M> that creates a circular chain of <M>shared_ptr</M>
-                references, reference counts on the <M>shared_ptr</M> will never go to zero, and a a result, none of the
-                participating objects will ever get deleted.</p>
-            <p>This issue becomes particular perilous when capturing references to elements in event handler lambdas. The following
-                somewhat contrived example illustrates the issue:
+            <p>As always, be cautious about accidentally creating circular shared pointer references. 
+                Rather than subscribing to an event on your own control, override the 
+                corresponding <M>handle_<i>event_name</i></M> method instead.</p>
+            <p>If your control needs to handle <M>NWindow</M> events, <ML name="NEvent::subscribe" /> to them 
+               in an <ML fullName name="NElement::handle_attached" /> override, 
+               and <ML fullName name="NEvent::unsubscribe" /> in 
+               an <ML fullName name="NElement::handle_detaching" /> override.
             </p>
-            <CodeFragment2 white text={`/* DO NOT DO THIS! */
-virtual void on_attach(NWindow*) override {
-    super:on_attach();
-    NWindow::ptr window = this->window();
-    // find on of our child elements.
-    NTextElement::ptr textElement = get_element_by_id<NTextElement>("text_control");
-    NElement::ptr thisElement = this->shared_from_this();
 
-    this->on_mouse_move.subscribe(
-        [thisElement,textElement](NMouseButton button, NMouseMoveEvent& event_args) mutable {
-            /* DO SOMETHING */
-        }
-    
-    );
-}`} />
-            <p>This code creates a chain of <M>shared_ptr</M> reference that will prevent the element from ever getting deleted.
-                The problem arises because of the capture of <M>thisPtr</M> in the lambda. The lambda captures a shared_ptr by value,
-                and the captured variable is stored within generated lambda, which is then moved into the list of event handlers
-                for <M>on_mouse_move</M>, where it persists until the event handler is removed. So this code generates a circular reference
-                where the <M>thisElement</M> holds a circular reference to the element itself.
-            </p>
-            <p>There are several easy solutions, any of which would solve the problem:</p>
-            <ul>
-                <li>Use a weak pointer instead of a shared pointer in the lambda capture. This prevents the prevents the circular reference chain from forming in the first place.</li>
-                <li>Capture the reference using a naked pointer. instead of a shared pointer to the element. This is a good solution
-                    if the element doesn't need to be kept alive, and if the lifetime of the element to which the event handler is added
-                    is well known, and understood.</li>
-                <li>Use a shared pointer to the element, but remove the event handler in <M>on_detach</M> (which you should do anyway, honestly).
-                </li>
-            </ul>
-            <p>Obviously, this is a very contrived example. But the issue may occur in more subtle and less obvious situations where a
-                capture variable references a parent of the element that owns the event handler, or when capturing a shared pointer to
-                a parent <M>NWindow</M>. In order to avoid difficult-to-detect memory leaks, it is therefore best practice to
-                capture weak pointers in event handlers, and to remove event handlers in <M>on_detach</M>.
-            </p>
-            <p>To be honest, this may be a purely theoretical concern. It is infuriatingly difficult to come up with a sensible
-                example of a circular reference chain that actually causes a problem in practice. In actual practice, circular reference
-                probably get broken by removing event handlers in <M>on_detach</M> or when closing <M>NWindow</M>s release their visual
-                tree. And are further prevented by the fact that you cannot call <M>shared_from_this</M> in a constructor because an object
-                that is being constructed has not yet been made into a shared_ptr (you will get a runtime exception if you try to do so).
-                However, I am unable to convince myself that the problem will <i>never</i> occur, and so I bring it up here.
-            </p>
-            <p>
-                In short, capturing <M>shared_ptr</M>'s in event handler lambdas
-                seems perilous, and I think you should avoid it if you can.
-            </p>
             <SectionHead text='Parent Classes for Custom Controls' />
             <p>Simple classes can inherit directly from <M>NElement</M>. If your custom element wants child elements,
                 it should instead inherit from <M>NContainerItemElement</M>. If your custom control will be clickable,
@@ -169,13 +122,14 @@ virtual void arrange(const NRect& bounds);`} />
                 position of each element.</p>
             <p>When measuring, either or both of <M>available.width</M> and <M>available.height</M> may be set to <M>AUTO_SIZE</M>.
                 if that's the case, implementations of <M>measure</M> should return a width or height that reflects the desired size
-                of the element if it were unconstrained. The width and height of the returned value of <M>measure</M> must <i>not</i> be
-                <M>AUTO_SIZE</M>, and must not be less than zero. Container elements are responsible for calling <M>measure</M> on
+                of the element if it were unconstrained. The width and height of the returned 
+                value of <M>measure</M> must <i>not</i> be <M>AUTO_SIZE</M>, and must not be less than zero. Container elements are responsible for calling <M>measure</M> on
                 each of their child elements, with available space appropriately adjusted. The <M>available</M> argument contains
                 the space available to the element with margins already applied. <M>NContainerElement</M> implementations of <M>measure</M>
                 must deal with margins of their child elements by subtracting the margins of the child from the space available to the
                 child before calling the child's arrange method, and then adding the child's margins back onto the value return from
-                the child's <M>measure</M> method. <M>NContainerElement</M> provides a <M>measure_child_with_margins</M> method
+                the child's <M>measure</M> method. <M>NContainerElement</M> provides 
+                an <ML name="NContainerElement::measure_child_with_margins"/> method
                 to subtract and re-add a child's margins when measuring.</p>
 
             <p>The <M>arrange</M> method
@@ -191,8 +145,8 @@ virtual void arrange(const NRect& bounds);`} />
                 set to zero. Implementations of <M>arrange</M> must call the <M>arrange</M> method of their superclass,
                 since <M>NElement::arrange</M> sets private properties that control the position of the element when rendering.
             </p>
-            <p>When calling <M>measure</M> on a child element, container implementations of <M>measure</M> may set the <M>NElement::measured</M>
-                property of child elements to the result return by the <M>measure</M> call so that the measured result can be retrieved in their <M>arrange</M> implementation.
+            <p>When calling <M>measure</M> on a child element, container implementations of <M>measure</M> may set the <M>NElement::measured</M> property 
+            of child elements to the result return by the <M>measure</M> call so that the measured result can be retrieved in their <M>arrange</M> implementation.
                 reserved specifically for this use, and no other.
             </p>
 
@@ -229,12 +183,11 @@ virtual void arrange(const NRect& bounds);`} />
     return result;
 }`} />
             <p>The only thing worth noting here is the use of the method <M>NElement::measure_text</M>. The size
-                that <M>measure</M> returns is in screen coordinates. <M>measure_text</M> takes care of a lot of details:
+                that <M>measure</M> returns is in screen columns. <M>measure_text</M> takes care of a lot of details:
                 interpreting UTF-8 characters, dealing with double-width display characters (some Unicode characters
                 occupy two character cells on terminal output devices), and composing of accents which can't always be
-                composed into a single character. Don't
-                make the mistake of just using string lengths to measure text; always use <M>measure_text</M>. <M>measure_text</M>
-                will be discussed more in the rendering section that follows.</p>
+                composed into a single Unicode codepoint. Don't
+                make the mistake of just using string lengths to measure text; always use <M>measure_text</M>.</p>
 
             <p>Measuring elements that have children is a bit more complicated. The actual code for <M>NVerticalStackElement::measure</M> serves as a good example of
                 how <M>measure</M> should be implemented.</p>
@@ -273,7 +226,7 @@ virtual void arrange(const NRect& bounds);`} />
     return NSize(width, height);
 }
 `} />
-            <p>There are two things that particularly bear mentioning. Elements that are containers are responsible for handling margins of their
+            <p>Elements that are containers are responsible for handling margins of their
                 children. <M>NVerticalStackElement</M> does this by using the method <M>NContainerElement::measure_child_with_margins</M>. This
                 method subtracts the child's margins from the available space before calling <M>child-measure(...)</M>, and adds the margins
                 to the size that the child returns, returning an <M>NSize</M> that includes the child's margins. The implementation
@@ -359,7 +312,7 @@ virtual void arrange(const NRect& bounds);`} />
             <p><M>NElement</M> provides the following methods for drawing content on the screen. Coordinates, when specified, are
                 in element coordinates &mdash; (0,0) is at the top-left corner of the element, inside its margins.
             </p>
-            <ClassDescription name="NElement">
+            <SummaryClassDescription name="NElement">
                 <MethodDescription
                     indexName={"void NElement::move(int x, int y)"}
                     method={
@@ -598,7 +551,7 @@ void color_off(NColorPair colorPair);
 
 
 
-            </ClassDescription>
+            </SummaryClassDescription>
 
 
 

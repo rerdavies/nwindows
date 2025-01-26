@@ -1,8 +1,8 @@
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import M, { ML } from '../M';
-import ClassDescription, {
-    CreateDescriptions, MethodDescriptions,
+import {
+    SummaryClassDescription, CreateDescriptions, MethodDescriptions,
     PropertyList, EnumDescription, EnumDefinitionList, MethodDescription, ParameterList, DefinitionList
 } from '../ClassDescription';
 import Code from '../Code';
@@ -51,7 +51,7 @@ function NWindowsWindows() {
                 Child windows use the event loop of their parent window, and will typically be deleted shortly
                 after <ML fullName name="NWindow::close" /> is called on the child window.
             </p>
-            <ClassDescription name="NWindow" baseClass="NElement">
+            <SummaryClassDescription name="NWindow" baseClass="NContainerElement">
                 <p>
                     <M>NWindow</M> is the type of window you will use most often. It can be either a root-level window
                     or a child window, depending on how it is constructed.
@@ -186,8 +186,8 @@ function NWindowsWindows() {
 
                 </PropertyList>
 
-            </ClassDescription>
-            <ClassDescription name="NPopupWindow" baseClass="NWindow">
+            </SummaryClassDescription>
+            <SummaryClassDescription name="NPopupWindow" baseClass="NWindow">
                 <p><M>NPopupWindow</M> inherits directly from <M>NWindow</M>, so it <i>is</i> an <M>NWindow</M>,
                     and behave like an <M>NWindow</M> in all respects save for how it is positioned on the screen.</p>
                 <p>An <M>NPopupWindow</M> positions itself relative to an <i>anchor</i> rectangle. Typically,
@@ -286,8 +286,8 @@ function NWindowsWindows() {
 
                 </MethodDescription>
 
-            </ClassDescription>
-            <ClassDescription name="NPopupMenuWindow" baseClass="NPopupWindow">
+            </SummaryClassDescription>
+            <SummaryClassDescription name="NPopupMenuWindow" baseClass="NPopupWindow">
                 <p>Display a popup menu. <M>NPopupMenuWindow</M> inherits directly from <M>NPopupWindow</M>.</p>
                 <div style={{ display: "flex", flexFlow: "row nowrap", columnGap: 16, justifyContent: "start", alignItems: "flex-start" }}>
                     <div style={{ flex: "1 1 0px" }} />
@@ -368,7 +368,7 @@ function NWindowsWindows() {
 
                     </MethodDescription>
                 </MethodDescriptions>
-            </ClassDescription>
+            </SummaryClassDescription>
 
         </DocsPage >
     );

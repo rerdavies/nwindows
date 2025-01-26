@@ -321,6 +321,11 @@ const indexData = new IndexData([
             `property NCheckboxElement::checked`, 
             `property__NCheckboxElement_checked`),
         new IndexReference(
+            `/apis/structs`, 
+            `5.5 - Structs`, 
+            `field NMenuItem::checked`, 
+            `field__NMenuItem_checked`),
+        new IndexReference(
             `/apis/classes/NCheckboxElement`, 
             `5.7.4 - NCheckboxElement`, 
             `property NCheckboxElement::checked`, 
@@ -873,6 +878,13 @@ const indexData = new IndexData([
             `property NButtonBaseElement::disabled_color`, 
             `property__NButtonBaseElement_disabled_color`),
     ]),
+    new IndexEntry("display_check", [
+        new IndexReference(
+            `/apis/structs`, 
+            `5.5 - Structs`, 
+            `field NMenuItem::display_check`, 
+            `field__NMenuItem_display_check`),
+    ]),
     new IndexEntry("display_checkmark", [
         new IndexReference(
             `/apis/structs`, 
@@ -917,6 +929,13 @@ const indexData = new IndexData([
             `5.7.9 - NElement`, 
             `method NRect element_to_window(const NRect& rect) const`, 
             `method___element_to_window`),
+    ]),
+    new IndexEntry("enabled", [
+        new IndexReference(
+            `/apis/structs`, 
+            `5.5 - Structs`, 
+            `field NMenuItem::enabled`, 
+            `field__NMenuItem_enabled`),
     ]),
     new IndexEntry("end", [
         new IndexReference(
@@ -1103,6 +1122,13 @@ const indexData = new IndexData([
             `property NButtonBaseElement::hover_color`, 
             `property__NButtonBaseElement_hover_color`),
     ]),
+    new IndexEntry("icon", [
+        new IndexReference(
+            `/apis/structs`, 
+            `5.5 - Structs`, 
+            `field NMenuItem::icon`, 
+            `field__NMenuItem_icon`),
+    ]),
     new IndexEntry("inflate", [
         new IndexReference(
             `/apis/structs`, 
@@ -1226,6 +1252,13 @@ const indexData = new IndexData([
             `method bool NElement::is_menu_item_shortcut_key(const std::string& utf8key, const std::string& text)`, 
             `method__NElement_is_menu_item_shortcut_key`),
     ]),
+    new IndexEntry("item_id", [
+        new IndexReference(
+            `/apis/structs`, 
+            `5.5 - Structs`, 
+            `field NMenuItem::item_id`, 
+            `field__NMenuItem_item_id`),
+    ]),
     new IndexEntry("key", [
         new IndexReference(
             `/apis/structs`, 
@@ -1256,6 +1289,11 @@ const indexData = new IndexData([
             `4.3 - NWindows Elements`, 
             `property NMenuElement::label`, 
             `property__NMenuElement_label`),
+        new IndexReference(
+            `/apis/structs`, 
+            `5.5 - Structs`, 
+            `field NMenuItem::label`, 
+            `field__NMenuItem_label`),
         new IndexReference(
             `/apis/classes/NMenuElement`, 
             `5.7.12 - NMenuElement`, 
@@ -1590,8 +1628,8 @@ const indexData = new IndexData([
             `class NCheckboxElement`, 
             `class__NCheckboxElement`),
         new IndexReference(
-            `/using/events/misc`, 
-            `4.5.3 - Miscellaneous Events`, 
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
             `class NCheckboxElement`, 
             `class__NCheckboxElement`),
         new IndexReference(
@@ -1662,8 +1700,8 @@ const indexData = new IndexData([
             `class NDropdownElement`, 
             `class__NDropdownElement`),
         new IndexReference(
-            `/using/events/misc`, 
-            `4.5.3 - Miscellaneous Events`, 
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
             `class NDropdownElement`, 
             `class__NDropdownElement`),
         new IndexReference(
@@ -1694,11 +1732,6 @@ const indexData = new IndexData([
             `class NElement`, 
             `class__NElement`),
         new IndexReference(
-            `/using/events`, 
-            `4.5 - NWindows Events`, 
-            `class NElement`, 
-            `class__NElement`),
-        new IndexReference(
             `/using/events/keyboard`, 
             `4.5.1 - Keyboard Events`, 
             `class NElement`, 
@@ -1709,8 +1742,8 @@ const indexData = new IndexData([
             `class NElement`, 
             `class__NElement`),
         new IndexReference(
-            `/using/events/misc`, 
-            `4.5.3 - Miscellaneous Events`, 
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
             `class NElement`, 
             `class__NElement`),
         new IndexReference(
@@ -1969,8 +2002,8 @@ const indexData = new IndexData([
             `class NRadioGroupElement`, 
             `class__NRadioGroupElement`),
         new IndexReference(
-            `/using/events/misc`, 
-            `4.5.3 - Miscellaneous Events`, 
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
             `class NRadioGroupElement`, 
             `class__NRadioGroupElement`),
         new IndexReference(
@@ -2020,8 +2053,8 @@ const indexData = new IndexData([
             `class NTextEditElement`, 
             `class__NTextEditElement`),
         new IndexReference(
-            `/using/events/misc`, 
-            `4.5.3 - Miscellaneous Events`, 
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
             `class NTextEditElement`, 
             `class__NTextEditElement`),
         new IndexReference(
@@ -2105,8 +2138,8 @@ const indexData = new IndexData([
             `class NWindow`, 
             `class__NWindow`),
         new IndexReference(
-            `/using/events/misc`, 
-            `4.5.3 - Miscellaneous Events`, 
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
             `class NWindow`, 
             `class__NWindow`),
         new IndexReference(
@@ -2127,8 +2160,8 @@ const indexData = new IndexData([
     ]),
     new IndexEntry("on_attached", [
         new IndexReference(
-            `/using/events/misc`, 
-            `4.5.3 - Miscellaneous Events`, 
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
             `event NEvent<void(NWindow*window)> NElement::on_attached`, 
             `event__NElement_on_attached`),
         new IndexReference(
@@ -2146,9 +2179,9 @@ const indexData = new IndexData([
     ]),
     new IndexEntry("on_checked_changed", [
         new IndexReference(
-            `/using/events/misc`, 
-            `4.5.3 - Miscellaneous Events`, 
-            `event NEvent<void (bool checked)> NCheckboxElement::on_checked_changed`, 
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
+            `event NCheckboxElement::on_checked_changed`, 
             `event__NCheckboxElement_on_checked_changed`),
         new IndexReference(
             `/apis/classes/NCheckboxElement`, 
@@ -2158,19 +2191,14 @@ const indexData = new IndexData([
     ]),
     new IndexEntry("on_clicked", [
         new IndexReference(
-            `/using/events`, 
-            `4.5 - NWindows Events`, 
-            `event NEvent<void (int button,NClickedEventArgs&event_args)>  NElement::on_clicked`, 
-            `event__NElement_on_clicked`),
-        new IndexReference(
             `/using/events/mouse`, 
             `4.5.2 - Mouse Events`, 
-            `event NEvent<void (int button,NClickedEventArgs&event_args)> NElement::on_clicked`, 
+            `event NEvent<void (NMouseButton button,NClickedEventArgs&event_args)> NElement::on_clicked`, 
             `event__NElement_on_clicked`),
         new IndexReference(
             `/apis/classes/NElement`, 
             `5.7.9 - NElement`, 
-            `event NEvent<void (int button,NClickedEventArgs&event_args)> NElement::on_clicked`, 
+            `event NEvent<void (NMouseButton button,NClickedEventArgs&event_args)> NElement::on_clicked`, 
             `event__NElement_on_clicked`),
     ]),
     new IndexEntry("on_closed", [
@@ -2192,8 +2220,8 @@ const indexData = new IndexData([
     ]),
     new IndexEntry("on_detaching", [
         new IndexReference(
-            `/using/events/misc`, 
-            `4.5.3 - Miscellaneous Events`, 
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
             `event NEvent<void()> NElement::on_detaching`, 
             `event__NElement_on_detaching`),
         new IndexReference(
@@ -2204,8 +2232,8 @@ const indexData = new IndexData([
     ]),
     new IndexEntry("on_focus_changed", [
         new IndexReference(
-            `/using/events/misc`, 
-            `4.5.3 - Miscellaneous Events`, 
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
             `event NEvent<void (NElement::ptr focusElement)> NWindow::on_focus_changed`, 
             `event__NWindow_on_focus_changed`),
         new IndexReference(
@@ -2216,8 +2244,8 @@ const indexData = new IndexData([
     ]),
     new IndexEntry("on_focused", [
         new IndexReference(
-            `/using/events/misc`, 
-            `4.5.3 - Miscellaneous Events`, 
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
             `event NEvent<void (bool focused)> NElement::on_focused`, 
             `event__NElement_on_focused`),
     ]),
@@ -2242,11 +2270,6 @@ const indexData = new IndexData([
     ]),
     new IndexEntry("on_key", [
         new IndexReference(
-            `/using/events`, 
-            `4.5 - NWindows Events`, 
-            `event NEvent<void (NKeyEventArgs&event_args)> NElement::on_key`, 
-            `event__NElement_on_key`),
-        new IndexReference(
             `/using/events/keyboard`, 
             `4.5.1 - Keyboard Events`, 
             `event NEvent<void (NKeyEventArgs&event_args)> NElement::on_key`, 
@@ -2259,11 +2282,6 @@ const indexData = new IndexData([
     ]),
     new IndexEntry("on_key_code", [
         new IndexReference(
-            `/using/events/keyboard`, 
-            `4.5.1 - Keyboard Events`, 
-            `event NEvent<void (NKeyCodeEventArgs&event_args)> NElement::on_key_code`, 
-            `event__NElement_on_key_code`),
-        new IndexReference(
             `/apis/classes/NElement`, 
             `5.7.9 - NElement`, 
             `event NEvent<void (NKeyCodeEventArgs&event_args)> NElement::on_key_code`, 
@@ -2271,44 +2289,29 @@ const indexData = new IndexData([
     ]),
     new IndexEntry("on_mouse_button_pressed", [
         new IndexReference(
-            `/using/events`, 
-            `4.5 - NWindows Events`, 
-            `event NEvent<void (int button,NMouseEventArgs&event_args)> NElement::on_mouse_button_pressed`, 
-            `event__NElement_on_mouse_button_pressed`),
-        new IndexReference(
             `/using/events/mouse`, 
             `4.5.2 - Mouse Events`, 
-            `event NEvent<void (int button,NMouseEventArgs&event_args)> NElement::on_mouse_button_pressed`, 
+            `event NEvent<void (NMouseButton button,NMouseEventArgs&event_args)> NElement::on_mouse_button_pressed`, 
             `event__NElement_on_mouse_button_pressed`),
         new IndexReference(
             `/apis/classes/NElement`, 
             `5.7.9 - NElement`, 
-            `event NEvent<void (int button,NMouseEventArgs&event_args)> NElement::on_mouse_button_pressed`, 
+            `event NEvent<void (NMouseButton button,NMouseEventArgs&event_args)> NElement::on_mouse_button_pressed`, 
             `event__NElement_on_mouse_button_pressed`),
     ]),
     new IndexEntry("on_mouse_button_released", [
         new IndexReference(
-            `/using/events`, 
-            `4.5 - NWindows Events`, 
-            `event NEvent<void (int button,NMouseEventArgs&event_args)>  NElement::on_mouse_button_released`, 
-            `event__NElement_on_mouse_button_released`),
-        new IndexReference(
             `/using/events/mouse`, 
             `4.5.2 - Mouse Events`, 
-            `event NEvent<void (int button,NMouseEventArgs&event_args)> NElement::on_mouse_button_released`, 
+            `event NEvent<void (NMouseButton button,NMouseEventArgs&event_args)> NElement::on_mouse_button_released`, 
             `event__NElement_on_mouse_button_released`),
         new IndexReference(
             `/apis/classes/NElement`, 
             `5.7.9 - NElement`, 
-            `event NEvent<void (int button,NMouseEventArgs&event_args)> NElement::on_mouse_button_released`, 
+            `event NEvent<void (NMouseButton button,NMouseEventArgs&event_args)> NElement::on_mouse_button_released`, 
             `event__NElement_on_mouse_button_released`),
     ]),
     new IndexEntry("on_mouse_enter", [
-        new IndexReference(
-            `/using/events`, 
-            `4.5 - NWindows Events`, 
-            `event NEvent<void (NMouseEventArgs&event_args)> NElement::on_mouse_enter`, 
-            `event__NElement_on_mouse_enter`),
         new IndexReference(
             `/using/events/mouse`, 
             `4.5.2 - Mouse Events`, 
@@ -2322,11 +2325,6 @@ const indexData = new IndexData([
     ]),
     new IndexEntry("on_mouse_leave", [
         new IndexReference(
-            `/using/events`, 
-            `4.5 - NWindows Events`, 
-            `event NEvent<void (NMouseEventArgs&event_args)> NElement::on_mouse_leave`, 
-            `event__NElement_on_mouse_leave`),
-        new IndexReference(
             `/using/events/mouse`, 
             `4.5.2 - Mouse Events`, 
             `event NEvent<void (NMouseEventArgs&event_args)> NElement::on_mouse_leave`, 
@@ -2339,11 +2337,6 @@ const indexData = new IndexData([
     ]),
     new IndexEntry("on_mouse_lost_capture", [
         new IndexReference(
-            `/using/events`, 
-            `4.5 - NWindows Events`, 
-            `event NEvent<void ()>  NElement::on_mouse_lost_capture`, 
-            `event__NElement_on_mouse_lost_capture`),
-        new IndexReference(
             `/using/events/mouse`, 
             `4.5.2 - Mouse Events`, 
             `event NEvent<void ()>  NElement::on_mouse_lost_capture`, 
@@ -2355,11 +2348,6 @@ const indexData = new IndexData([
             `event__NElement_on_mouse_lost_capture`),
     ]),
     new IndexEntry("on_mouse_move", [
-        new IndexReference(
-            `/using/events`, 
-            `4.5 - NWindows Events`, 
-            `event NEvent<void (NMouseEventArgs&event_args)>  NElement::on_mouse_move`, 
-            `event__NElement_on_mouse_move`),
         new IndexReference(
             `/using/events/mouse`, 
             `4.5.2 - Mouse Events`, 
@@ -2385,15 +2373,25 @@ const indexData = new IndexData([
     ]),
     new IndexEntry("on_selection_changed", [
         new IndexReference(
-            `/using/events/misc`, 
-            `4.5.3 - Miscellaneous Events`, 
-            `event NEvent<void(const NTextSelection&selection)> NTextEditElement::on_selection_changed`, 
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
+            `event NEvent<void(NDropdownElement::ptr source, int selection)> NDropdownElement::on_selection_changed`, 
+            `event__NDropdownElement_on_selection_changed`),
+        new IndexReference(
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
+            `event NEvent<void(NRadioButtonGroupElement::ptr source, int selection)> NRadioGroupElement::on_selection_changed`, 
+            `event__NRadioGroupElement_on_selection_changed`),
+        new IndexReference(
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
+            `event NTextEditElement::on_selection_changed`, 
             `event__NTextEditElement_on_selection_changed`),
         new IndexReference(
             `/apis/classes/NRadioGroupElement`, 
             `5.7.16 - NRadioGroupElement`, 
-            `event NEvent<void(NRadioButtonGroupElement::ptr source, int selection)> NRadioGroupElement::on_selection_changed`, 
-            `event__NRadioGroupElement_on_selection_changed`),
+            `event NEvent<void(NDropdownElement::ptr source, int selection)> NDropdownElement::on_selection_changed`, 
+            `event__NDropdownElement_on_selection_changed`),
         new IndexReference(
             `/apis/classes/NTextEditElement`, 
             `5.7.18 - NTextEditElement`, 
@@ -2412,27 +2410,15 @@ const indexData = new IndexData([
     ]),
     new IndexEntry("on_text_changed", [
         new IndexReference(
-            `/using/events/misc`, 
-            `4.5.3 - Miscellaneous Events`, 
-            `event NEvent<void(const std::string&)> NTextEditElement::on_text_changed`, 
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
+            `event NTextEditElement::on_text_changed`, 
             `event__NTextEditElement_on_text_changed`),
         new IndexReference(
             `/apis/classes/NTextEditElement`, 
             `5.7.18 - NTextEditElement`, 
             `event NTextEditElement::on_text_changed`, 
             `event__NTextEditElement_on_text_changed`),
-    ]),
-    new IndexEntry("on_value_changed", [
-        new IndexReference(
-            `/using/events/misc`, 
-            `4.5.3 - Miscellaneous Events`, 
-            `event NEvent<void (int value)> NDropdownElement::on_value_changed`, 
-            `event__NDropdownElement_on_value_changed`),
-        new IndexReference(
-            `/using/events/misc`, 
-            `4.5.3 - Miscellaneous Events`, 
-            `event NEvent<void (int value)> NRadioGroupElement::on_value_changed`, 
-            `event__NRadioGroupElement_on_value_changed`),
     ]),
     new IndexEntry("open", [
         new IndexReference(
@@ -3111,7 +3097,7 @@ const indexData = new IndexData([
         new IndexReference(
             `/apis/classes/NElement`, 
             `5.7.9 - NElement`, 
-            `method virtual bool NElement::simulate_keyboard_click(NElement* source, int button = 0)`, 
+            `method virtual bool NElement::simulate_keyboard_click(NElement* source, NMouseButton button = 0)`, 
             `method__NElement_simulate_keyboard_click`),
     ]),
     new IndexEntry("size", [
@@ -3296,6 +3282,11 @@ const indexData = new IndexData([
             `5.7.17 - NTextElement`, 
             `property NTextElement::text`, 
             `property__NTextElement_text`),
+        new IndexReference(
+            `/apis/classes/NTextEditElement`, 
+            `5.7.18 - NTextEditElement`, 
+            `property NTextEditElement::text`, 
+            `property__NTextEditElement_text`),
     ]),
     new IndexEntry("text_attribute", [
         new IndexReference(
@@ -3573,6 +3564,7 @@ let keywordIndexMap = new Map<string,IndexLink>([
     ["MouseEventArgs::button3_pressed", {route: "/apis/structs", id: "field__MouseEventArgs_button3_pressed", classRef: false}],
     ["NWindows::cancel_post", {route: "/apis/classes/NWindow", id: "method__NWindows_cancel_post", classRef: false}],
     ["NTextEditElement::character_filter", {route: "/apis/classes/NTextEditElement", id: "method__NTextEditElement_character_filter", classRef: false}],
+    ["NMenuItem::checked", {route: "/apis/structs", id: "field__NMenuItem_checked", classRef: false}],
     ["NCheckboxElement::checked", {route: "/apis/classes/NCheckboxElement", id: "property__NCheckboxElement_checked", classRef: false}],
     ["NRadioGroupElement::checked_text", {route: "/apis/classes/NRadioGroupElement", id: "property__NRadioGroupElement_checked_text", classRef: false}],
     ["NCheckboxElement::checked_text", {route: "/apis/classes/NCheckboxElement", id: "property__NCheckboxElement_checked_text", classRef: false}],
@@ -3615,11 +3607,13 @@ let keywordIndexMap = new Map<string,IndexLink>([
     ["NCheckboxElement::disabled", {route: "/apis/classes/NCheckboxElement", id: "property__NCheckboxElement_disabled", classRef: false}],
     ["NElement::disabled", {route: "/apis/classes/NElement", id: "property__NElement_disabled", classRef: false}],
     ["NButtonBaseElement::disabled_color", {route: "/apis/classes/NButtonBaseElement", id: "property__NButtonBaseElement_disabled_color", classRef: false}],
+    ["NMenuItem::display_check", {route: "/apis/structs", id: "field__NMenuItem_display_check", classRef: false}],
     ["NMenuItem::display_checkmark", {route: "/apis/structs", id: "method__NMenuItem_display_checkmark", classRef: false}],
     ["NMenuItem::Divider", {route: "/apis/structs", id: "method__NMenuItem_Divider", classRef: false}],
     ["NDropdownElement::dropdown_attachment", {route: "/apis/classes/NDropdownElement", id: "property__NDropdownElement_dropdown_attachment", classRef: false}],
     ["NElement::element_to_screen", {route: "/apis/classes/NElement", id: "method__NElement_element_to_screen", classRef: false}],
     ["NElement::element_to_window", {route: "/apis/classes/NElement", id: "method__NElement_element_to_window", classRef: false}],
+    ["NMenuItem::enabled", {route: "/apis/structs", id: "field__NMenuItem_enabled", classRef: false}],
     ["NTextSelection::end", {route: "/apis/structs", id: "method__NTextSelection_end", classRef: false}],
     ["NEvent::EventHandler", {route: "/apis/classes/NEvent", id: "using__NEvent_EventHandler", classRef: false}],
     ["NWindow::fatal_error", {route: "/apis/classes/NWindow", id: "method__NWindow_fatal_error", classRef: false}],
@@ -3641,6 +3635,7 @@ let keywordIndexMap = new Map<string,IndexLink>([
     ["NElement::height", {route: "/apis/classes/NElement", id: "property__NElement_height", classRef: false}],
     ["NElement::horizontal_line", {route: "/apis/classes/NElement", id: "method__NElement_horizontal_line", classRef: false}],
     ["NButtonBaseElement::hover_color", {route: "/apis/classes/NButtonBaseElement", id: "property__NButtonBaseElement_hover_color", classRef: false}],
+    ["NMenuItem::icon", {route: "/apis/structs", id: "field__NMenuItem_icon", classRef: false}],
     ["NRect::inflate", {route: "/apis/structs", id: "method__NRect_inflate", classRef: false}],
     ["NWindow::init_root_window", {route: "/apis/classes/NWindow", id: "method__NWindow_init_root_window", classRef: false}],
     ["NRect::inset", {route: "/apis/structs", id: "method__NRect_inset", classRef: false}],
@@ -3657,8 +3652,10 @@ let keywordIndexMap = new Map<string,IndexLink>([
     ["NTextSelection::is_empty", {route: "/apis/structs", id: "method__NTextSelection_is_empty", classRef: false}],
     ["NElement::is_focused", {route: "/apis/classes/NElement", id: "property__NElement_is_focused", classRef: false}],
     ["NElement::is_menu_item_shortcut_key", {route: "/apis/classes/NElement", id: "method__NElement_is_menu_item_shortcut_key", classRef: false}],
+    ["NMenuItem::item_id", {route: "/apis/structs", id: "field__NMenuItem_item_id", classRef: false}],
     ["NKeyEventArgs::key", {route: "/apis/structs", id: "field__NKeyEventArgs_key", classRef: false}],
     ["NElement::keyboard_clicking", {route: "/apis/classes/NElement", id: "method__NElement_keyboard_clicking", classRef: false}],
+    ["NMenuItem::label", {route: "/apis/structs", id: "field__NMenuItem_label", classRef: false}],
     ["NMenuElement::label", {route: "/apis/classes/NMenuElement", id: "property__NMenuElement_label", classRef: false}],
     ["NButtonElement::label", {route: "/apis/classes/NButtonElement", id: "property__NButtonElement_label", classRef: false}],
     ["NCheckboxElement::label", {route: "/apis/classes/NCheckboxElement", id: "property__NCheckboxElement_label", classRef: false}],
@@ -3768,10 +3765,9 @@ let keywordIndexMap = new Map<string,IndexLink>([
     ["NElement::on_mouse_move", {route: "/apis/classes/NElement", id: "event__NElement_on_mouse_move", classRef: false}],
     ["NMenuElement::on_opening", {route: "/apis/classes/NMenuElement", id: "event__NMenuElement_on_opening", classRef: false}],
     ["NDropdownElement::on_opening", {route: "/apis/classes/NDropdownElement", id: "event__NDropdownElement_on_opening", classRef: false}],
-    ["NRadioGroupElement::on_selection_changed", {route: "/apis/classes/NRadioGroupElement", id: "event__NRadioGroupElement_on_selection_changed", classRef: false}],
+    ["NDropdownElement::on_selection_changed", {route: "/apis/classes/NDropdownElement", id: "event__NDropdownElement_on_selection_changed", classRef: false}],
     ["NTextEditElement::on_selection_changed", {route: "/apis/classes/NTextEditElement", id: "event__NTextEditElement_on_selection_changed", classRef: false}],
     ["NButtonElement::on_selection_changed", {route: "/apis/classes/NButtonElement", id: "event__NButtonElement_on_selection_changed", classRef: false}],
-    ["NDropdownElement::on_selection_changed", {route: "/apis/classes/NDropdownElement", id: "event__NDropdownElement_on_selection_changed", classRef: false}],
     ["NTextEditElement::on_text_changed", {route: "/apis/classes/NTextEditElement", id: "event__NTextEditElement_on_text_changed", classRef: false}],
     ["NMenuElement::open", {route: "/apis/classes/NMenuElement", id: "property__NMenuElement_open", classRef: false}],
     ["NDropdownElement::open", {route: "/apis/classes/NDropdownElement", id: "property__NDropdownElement_open", classRef: false}],
@@ -3886,6 +3882,7 @@ let keywordIndexMap = new Map<string,IndexLink>([
     ["MouseEventArgs::target", {route: "/apis/structs", id: "field__MouseEventArgs_target", classRef: false}],
     ["NElement::target", {route: "/apis/structs", id: "field__NElement_target", classRef: false}],
     ["NTextElement::text", {route: "/apis/classes/NTextElement", id: "property__NTextElement_text", classRef: false}],
+    ["NTextEditElement::text", {route: "/apis/classes/NTextEditElement", id: "property__NTextEditElement_text", classRef: false}],
     ["NTextElement::text_attribute", {route: "/apis/classes/NTextElement", id: "property__NTextElement_text_attribute", classRef: false}],
     ["NBoxElement::title", {route: "/apis/classes/NBoxElement", id: "property__NBoxElement_title", classRef: false}],
     ["NWindow::title", {route: "/apis/classes/NWindow", id: "property__NWindow_title", classRef: false}],

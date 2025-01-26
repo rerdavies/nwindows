@@ -1770,7 +1770,7 @@ namespace nwindows
         NElement::ptr button3_down_element = nullptr;
 
         std::weak_ptr<NElement> mouse_capture_;
-        NElement::ptr entered_element_ = nullptr;
+        std::weak_ptr<NElement> entered_element_;
         NMouseEventArgs current_mouse_event_args_;
         void clear_window();
         mmask_t oldMouseMask = 0;

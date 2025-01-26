@@ -24,7 +24,7 @@
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import M, { ML } from '../M';
-import ClassDescription, { EventDescription, EventDescriptions } from '../ClassDescription';
+import { SummaryClassDescription, EventDescription } from '../ClassDescription';
 import { CodeFragment2 } from '../Code';
 
 
@@ -36,8 +36,7 @@ function KeyboardEvents() {
 
             <h1>{DocsTitle("/using/events/keyboard")}</h1>
 
-            <ClassDescription name="NElement">
-                <EventDescriptions>
+            <SummaryClassDescription name="NElement">
                     <EventDescription
                         indexName="NEvent<void (NKeyEventArgs&event_args)> NElement::on_key"
                         event={
@@ -137,8 +136,7 @@ function KeyboardEvents() {
 
                         <p>Key code event routing is the same as for key event routing.</p>
                     </EventDescription>
-                </EventDescriptions>
-            </ClassDescription>
+            </SummaryClassDescription>
 
         </DocsPage>
     );

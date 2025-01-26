@@ -302,32 +302,24 @@ function ApiStructs() {
                 </MethodDescription>
                 <FieldDescriptions>
                     <FieldDefinitionList>
-                        <div>std::string</div>
-                        <div>label</div>
-                        <div>Text to display in the menu item. '_' characters are used to indicate hotkeys.</div>
-
-                        <div>int</div>
-                        <div>item_id</div>
-                        <div>The id used to identify menu selected menu items.</div>
-
-                        <div>bool</div>
-                        <div>enabled</div>
-                        <div><M>true</M> if the menu item is enabled and can be selected.</div>
-
-                        <div>bool</div>
-                        <div>display_check</div>
-                        <div>Whether space should be reserved to display a checkmark.</div>
-
-                        <div>bool</div>
-                        <div>checked</div>
-                        <div>Whether to display a checkmark.</div>
-
-                        <div>std::string</div>
-                        <div>icon</div>
-                        <div>A single Unicode character to display to the left of the label, encoded in UTF-8.</div>
-
-                        <div></div>
-
+                        <FieldEntry type={`std::string`} name="NMenuItem::label" >
+                            <div>Text to display in the menu item. '_' characters are used to indicate hotkeys.</div>
+                        </FieldEntry>
+                        <FieldEntry type={`int`} name="NMenuItem::item_id" >
+                            <div>The id used to identify menu selected menu items.</div>
+                        </FieldEntry>
+                        <FieldEntry type={`bool`} name="NMenuItem::enabled" >
+                            <div><M>true</M> if the menu item is enabled and can be selected.</div>
+                            </FieldEntry>
+                        <FieldEntry type={`bool`} name="NMenuItem::display_check" >
+                            <div>Whether space should be reserved to display a checkmark.</div>
+                        </FieldEntry>
+                        <FieldEntry type={`bool`} name="NMenuItem::checked" >
+                            <div>Whether to display a checkmark.</div>
+                        </FieldEntry>
+                        <FieldEntry type={`std::string`} name="NMenuItem::icon" >
+                            <div>A single Unicode character to display to the left of the label, encoded in UTF-8.</div>
+                        </FieldEntry>
                     </FieldDefinitionList>
                 </FieldDescriptions>
                 <MethodDescriptions>

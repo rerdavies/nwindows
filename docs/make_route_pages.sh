@@ -24,7 +24,7 @@ strings=(\
      "/using/events"\
      "/using/events/keyboard"\
      "/using/events/mouse"\
-     "/using/events/misc"\
+     "/using/events/other"\
      "/using/custom"\
      "/using/custom/unicode"\
      "/using/custom/inherit"\

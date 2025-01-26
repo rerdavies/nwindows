@@ -24,8 +24,8 @@
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import M, { ML } from '../M';
-import ClassDescription, {
-    MethodDescription, ClassSectionHead, EnumDescription, PropertyEntry,
+import {
+    SummaryClassDescription, MethodDescription, ClassSectionHead, EnumDescription, PropertyEntry,
     CreateDescriptions, PropertyList, EnumDefinitionList,
     IndentedDefinitionList
 } from '../ClassDescription';
@@ -39,11 +39,13 @@ function NWindowsElements() {
     return (
         <DocsPage route="/using/elements">
             <h1>{DocsTitle("/using/elements")}</h1>
-            <p>This section describes elements used for UI composition in NWindows. Descriptions of classes in this section are abridged. They contain
+            <p>This section describes elements used for UI composition in NWindows. </p>
+            <p>Descriptions of classes in this section are abridged. They contain
                 documentation only on those properties and methods germane to controlling layout and display of NWindows elements.
             </p>
             <p>Event handling is discussed in the <Link to="/using/events">NWindows Events</Link> section of this document; and a complete unabridged description
                 of each of these classes is provided in the <Link to="/apis">NWindows API Reference</Link> section of this document.
+                Click on the <i>link</i> (🔗) icon on the right of each class header to view full API documentation for that class.
             </p>
 
             <SectionHead text="General Layout" />
@@ -59,8 +61,9 @@ function NWindowsElements() {
                 which are available on all NWindows elements.</p>
 
 
-            <ClassDescription name="NElement">
-                <p>The common base class for all NWindows elements.</p>
+            <SummaryClassDescription name="NElement">
+                <p><M>NElement</M> is the common base class for all NWindows elements. All NWindows elements have these 
+                properties.</p>
                 <PropertyList>
 
                     <PropertyEntry type="int" propertyName='NElement::width'>
@@ -96,12 +99,12 @@ function NWindowsElements() {
                             first focusable element in the visual tree. Defaults to <M>false</M>.</div>
                     </PropertyEntry>
                 </PropertyList>
-            </ClassDescription>
+            </SummaryClassDescription>
 
 
             <SectionHead text="Layout Elements" />
 
-            <ClassDescription name="NVerticalStackElement" baseClass="NContainerElement">
+            <SummaryClassDescription name="NVerticalStackElement" baseClass="NContainerElement">
                 <p>
                     <M>NVerticalStackElement</M> stacks child elements vertically.
                 </p>
@@ -146,8 +149,8 @@ function NWindowsElements() {
 
                 </PropertyList>
 
-            </ClassDescription>
-            <ClassDescription name="NHorizontalStackElement" >
+            </SummaryClassDescription>
+            <SummaryClassDescription name="NHorizontalStackElement" >
                 <p>
                     <M>NHorizontalStackElement</M> stacks child elements horizontally.
                 </p>
@@ -201,11 +204,11 @@ function NWindowsElements() {
                         </div>
                     </PropertyEntry>
                 </PropertyList>
-            </ClassDescription>
+            </SummaryClassDescription>
 
             <SectionHead text="Rendering Elements" />
 
-            <ClassDescription name="NTextElement">
+            <SummaryClassDescription name="NTextElement">
                 <p>
                     The <M>NTextElement</M> displays text.
                 </p>
@@ -307,9 +310,9 @@ static NTextElement::ptr create(
                         </div>
                     </PropertyEntry>
                 </PropertyList>
-            </ClassDescription>
+            </SummaryClassDescription>
 
-            <ClassDescription name="NBoxElement">
+            <SummaryClassDescription name="NBoxElement">
                 <p>Displays a box border around its child element. <M>NBoxElement</M> can have only
                     one child element.</p>
                 <CenteredImage
@@ -340,11 +343,11 @@ static NTextElement::ptr create(
                         </div>
                     </PropertyEntry>
                 </PropertyList>
-            </ClassDescription>
+            </SummaryClassDescription>
 
             <SectionHead text="Input Elements" />
 
-            <ClassDescription name="NButtonElement">
+            <SummaryClassDescription name="NButtonElement">
                 <p>Displays a button that can be clicked.</p>
                 <CenteredImage
                     src="/nwindows/image/sample_button.png"
@@ -418,9 +421,9 @@ NButtonElement::create()
                     </PropertyEntry>
 
                 </PropertyList>
-            </ClassDescription>
+            </SummaryClassDescription>
 
-            <ClassDescription name="NTextEditElement">
+            <SummaryClassDescription name="NTextEditElement">
                 <p>Displays a text box that allows editing of text.</p>
                 <CenteredImage
                     src="/nwindows/image/sample_textedit.png"
@@ -519,8 +522,8 @@ void select_end();
                         (Inherited from NElement). When true, editing is disabled, and the control is grayed out.
                     </div>
                 </PropertyList>
-            </ClassDescription>
-            <ClassDescription name="NCheckboxElement">
+            </SummaryClassDescription>
+            <SummaryClassDescription name="NCheckboxElement">
                 <p>Displays a checkbox control.</p>
                 <CenteredImage
                     src="/nwindows/image/sample_checkbox.png"
@@ -584,8 +587,8 @@ static NCheckboxElement::ptr create();`
 
                 </PropertyList>
 
-            </ClassDescription>
-            <ClassDescription name="NRadioGroupElement">
+            </SummaryClassDescription>
+            <SummaryClassDescription name="NRadioGroupElement">
                 <p>Displays a group of radio buttons.</p>
                 <CenteredImage
                     src="/nwindows/image/sample_radiogroup.png"
@@ -672,8 +675,8 @@ static NRadioGroupElement::ptr create();
                     </PropertyEntry>
  
                 </PropertyList>
-            </ClassDescription>
-            <ClassDescription name="NDropdownElement">
+            </SummaryClassDescription>
+            <SummaryClassDescription name="NDropdownElement">
                 <p>A dropdown control that allows selection of values from a list.</p>
                 <CenteredImage src="/nwindows/image/sample_dropdown.png" alt="Sample dropdown" />
                 <p><M>NDropdownElement</M> allows users to select from a list items. The list of items
@@ -732,9 +735,9 @@ static NDropdownElement::ptr create();
                         <div>(Inherited from NElement). When true, the dropdown is disabled, and grayed out.</div>
                     </PropertyEntry>
                 </PropertyList>
-            </ClassDescription>
+            </SummaryClassDescription>
 
-            <ClassDescription name="NMenuElement" baseClass="NButtonBaseElement">
+            <SummaryClassDescription name="NMenuElement" baseClass="NButtonBaseElement">
                 <p><M>NMenuElement</M> menu header for a single menu item, displays a popup menu
                     when clicked, or when the hot key is pressed. Submenus are supported, as are menu menu_items
                     with checkmarks, or with icons.
@@ -789,7 +792,7 @@ static NMenuElement::ptr create();
                         </div>
                     </PropertyEntry>
                 </PropertyList>
-            </ClassDescription>
+            </SummaryClassDescription>
 
             <SectionHead text="Building-Block Elements" />
 

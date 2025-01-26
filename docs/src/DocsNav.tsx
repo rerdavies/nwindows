@@ -52,7 +52,7 @@ const NWindowsWindows = React.lazy(() => import("./pages/NWindowsWindows"));
 const NWindowsEvents = React.lazy(() => import("./pages/NWindowsEvents"));
 const KeyboardEvents = React.lazy(() => import("./pages/KeyboardEvents"));
 const MouseEvents = React.lazy(() => import("./pages/MouseEvents"));
-const MiscEvents = React.lazy(() => import("./pages/MiscEvents"));
+const OtherEvents = React.lazy(() => import("./pages/OtherEvents"));
 const CustomControls = React.lazy(() => import("./pages/CustomControls"));
 const CustomUnicode = React.lazy(() => import("./pages/CustomUnicode"));
 
@@ -119,7 +119,7 @@ const indexedComponents: IndexedComponent[] = [
     { route: "/using/events", component: () => NWindowsEvents },
     { route: "/using/events/keyboard", component: () => KeyboardEvents },
     { route: "/using/events/mouse", component: () => MouseEvents },
-    { route: "/using/events/misc", component: () => MiscEvents },
+    { route: "/using/events/other", component: () => OtherEvents },
     { route: "/using/custom", component: () => CustomControls },
     { route: "/using/custom/unicode", component: () => CustomUnicode },
     { route: "/using/custom/inherit", component: () => InheritingCustomControl },
@@ -175,9 +175,9 @@ let docsIndex: DocsPage[] = [
     { route: "/using/events", title: "4.5 - NWindows Events", up: "/using" },
     { route: "/using/events/keyboard", title: "4.5.1 - Keyboard Events", up: "/using/events", },
     { route: "/using/events/mouse", title: "4.5.2 - Mouse Events", up: "/using/events", },
-    { route: "/using/events/misc", title: "4.5.3 - Miscellaneous Events", up: "/using/events", },
+    { route: "/using/events/other", title: "4.5.3 - Other Events", up: "/using/events", },
     { route: "/using/custom", title: "4.6 - Implementing Custom Controls", up: "/using", },
-    { route: "/using/custom/unicode", title: "4.6.1 - Unicode Support", up: "/using/custom", },
+    { route: "/using/custom/unicode", title: "4.6.1 - Supporting Unicode", up: "/using/custom", },
     { route: "/using/custom/inherit", title: "4.6.2 - Inheriting from Existing Elements", up: "/using/custom", },
     { route: "/using/custom/compose", title: "4.6.3 - Compound Elements", up: "/using/custom", },
     { route: "/using/custom/full", title: "4.6.4 - Fully-Custom Elements", up: "/using/custom", },

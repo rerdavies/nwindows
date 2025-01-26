@@ -54,18 +54,6 @@ target_include_directories(nwindows PUBLIC
     include/NWindows
 )
 
-
-add_executable(nwindows_test
-    scratch.cpp
-    test_main.cpp
-)
-
-
-target_link_libraries(
-    nwindows_test PRIVATE
-    nwindows
-)
-
 add_executable(locale_test
     test_locale.cpp
 )

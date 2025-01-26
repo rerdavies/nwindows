@@ -24,7 +24,8 @@
 import React from "react";
 import { RegisterIndexEntry } from "./IndexBuilder";
 import { Link } from "react-router-dom";
-import {IL} from "./M"; 
+import {IL,ML} from "./M"; 
+
 
 export default function
     ClassDescription(props: {
@@ -55,6 +56,37 @@ export default function
         </div>
     );
 }
+
+export function
+    SummaryClassDescription(props: {
+        children?: React.ReactNode,
+        name: string,
+        prefix?: string,
+        id_tag?: string,
+        text? : string,
+        baseClass?: string
+    }) {
+
+    let id_tag = props.id_tag ?? "class";
+    let prefix = props.prefix || "class";
+    let id = id_tag + "__" + props.name;
+    let indexText = (props.prefix ?? "class") + " " + props.name;
+
+    RegisterIndexEntry(props.name, id, indexText);
+    return (
+        <div id={id} className="nav_target" >
+            <h2 className="class-desc-header" >
+                <div className="preformatted">{props.text ? props.text : (prefix + " " + props.name) }</div>
+                <ML name="" target={props.name}/>
+            </h2>
+
+            <div className="indent">
+                {props.children}
+            </div>
+        </div>
+    );
+}
+
 export function
     EnumDescription(props: { children: React.ReactNode, enumName: string, prefix?: string }) {
     return (
@@ -107,8 +139,8 @@ export function FieldEntry(props: { name: string, type: string, children?: React
     }
     return (
         <React.Fragment>
-            <div className="property_grid_cell_pre"><IL name={props.type}/></div>
-            <div className="property_grid_cell_pre" id={id}>{propertyOnly}</div>
+            <div className="property_grid_cell_pre preformatted"><IL name={props.type}/></div>
+            <div className="property_grid_cell pre preformatted link_target"  id={id}>{propertyOnly}</div>
             <div className="property_grid_cell">{props.children}</div>
         </React.Fragment>
     );

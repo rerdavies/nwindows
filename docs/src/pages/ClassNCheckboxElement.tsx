@@ -116,8 +116,8 @@ static NCheckboxElement::ptr create();`
                         event={`NEvent<
     void(NCheckboxElement::ptr source, bool checked)
 > on_checked_changed;`}>
-                        <div>Invoked when the <M>checked</M> property changes. The <M>source</M> parameter is the 
-                            <M>NCheckboxElement</M> that generated the event. The <M>checked</M> parameter is the new value of the 
+                        <div>Fires when the <ML name="NCheckboxElement::checked"/ > property changes. The <M>source</M> parameter is 
+                            the <M>NCheckboxElement</M> that generated the event. The <M>checked</M> parameter is the new value of the 
                             <M>checked</M> property.
                         </div>
                     </EventDescription>

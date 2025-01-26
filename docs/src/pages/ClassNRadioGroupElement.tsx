@@ -27,7 +27,7 @@ import ClassDescription, {
     CreateDescriptions, MethodDescription, ClassSectionHead, UsingDescription, PropertyList,
     PropertyEntry, EventDescriptions, EventDescription, TypeDefinitions
 } from '../ClassDescription';
-import M from '../M';
+import M, {ML} from '../M';
 import CenteredImage from '../CenteredImage';
 
 function ClassNRadioGroupElement() {
@@ -148,7 +148,7 @@ static NRadioGroupElement::ptr create();
     void(NRadioButtonGroupElement::ptr source, int selection)
 > on_selection_changed;`}>
                         <p>
-                            Fired when the selected radio button changes.
+                             Fired when the <ML fullName name="NRadioButtonGroupElement::selection" /> property changes. 
                         </p>
                     </EventDescription>
                 </EventDescriptions>

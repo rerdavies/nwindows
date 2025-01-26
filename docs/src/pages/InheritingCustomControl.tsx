@@ -72,7 +72,7 @@ public:
 
 
             <SectionHead text="ContextEditElement" />
-            <p>A more ambitious example might be a class that implements a Text Edit field with a context menu.</p>
+            <p>A more ambitious example might be a class that implements a text edit field with a context menu.</p>
             <Code showLines text={`#include <NWindows/NWindows.hpp>
 
 using namespace nwindows;
@@ -168,7 +168,7 @@ private:
 };
 `} />
         <p>Calling </p>
-        <Code text={`ContextEditElement::Create(
+        <Code text={`ContextEditElement::create(
 {
     NMenuItem("Cut",1),
     NMenuItem("Copy",2),

@@ -246,6 +246,10 @@ h1 {
   margin-left: 32px;
 }
 
+.link_target {
+  scroll-margin-top: 32px;
+  scroll-margin-bottom: 32px;
+}
 .method_description {
   scroll-margin-top: 32px;
   scroll-margin-bottom: 32px;

@@ -152,7 +152,7 @@ NAttachment`} propertyName='NMenuElement::menu_attachment'>
     void(NMenuElement::ptr source)
 > on_opening;`}>
                         <div>Fired before the menu dropdown opens. If you need to update menu items, you can set
-                            the <M>menu_items</M> property in the handler for this event.
+                            the <ML name="NMenuElement::menu_items" /> property in the handler for this event.
                         </div>
                     </EventDescription>
                     <EventDescription indexName={`NEvent<void(NMenuElement::ptr source)> NMenuElement::on_closed`}

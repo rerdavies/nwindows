@@ -350,7 +350,7 @@ public:
                         event={`NEvent<
     void(NWindow::ptr source, bool activated)
 > on_is_active_changed;`}>
-                        <p>Called when the window becomes active or inactive.</p>
+                        <p>Fires when the window becomes active or inactive.</p>
                     </EventDescription>
                 </EventDescriptions>
                 <MethodDescriptions>

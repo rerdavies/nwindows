@@ -237,10 +237,10 @@ function ClassNElement() {
                     ]} event={`NEvent<
     void (NMouseButton button,NMouseEventArgs&event_args)
 > on_mouse_button_pressed;
+
 NEvent<
     void (NMouseButton button,NMouseEventArgs&event_args)
-> on_mouse_button_released;                                
- `} >
+> on_mouse_button_released;`} >
     <p>Fires whenever a mouse button is pressed or released. The <M>button</M> argument is of
     type <ML name="NMouseButton" /> and specifies which mouse button was clicked. The <M>event_args</M> argument is of 
     type <ML name="NMouseEventArgs" /> and provides the current mouse position, 
@@ -274,8 +274,7 @@ NEvent<void (
                         indexName={[
                             "NEvent<void (NMouseEventArgs&event_args)> NElement::on_mouse_move",
                         ]}
-                        event={`
-NEvent<
+                        event={`NEvent<
     void (NMouseEventArgs&event_args)
 > on_mouse_move;
 `} >
@@ -288,14 +287,9 @@ NEvent<
                         "NEvent<void ()>  NElement::on_mouse_lost_capture",
                     ]}
                     event={`NEvent<
-                            void ()
-                        >  on_mouse_lost_capture;
-                        
-                        `} >
-                        <p>Fires on the event which has mouse capture if capture is lost. This 
-                            occurs if the state of mouse buttons changes while the mouse is outside the bounds of the 
-                            terminal window, or if some other element captures the mouse.
-                            xxx;
+    void ()
+>  on_mouse_lost_capture;`} >
+                        <p>Fires on the element which has mouse capture if capture is lost. 
                         </p>
                     </EventDescription>
                     <EventDescription indexName={[
@@ -326,7 +320,7 @@ NEvent<void (NKeyCodeEventArgs&event_args)> on_key_code;
                             contains a key of type <M>char32_t</M> &mdash; a 32-bit Unicode character.
                         </p>
                         <p><M>handle_key_code</M> methods and observers of <M>on_key_code</M> receive one argument of
-                            type <ApiLink linkType={LinkType.Struct} name="NKeyEventArgs"><M>NKeyCodeEventArgs</M></ApiLink>, which contains
+                            type <ML name="NKeyEventArgs" />, which contains
                             a <M>key_code</M> of type <M>int</M>.</p>
                         <p> Key-codes are the the same as <M>ncurses</M> key-codes, which are in turn derived from X11 key-codes.
                             Well-known key-codes can be found the <M>ncurses.h</M> header file. Search for literals starting with "KEY_".

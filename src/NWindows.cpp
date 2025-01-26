@@ -2218,17 +2218,19 @@ bool NWindow::bubble_event(int x, int y, const std::function<bool(NElement&)>& f
 
 void NWindow::handle_window_mouse_move(NMouseEventArgs& event_args)
 {
-    if (entered_element_)
+    NElement::ptr entered_element = this->entered_element_.lock();
+
+    if (entered_element)
     {
         event_args.handled = false;
-        while (entered_element_ && !entered_element_->bounds_.contains(event_args.cursor_position))
+        while (entered_element && !entered_element->bounds_.contains(event_args.cursor_position))
         {
-            auto t = entered_element_;
-            if (!entered_element_->parent())
+            auto t = entered_element;
+            if (!entered_element->parent())
             {
                 break;
             }
-            entered_element_ = entered_element_->parent()->shared_from_this<NElement>();
+            entered_element = entered_element->parent()->shared_from_this<NElement>();
 
             if (t->mouse_entered_)
             {
@@ -2237,7 +2239,7 @@ void NWindow::handle_window_mouse_move(NMouseEventArgs& event_args)
             }
         }
     }
-    NElement::ptr entered_element = get_element_at(event_args.cursor_position);
+    entered_element = get_element_at(event_args.cursor_position);
     this->entered_element_ = entered_element;
 
     event_args.handled = false;
@@ -2928,9 +2930,13 @@ bool NCheckboxElement::handle_clicked(NMouseButton button, NClickedEventArgs& ev
     {
         return true;
     }
-    checked(!checked());
-    event_args.handled = true;
-    return true;
+    if (button == NMouseButton::Left)
+    {
+        checked(!checked());
+        event_args.handled = true;
+        return true;
+    }   
+    return false;;
 }
 
 
@@ -3058,9 +3064,11 @@ void NRadioGroupElement::update_child_elements()
 
         radioBox->on_clicked.subscribe(
             [this, ix](NMouseButton button, NClickedEventArgs& event_args) {
-                this->selection(ix);
-                event_args.handled = true;
-                return true;
+                if (button == NMouseButton::Left)
+                {
+                    this->selection(ix);
+                    event_args.handled = true;
+                }
             }
         );
         ++ix;

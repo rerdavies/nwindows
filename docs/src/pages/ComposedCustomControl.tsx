@@ -23,7 +23,7 @@
 
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
-import M from '../M';
+import M, {ML} from '../M';
 import SectionHead from '../SectionHead';
 import Code from '../Code';
 
@@ -35,7 +35,7 @@ function ComposedCustomControl() {
             <h1>{DocsTitle("/using/custom/compose")}</h1>
             <p> Another fairly simple way to implement custom elements is to use compound elements.
                 Compound elements wrap one or more
-                existing controls in a new control that provides additional functionality. This is a good way to implement
+                existing controls in a new control, derived from <ML name="NContainerElement"/>, that provides additional functionality. This is a good way to implement
                 custom controls that don't require a lot of new functionality, or that can be implemented as a combination of
                 existing controls.
             </p>
@@ -44,11 +44,12 @@ function ComposedCustomControl() {
                 to deal with them.
             </p>
             <ul>
-                <li><p>NWindows uses <M>std::weak_ptr&lt;&gt;</M>s internally, as well as using <M>shared_from_this()</M> and 
-                <M>weak_from_this()</M> calls perhaps more often than it really should. Because of this, you will have to
+                <li><p>NWindows uses <M>std::weak_ptr&lt;&gt;</M>s internally, as well as 
+                using <M>shared_from_this()</M> and NWindows calls <M>weak_from_this()</M> perhaps more 
+                often than it really should. Because of this, you will have to
                     create the compound element's <M>std::shared_ptr&lt;&gt;</M> before you add children to it. To deal with 
-                    this situation, use an <M>Init</M> method to attach children to the compound element, and then have 
-                    the element's <M>create</M> method call <M>Init</M> before returning the new element.
+                    this situation, use an <M>init</M> method to attach children to the compound element, and then have 
+                    the element's <M>create</M> method call <M>init</M> before returning the new element.
                 </p></li>
 
                 <li><p>
@@ -68,10 +69,10 @@ function ComposedCustomControl() {
             methods. The default <M>NContainerElement</M> implementation doesn't implement complex layout. However, it deals with one 
             and only one child element perfectly well, wrapping itself tightly around the child control. And you can use 
             NWindows layout elements to provide  more complex layout of your custom element's children.</p>
-            <Code showLines text={`class BulletListElement {
+            <Code text={`class BulletListElement {
 private: 
     BulletListElement(): NContainerElement("BulletList") { }
-    void Init(int width) {
+    void init(int width) {
         auto horizontal_container = NHorizontalStackElement::create()
         | nwindows::column_gap(3)
         super::add_child(horizontal_container);
@@ -100,7 +101,9 @@ public:
         // create the shared_ptr before adding children.
         ptr result = new self{}; 
 
-        result->Init(width);
+        result->init(width);
+        return result;
+    }
 
     virtual void add_child(NElement::ptr child) override {
         child_container_->add_child(child);
@@ -140,9 +143,9 @@ private:
     NVerticalStackElement::ptr child_container_;
 };`} />
             <p>Here's how you might use the <M>BulletListElement</M> class:</p>
-            <Code showLines text={`auto bullet_list = BulletListElement::create(200);
-
-};`} />
+            <Code text={`auto bullet_list = BulletListElement::create(200)
+    | add_child(NTextElement::create("First item")
+);`} />
 
 
         </DocsPage>

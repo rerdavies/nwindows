@@ -115,7 +115,9 @@ void select_end();
                 </CreateDescriptions>
 
                 <PropertyList>
-                    <PropertyEntry propertyName="text" type="std::string" >
+                    <PropertyEntry type="std::string" 
+                        propertyName="NTextEditElement::text" 
+                    >
                         <div>The current value of the text being edited.</div>
                     </PropertyEntry>
 
@@ -158,13 +160,13 @@ void select_end();
                         event={`NEvent<
     void(NTextEditElement::ptr source, const std::string&)
 > on_text_changed;`} >
-                        <div>Called when the text in the control changes.</div>
+                        <div>Called when <ML name="NTextEditElement::text" /> property changes.</div>
                     </EventDescription>
                     <EventDescription indexName="NTextEditElement::on_selection_changed"
                         event={`NEvent<
     void(NTextEditElement::ptr source, NTextSelection selection)
 > on_selection_changed;`} >
-                        <div>Called when the selection of text in the control changes.</div>
+                        <div>Called when selection of text in the control changes.</div>
                     </EventDescription>
                 </EventDescriptions>
                 <MethodDescriptions>
