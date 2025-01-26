@@ -33,35 +33,37 @@ import SectionHead from '../SectionHead';
 import { WhereToGoFromHere } from '../DocsNav';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
+import PersistentScrollDiv from '../PersistentScrollDiv';
 
 function HomePage() {
 
     return (
-        <Paper className="app_body">
-            <PageColumn>
-                <div>
-                    <Banner subtitle="TUI Library" />
-                    <p>INITIAL DEPLOYMENT IN PROGRESS. NOT YET READY FOR USE!!!</p>
-                    <p>
-                        The <span className="name">NWindows</span> library is a C++ text user interface (TUI) library for building console applications.
-                        The library uses elements to compose user interfaces using an innovative and concise manipulator system. The library provides a
-                        rich set of elements with which to build user interfaces.
-                    </p>
-                    <p>
-                        Built on top of the <span className="mono">ncursesw</span> library, <span className="name">NWindows</span> works on both xterm and raw linux terminal windows, and also works over ssh.
-                    </p>
+        <PersistentScrollDiv tag="home" style={{ flex: "1 1 1px" }}>
+            <Paper className="app_body">
+                <PageColumn>
+                    <div>
+                        <Banner subtitle="TUI Library" />
+                        <p>INITIAL DEPLOYMENT IN PROGRESS. NOT YET READY FOR USE!!!</p>
+                        <p>
+                            The <span className="name">NWindows</span> library is a C++ text user interface (TUI) library for building console applications.
+                            The library uses elements to compose user interfaces using an innovative and concise manipulator system. The library provides a
+                            rich set of elements with which to build user interfaces.
+                        </p>
+                        <p>
+                            Built on top of the <span className="mono">ncursesw</span> library, <span className="name">NWindows</span> works on both xterm and raw linux terminal windows, and also works over ssh.
+                        </p>
 
-                    <CenteredImage src="/nwindows/image/screenshot.png" alt="screenshot" width="80%" maxWidth="600px"
-                    />
+                        <CenteredImage src="/nwindows/image/screenshot.png" alt="screenshot" width="80%" maxWidth="600px"
+                        />
 
-                    <p>Here is a simple example of a <span className="name">NWindows</span> application that demonstrates the use of manipulators to
-                        create users interfaces. The program creates a window
-                        with a button that closes the window when clicked:</p>
-                    {true &&
-                        <Code text=
-                            {
+                        <p>Here is a simple example of a <span className="name">NWindows</span> application that demonstrates the use of manipulators to
+                            create users interfaces. The program creates a window
+                            with a button that closes the window when clicked:</p>
+                        {true &&
+                            <Code text=
+                                {
 
-                                `
+                                    `
 #include "NWindows/NWindows.hpp"
 
 using namespace nwindows;
@@ -85,49 +87,50 @@ int main(void) {
 }
 `} />}
 
-                    <p>which displays the following output when executed.</p>
-                    <CenteredImage src="/nwindows/image/hello_world.png" alt="hello world"
-                    />
-                    <SectionHead text="Where to Go From Here" />
-                    {WhereToGoFromHere()}
-                </div>
-
-                <div style={{ display: "flex", flexFlow: "row nowrap", columnGap: 8, alignItems: "center", justifyContent: "flex-start" }} >
-                    <div style={{ flex: "0 0 auto", opacity: 0.7 }}>
-                        <IconButton color="inherit" onClick={() => {
-                            window.open("https://github.com/rerdavies/nwindows/", "_blank");
-                        }}>
-                            <GitHubIcon />
-                        </IconButton>
-                    </div>
-                    <div style={{ flex: "1 1 auto" }}>
-                        <p>NWindows source code is published on GitHub at <a href="https://github.com/rerdavies/nwindows">https://github.com/rerdavies/nwindows</a></p>
-                    </div>
-                </div>
-                <div style={{ display: "flex", flexFlow: "row nowrap", columnGap: 8,alignItems: "top" }} >
-                    <div style={{ flex: "0 0 auto", opacity: 0.6 }}>
-                        <IconButton color="inherit" onClick={() => {
-                            window.open("https://github.com/rerdavies/nwindows/", "_blank");
-                        }}>
-                            <img src={VolunteerLoveIcon} />
-                        </IconButton>
+                        <p>which displays the following output when executed.</p>
+                        <CenteredImage src="/nwindows/image/hello_world.png" alt="hello world"
+                        />
+                        <SectionHead text="Where to Go From Here" />
+                        {WhereToGoFromHere()}
                     </div>
 
-                    <div style={{flex: "1 1 auto"}}>
-                        <p style={{marginTop: 8}}>NWindows is written by an indepedent developer. Your support and sponsorship for this, and other Open Source projects
-                            by Robin Davies would mean more
-                            than you would think. You can make a monthly or a one time donation at Robin Davies' <a href="https://github.com/sponsors/rerdavies">GitHub Sponsorship page</a>.
-
-                        </p>
+                    <div style={{ display: "flex", flexFlow: "row nowrap", columnGap: 8, alignItems: "center", justifyContent: "flex-start" }} >
+                        <div style={{ flex: "0 0 auto", opacity: 0.7 }}>
+                            <IconButton color="inherit" onClick={() => {
+                                window.open("https://github.com/rerdavies/nwindows/", "_blank");
+                            }}>
+                                <GitHubIcon />
+                            </IconButton>
+                        </div>
+                        <div style={{ flex: "1 1 auto" }}>
+                            <p>NWindows source code is published on GitHub at <a href="https://github.com/rerdavies/nwindows">https://github.com/rerdavies/nwindows</a></p>
+                        </div>
                     </div>
-                </div>
-                <div className="copyright_footer">
-                    <p style={{ marginTop: 0 }}>Copyright © 2024-2025 Robin E. R. Davies.</p>
-                </div>
+                    <div style={{ display: "flex", flexFlow: "row nowrap", columnGap: 8, alignItems: "top" }} >
+                        <div style={{ flex: "0 0 auto", opacity: 0.6 }}>
+                            <IconButton color="inherit" onClick={() => {
+                                window.open("https://github.com/sponsors/rerdavies", "_blank");
+                            }}>
+                                <img src={VolunteerLoveIcon} />
+                            </IconButton>
+                        </div>
 
-            </PageColumn>
+                        <div style={{ flex: "1 1 auto" }}>
+                            <p style={{ marginTop: 8 }}>NWindows is written by an indepedent developer. Your support and sponsorship for this, and other Open Source projects
+                                by Robin Davies would mean more
+                                than you would think. You can make a monthly or a one time donation at Robin Davies' <a href="https://github.com/sponsors/rerdavies">GitHub Sponsorship page</a>.
 
-        </Paper>
+                            </p>
+                        </div>
+                    </div>
+                    <div className="copyright_footer">
+                        <p style={{ marginTop: 0 }}>Copyright © 2024-2025 Robin E. R. Davies.</p>
+                    </div>
+
+                </PageColumn>
+
+            </Paper>
+        </PersistentScrollDiv>
     )
 }
 

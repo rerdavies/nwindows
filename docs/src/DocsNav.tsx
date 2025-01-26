@@ -90,7 +90,7 @@ const ClassNCheckboxElement = React.lazy(() => import("./pages/ClassNCheckboxEle
 const ClassNTextEditElement = React.lazy(() => import("./pages/ClassNTextEditElement"));
 const ClassNEvent = React.lazy(() => import("./pages/ClassNEvent"));
 const IndexPage = React.lazy(() => import("./pages/IndexPage"));
-
+const ScratchPage = React.lazy(() => import("./pages/ScratchPage"));
 
 
 interface DocsPage {
@@ -280,6 +280,12 @@ export function DocsRoutes() {
             <Route path="index_builder" element={
                 <IndexBuilder />
             } />
+            <Route path="scratch" element={
+                <React.Suspense fallback={<Loading />}>
+                    <ScratchPage />
+                </React.Suspense>
+            } />
+
 
 
             <Route path="*" element={<NotFound />} />

@@ -299,8 +299,8 @@ const indexData = new IndexData([
         new IndexReference(
             `/apis/classes/NWindow`, 
             `5.7.20 - NWindow`, 
-            `method bool NWindows::cancel_post(PostHandle handle)`, 
-            `method__NWindows_cancel_post`),
+            `method bool NWindow::cancel_post(PostHandle handle)`, 
+            `method__NWindow_cancel_post`),
     ]),
     new IndexEntry("character_filter", [
         new IndexReference(
@@ -1822,6 +1822,11 @@ const indexData = new IndexData([
             `class NMenuElement`, 
             `class__NMenuElement`),
         new IndexReference(
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
+            `class NMenuElement`, 
+            `class__NMenuElement`),
+        new IndexReference(
             `/apis/classes/NMenuElement`, 
             `5.7.12 - NMenuElement`, 
             `class NMenuElement`, 
@@ -1975,6 +1980,11 @@ const indexData = new IndexData([
         new IndexReference(
             `/using/windows`, 
             `4.4 - NWindows Windows`, 
+            `class NPopupMenuWindow`, 
+            `class__NPopupMenuWindow`),
+        new IndexReference(
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
             `class NPopupMenuWindow`, 
             `class__NPopupMenuWindow`),
         new IndexReference(
@@ -2172,6 +2182,11 @@ const indexData = new IndexData([
     ]),
     new IndexEntry("on_cancelled", [
         new IndexReference(
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
+            `event NEvent<void(NPopupMenuWindow::ptr source)> NPopupMenuWindow::on_cancelled`, 
+            `event__NPopupMenuWindow_on_cancelled`),
+        new IndexReference(
             `/apis/classes/NPopupMenuWindow`, 
             `5.7.15 - NPopupMenuWindow`, 
             `event NEvent<void(NPopupMenuWindow::ptr source)> NPopupMenuWindow::on_cancelled`, 
@@ -2202,6 +2217,11 @@ const indexData = new IndexData([
             `event__NElement_on_clicked`),
     ]),
     new IndexEntry("on_closed", [
+        new IndexReference(
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
+            `event NEvent<void(NMenuElement::ptr source)> NMenuElement::on_closed`, 
+            `event__NMenuElement_on_closed`),
         new IndexReference(
             `/apis/classes/NMenuElement`, 
             `5.7.12 - NMenuElement`, 
@@ -2251,12 +2271,27 @@ const indexData = new IndexData([
     ]),
     new IndexEntry("on_is_active_changed", [
         new IndexReference(
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
+            `event NEvent<void(NWindow::ptr source, bool activated)> NWindow::on_is_active_changed`, 
+            `event__NWindow_on_is_active_changed`),
+        new IndexReference(
             `/apis/classes/NWindow`, 
             `5.7.20 - NWindow`, 
             `event NEvent<void(NWindow::ptr source, bool activated)> NWindow::on_is_active_changed`, 
             `event__NWindow_on_is_active_changed`),
     ]),
     new IndexEntry("on_item_selected", [
+        new IndexReference(
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
+            `event NEvent<void(NMenuElement::ptr source, int selection)> NMenuElement::on_item_selected`, 
+            `event__NMenuElement_on_item_selected`),
+        new IndexReference(
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
+            `event NEvent<void(NPopupMenuWindow::ptr source, int item_id)> NPopupMenuWindow::on_item_selected`, 
+            `event__NPopupMenuWindow_on_item_selected`),
         new IndexReference(
             `/apis/classes/NMenuElement`, 
             `5.7.12 - NMenuElement`, 
@@ -2361,6 +2396,11 @@ const indexData = new IndexData([
     ]),
     new IndexEntry("on_opening", [
         new IndexReference(
+            `/using/events/other`, 
+            `4.5.3 - Other Events`, 
+            `event NEvent<void(NMenuElement::ptr source)> NMenuElement::on_opening`, 
+            `event__NMenuElement_on_opening`),
+        new IndexReference(
             `/apis/classes/NMenuElement`, 
             `5.7.12 - NMenuElement`, 
             `event NEvent<void(NMenuElement::ptr source)> NMenuElement::on_opening`, 
@@ -2390,8 +2430,8 @@ const indexData = new IndexData([
         new IndexReference(
             `/apis/classes/NRadioGroupElement`, 
             `5.7.16 - NRadioGroupElement`, 
-            `event NEvent<void(NDropdownElement::ptr source, int selection)> NDropdownElement::on_selection_changed`, 
-            `event__NDropdownElement_on_selection_changed`),
+            `event NEvent<void(NRadioButtonGroupElement::ptr source, int selection)> NRadioGroupElement::on_selection_changed`, 
+            `event__NRadioGroupElement_on_selection_changed`),
         new IndexReference(
             `/apis/classes/NTextEditElement`, 
             `5.7.18 - NTextEditElement`, 
@@ -3549,6 +3589,7 @@ let keywordIndexMap = new Map<string,IndexLink>([
     ["NElement::arrange", {route: "/apis/classes/NElement", id: "method__NElement_arrange", classRef: false}],
     ["NElement::attribute_off", {route: "/apis/classes/NElement", id: "method__NElement_attribute_off", classRef: false}],
     ["NElement::attribute_on", {route: "/apis/classes/NElement", id: "method__NElement_attribute_on", classRef: false}],
+    ["AUTO::SIZE", {route: "/apis/constants", id: "constant___AUTO_SIZE", classRef: false}],
     ["NColor::Black", {route: "/apis/classes/NColor", id: "method__NColor_Black", classRef: false}],
     ["NRect::bottom", {route: "/apis/structs", id: "method__NRect_bottom", classRef: false}],
     ["NRect::bottom_left", {route: "/apis/structs", id: "method__NRect_bottom_left", classRef: false}],
@@ -3562,7 +3603,7 @@ let keywordIndexMap = new Map<string,IndexLink>([
     ["MouseEventArgs::button1_pressed", {route: "/apis/structs", id: "field__MouseEventArgs_button1_pressed", classRef: false}],
     ["MouseEventArgs::button2_pressed", {route: "/apis/structs", id: "field__MouseEventArgs_button2_pressed", classRef: false}],
     ["MouseEventArgs::button3_pressed", {route: "/apis/structs", id: "field__MouseEventArgs_button3_pressed", classRef: false}],
-    ["NWindows::cancel_post", {route: "/apis/classes/NWindow", id: "method__NWindows_cancel_post", classRef: false}],
+    ["NWindow::cancel_post", {route: "/apis/classes/NWindow", id: "method__NWindow_cancel_post", classRef: false}],
     ["NTextEditElement::character_filter", {route: "/apis/classes/NTextEditElement", id: "method__NTextEditElement_character_filter", classRef: false}],
     ["NMenuItem::checked", {route: "/apis/structs", id: "field__NMenuItem_checked", classRef: false}],
     ["NCheckboxElement::checked", {route: "/apis/classes/NCheckboxElement", id: "property__NCheckboxElement_checked", classRef: false}],
@@ -3587,6 +3628,7 @@ let keywordIndexMap = new Map<string,IndexLink>([
     ["NHorizontalStackElement::create", {route: "/apis/classes/NHorizontalStackElement", id: "method__NHorizontalStackElement_create", classRef: false}],
     ["NMenuElement::create", {route: "/apis/classes/NMenuElement", id: "method__NMenuElement_create", classRef: false}],
     ["NMessageWindow::create", {route: "/apis/classes/NMessageWindow", id: "method__NMessageWindow_create", classRef: false}],
+    ["create", {route: "/apis/classes/NButtonElement", id: "method___create", classRef: false}],
     ["NRadioGroupElement::create", {route: "/apis/classes/NRadioGroupElement", id: "method__NRadioGroupElement_create", classRef: false}],
     ["NTextElement::create", {route: "/apis/classes/NTextElement", id: "method__NTextElement_create", classRef: false}],
     ["NTextEditElement::create", {route: "/apis/classes/NTextEditElement", id: "method__NTextEditElement_create", classRef: false}],
@@ -3598,6 +3640,7 @@ let keywordIndexMap = new Map<string,IndexLink>([
     ["MouseEventArgs::cursor_position", {route: "/apis/structs", id: "field__MouseEventArgs_cursor_position", classRef: false}],
     ["NTextEditElement::cursor_position", {route: "/apis/classes/NTextEditElement", id: "property__NTextEditElement_cursor_position", classRef: false}],
     ["NTextEditElement::cut", {route: "/apis/classes/NTextEditElement", id: "method__NTextEditElement_cut", classRef: false}],
+    ["DEBUG::NELEMENT_LIFECYCLE", {route: "/apis/defines", id: "define___DEBUG_NELEMENT_LIFECYCLE", classRef: false}],
     ["NWindow::decompose_utf8", {route: "/apis/classes/NWindow", id: "method__NWindow_decompose_utf8", classRef: false}],
     ["NTextEditElement::decomposed_text", {route: "/apis/classes/NTextEditElement", id: "property__NTextEditElement_decomposed_text", classRef: false}],
     ["NTextSelection::delete_character_at", {route: "/apis/structs", id: "method__NTextSelection_delete_character_at", classRef: false}],
@@ -3612,12 +3655,15 @@ let keywordIndexMap = new Map<string,IndexLink>([
     ["NMenuItem::Divider", {route: "/apis/structs", id: "method__NMenuItem_Divider", classRef: false}],
     ["NDropdownElement::dropdown_attachment", {route: "/apis/classes/NDropdownElement", id: "property__NDropdownElement_dropdown_attachment", classRef: false}],
     ["NElement::element_to_screen", {route: "/apis/classes/NElement", id: "method__NElement_element_to_screen", classRef: false}],
+    ["element::to_screen", {route: "/apis/classes/NElement", id: "method___element_to_screen", classRef: false}],
     ["NElement::element_to_window", {route: "/apis/classes/NElement", id: "method__NElement_element_to_window", classRef: false}],
+    ["element::to_window", {route: "/apis/classes/NElement", id: "method___element_to_window", classRef: false}],
     ["NMenuItem::enabled", {route: "/apis/structs", id: "field__NMenuItem_enabled", classRef: false}],
     ["NTextSelection::end", {route: "/apis/structs", id: "method__NTextSelection_end", classRef: false}],
     ["NEvent::EventHandler", {route: "/apis/classes/NEvent", id: "using__NEvent_EventHandler", classRef: false}],
     ["NWindow::fatal_error", {route: "/apis/classes/NWindow", id: "method__NWindow_fatal_error", classRef: false}],
     ["NContainerElement::find_child_element", {route: "/apis/classes/NContainerElement", id: "method__NContainerElement_find_child_element", classRef: false}],
+    ["find::child_element", {route: "/apis/classes/NElement", id: "method___find_child_element", classRef: false}],
     ["NEvent::fire", {route: "/apis/classes/NEvent", id: "method__NEvent_fire", classRef: false}],
     ["NWindow::focus", {route: "/apis/classes/NWindow", id: "property__NWindow_focus", classRef: false}],
     ["NButtonBaseElement::focus_color", {route: "/apis/classes/NButtonBaseElement", id: "property__NButtonBaseElement_focus_color", classRef: false}],
@@ -3722,6 +3768,8 @@ let keywordIndexMap = new Map<string,IndexLink>([
     ["NMouseEventArgs::NMouseEventArgs", {route: "/apis/structs", id: "method__NMouseEventArgs_NMouseEventArgs", classRef: false}],
     ["NMouseEventArgs", {route: "/apis/structs", id: "struct__NMouseEventArgs", classRef: false}],
     ["NNavDirection", {route: "/apis/enums", id: "enum__NNavDirection", classRef: false}],
+    ["NO::ITEM_ID", {route: "/apis/structs", id: "constant___NO_ITEM_ID", classRef: false}],
+    ["NO::MENU_ITEM", {route: "/apis/constants", id: "constant___NO_MENU_ITEM", classRef: false}],
     ["NOrientation", {route: "/apis/enums", id: "enum__NOrientation", classRef: false}],
     ["NButtonBaseElement::normal_color", {route: "/apis/classes/NButtonBaseElement", id: "property__NButtonBaseElement_normal_color", classRef: false}],
     ["NWindow::normalize_utf8", {route: "/apis/classes/NWindow", id: "method__NWindow_normalize_utf8", classRef: false}],
@@ -3765,9 +3813,10 @@ let keywordIndexMap = new Map<string,IndexLink>([
     ["NElement::on_mouse_move", {route: "/apis/classes/NElement", id: "event__NElement_on_mouse_move", classRef: false}],
     ["NMenuElement::on_opening", {route: "/apis/classes/NMenuElement", id: "event__NMenuElement_on_opening", classRef: false}],
     ["NDropdownElement::on_opening", {route: "/apis/classes/NDropdownElement", id: "event__NDropdownElement_on_opening", classRef: false}],
-    ["NDropdownElement::on_selection_changed", {route: "/apis/classes/NDropdownElement", id: "event__NDropdownElement_on_selection_changed", classRef: false}],
+    ["NRadioGroupElement::on_selection_changed", {route: "/apis/classes/NRadioGroupElement", id: "event__NRadioGroupElement_on_selection_changed", classRef: false}],
     ["NTextEditElement::on_selection_changed", {route: "/apis/classes/NTextEditElement", id: "event__NTextEditElement_on_selection_changed", classRef: false}],
     ["NButtonElement::on_selection_changed", {route: "/apis/classes/NButtonElement", id: "event__NButtonElement_on_selection_changed", classRef: false}],
+    ["NDropdownElement::on_selection_changed", {route: "/apis/classes/NDropdownElement", id: "event__NDropdownElement_on_selection_changed", classRef: false}],
     ["NTextEditElement::on_text_changed", {route: "/apis/classes/NTextEditElement", id: "event__NTextEditElement_on_text_changed", classRef: false}],
     ["NMenuElement::open", {route: "/apis/classes/NMenuElement", id: "property__NMenuElement_open", classRef: false}],
     ["NDropdownElement::open", {route: "/apis/classes/NDropdownElement", id: "property__NDropdownElement_open", classRef: false}],
@@ -3786,10 +3835,12 @@ let keywordIndexMap = new Map<string,IndexLink>([
     ["NTextEditElement::password", {route: "/apis/classes/NTextEditElement", id: "property__NTextEditElement_password", classRef: false}],
     ["NTextEditElement::paste", {route: "/apis/classes/NTextEditElement", id: "method__NTextEditElement_paste", classRef: false}],
     ["NWindow::post", {route: "/apis/classes/NWindow", id: "method__NWindow_post", classRef: false}],
+    ["PostHandle", {route: "/apis/typedefs", id: "using___PostHandle", classRef: false}],
     ["NMenuElement::prefix", {route: "/apis/classes/NMenuElement", id: "property__NMenuElement_prefix", classRef: false}],
     ["NButtonElement::prefix", {route: "/apis/classes/NButtonElement", id: "property__NButtonElement_prefix", classRef: false}],
     ["NButtonBaseElement::pressed", {route: "/apis/classes/NButtonBaseElement", id: "property__NButtonBaseElement_pressed", classRef: false}],
     ["NElement::print", {route: "/apis/classes/NElement", id: "method__NElement_print", classRef: false}],
+    ["print", {route: "/apis/classes/NElement", id: "method___print", classRef: false}],
     ["NElement::print_acs", {route: "/apis/classes/NElement", id: "method__NElement_print_acs", classRef: false}],
     ["NElement::print_menu_item", {route: "/apis/classes/NElement", id: "method__NElement_print_menu_item", classRef: false}],
     ["NBoxElement::ptr", {route: "/apis/classes/NBoxElement", id: "using__NBoxElement_ptr", classRef: false}],
@@ -3823,7 +3874,9 @@ let keywordIndexMap = new Map<string,IndexLink>([
     ["NVerticalStackElement::row_gap", {route: "/apis/classes/NVerticalStackElement", id: "property__NVerticalStackElement_row_gap", classRef: false}],
     ["NWindow::run", {route: "/apis/classes/NWindow", id: "method__NWindow_run", classRef: false}],
     ["NElement::screen_to_element", {route: "/apis/classes/NElement", id: "method__NElement_screen_to_element", classRef: false}],
+    ["screen::to_element", {route: "/apis/classes/NElement", id: "method___screen_to_element", classRef: false}],
     ["NElement::screen_to_window", {route: "/apis/classes/NElement", id: "method__NElement_screen_to_window", classRef: false}],
+    ["screen::to_window", {route: "/apis/classes/NElement", id: "method___screen_to_window", classRef: false}],
     ["NTextEditElement::select_all", {route: "/apis/classes/NTextEditElement", id: "method__NTextEditElement_select_all", classRef: false}],
     ["NButtonBaseElement::select_color", {route: "/apis/classes/NButtonBaseElement", id: "property__NButtonBaseElement_select_color", classRef: false}],
     ["NTextEditElement::select_end", {route: "/apis/classes/NTextEditElement", id: "method__NTextEditElement_select_end", classRef: false}],
@@ -3910,7 +3963,9 @@ let keywordIndexMap = new Map<string,IndexLink>([
     ["NElement::window", {route: "/apis/classes/NElement", id: "property__NElement_window", classRef: false}],
     ["NWindow::window_position", {route: "/apis/classes/NWindow", id: "property__NWindow_window_position", classRef: false}],
     ["NElement::window_to_element", {route: "/apis/classes/NElement", id: "method__NElement_window_to_element", classRef: false}],
+    ["window::to_element", {route: "/apis/classes/NElement", id: "method___window_to_element", classRef: false}],
     ["NElement::window_to_screen", {route: "/apis/classes/NElement", id: "method__NElement_window_to_screen", classRef: false}],
+    ["window::to_screen", {route: "/apis/classes/NElement", id: "method___window_to_screen", classRef: false}],
     ["NTextElement::wrap_text", {route: "/apis/classes/NTextElement", id: "property__NTextElement_wrap_text", classRef: false}],
 ]);
 

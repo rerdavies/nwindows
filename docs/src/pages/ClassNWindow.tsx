@@ -501,7 +501,7 @@ void NWindow::post(
                         <p>Each call to <M>post</M> returns a <ML name="PostHandle" /> that can be used to cancel the function before it executes.
                         </p>
                     </MethodDescription>
-                    <MethodDescription indexName="bool NWindows::cancel_post(PostHandle handle)"
+                    <MethodDescription indexName="bool NWindow::cancel_post(PostHandle handle)"
                         method={`bool cancel_post(PostHandle handle);`
                         }>
                         <p>Cancel a function that was previously posted <ML name="NWindow::post" /> before it executes. The <M>cancel_post</M> method is thread-safe

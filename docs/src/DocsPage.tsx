@@ -49,20 +49,20 @@ function DocsPage(props: { children: React.ReactNode, route: string }) {
         }
     }
     let t = (
-        <div className="docs_page" style={{ display: "flex", height: "100%", flexFlow: "column nowrap", position: "relative" }}>
-            <Paper className="app_body">
+        <div className="docs_page" style={{ display: "flex", flex: "1 1 1px",flexFlow: "column nowrap", position: "relative" }}>
+            <PersistentScrollDiv  tag="docs" style={{ flex: "1 1 1px"}} >
+                <Paper className="app_body">
 
-                <PersistentScrollDiv tag="docs" style={{ flex: "1 1 auto", overflowY: "auto", overflowX: "auto" }} >
                     <PageColumn>
                         {props.children}
                     </PageColumn>
-                </PersistentScrollDiv>
-            </Paper>
+                </Paper>
+            </PersistentScrollDiv>
             <div className="docs_footer no_print" >
-                    <PageColumn >
-                        <DocsNav currentRoute={props.route} />
-                    </PageColumn>
-                </div>
+                <PageColumn >
+                    <DocsNav currentRoute={props.route} />
+                </PageColumn>
+            </div>
 
         </div>
     );

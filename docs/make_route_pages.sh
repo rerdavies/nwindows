@@ -48,6 +48,7 @@ strings=(\
      "/apis/classes/NContainerElement"\
      "/apis/classes/NDropdownElement"\
      "/apis/classes/NElement"\
+     "/apis/classes/NEvent"\
      "/apis/classes/NHorizontalStackElement"\
      "/apis/classes/NMenuElement"\
      "/apis/classes/NMessageWindow"\

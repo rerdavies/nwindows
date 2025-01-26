@@ -68,7 +68,8 @@ function PersistentScrollDiv(props: { children: React.ReactNode, tag?: string, s
 
     return (
         <div
-            style={props.style}
+            className="persistent_scroll_div"
+            style={{overflowY: "auto", ...props.style}}
             ref={divRef}
             onScroll={() => {
                 if (divRef.current) {

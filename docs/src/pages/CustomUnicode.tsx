@@ -24,6 +24,7 @@
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import M, { ML } from '../M';
+import { Link } from 'react-router-dom';
 
 function CustomUnicode() {
     return (
@@ -41,9 +42,10 @@ function CustomUnicode() {
                 on the display terminal. The <ML name="NWindow" /> class also provides methods that are are useful for manipulating 
                 UTF-8 strings. 
                 See <ML fullName name="NWindow::compose_characters()" />,  <ML fullName name="NWindow::collator" />, <ML fullName name="NElement::normalize_utf8()" />.
-                The <M>"NWindows/NUtf8.hpp"</M> header also declares low-level methods for manipulating UTF-8 strings, and converting 
-                between UTF-8 and wide-character formats. Methods provided by NUtf8.hpp are not currently documented, but 
-                are generally self-explanatory.
+                The <M>"NWindows/NUtf8.hpp"</M> header also declares low-level non-class methods for manipulating UTF-8 strings, and converting 
+                between UTF-8 and wide-character formats. Documentation for these methods can be found 
+                in  the <Link to="/apis/methods"><i>NWindows Methods</i></Link> section of this document. 
+
             </p>
             <p>You should be aware that, on Windows platforms, <M>wchar_t</M> is a 16-bit type, and on Linux, <M>wchar_t</M> is
             a 32-bit type. NWindows therefore prefers to use UTF-8 encoded strings for all text manipulation, 

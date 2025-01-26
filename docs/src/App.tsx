@@ -23,9 +23,12 @@
 
 import React, { useEffect } from 'react';
 import logo from '/logo.svg'
+import VolunteerLoveIconWhite from './assets/volunteer_love_24_white.svg'
+import VolunteerLoveIcon from './assets/volunteer_love_24.svg'
 
 import './App.css';
 import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import HomeIcon from '@mui/icons-material/Home';
@@ -42,6 +45,7 @@ import { DocsRoutes } from './DocsNav';
 import Drawer from '@mui/material/Drawer';
 
 import List from '@mui/material/List';
+import Typography from '@mui/material/Typography';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -50,6 +54,27 @@ import Box from '@mui/material/Box';
 import { useNavigationTracker } from './NavigationType';
 import MainPageSearchBox from './MainPageSearchBox';
 import Collapse from '@mui/material/Collapse';
+
+
+function ToolbarTooltip(props: { title: string, children: React.ReactElement, placement: 'bottom' | 'bottom-end' | 'bottom-start' | undefined }
+) {
+    return (
+        <Tooltip color="black" arrow disableFocusListener disableTouchListener title={(
+
+            <Typography noWrap variant="h6" style={{ fontSize: "16px" }}>{props.title}</Typography>
+        )} placement={props.placement} enterDelay={1250} enterNextDelay={750}
+            slotProps={{
+                tooltip: { style: { background: "#000", color: "#FFF", opacity: 0.9 } },
+                arrow: { style: { color: "#000", opacity: 0.9 } },
+                popper: { style: { paddingBottom: 4 } }
+            }}
+        >
+            {props.children}
+        </Tooltip>
+    );
+}
+
+
 
 function App() {
     const navigate = useNavigate();
@@ -76,8 +101,14 @@ function App() {
     const compactNavBar = windowWidth < 600 && !isSearchPage;
     const fullNavBar = !compactNavBar && !isSearchPage;
 
-    const hideNavBar = windowWidth < 790 && searchOpen;
+    const hideNavBar = windowWidth < 879 && searchOpen;
 
+    const drawerShowSponsorship = () => {
+        window.open("https://github.com/sponsors/rerdavies", "_blank");
+        setDrawerOpen(false);
+
+
+    }
     const drawerShowGithub = () => {
         window.open("https://github.com/rerdavies/nwindows/", "_blank");
         setDrawerOpen(false);
@@ -118,6 +149,14 @@ function App() {
                     <ListItemButton onClick={() => drawerShowGithub()}>
                         <ListItemIcon>
                             <GitHubIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="GitHub" />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem>
+                    <ListItemButton onClick={() => drawerShowSponsorship()}>
+                        <ListItemIcon>
+                            <img src={VolunteerLoveIcon} />
                         </ListItemIcon>
                         <ListItemText primary="GitHub" />
                     </ListItemButton>
@@ -199,12 +238,25 @@ function App() {
                                 <MainPageSearchBox open={searchOpen} onOpen={(open) => { setSearchOpen(open); }} />
                             )}
                             {!hideNavBar && (
-                                <div style={{ color: "#FFF", marginLeft: 8 }}>
-                                    <IconButton color="inherit" onClick={() => {
-                                        window.open("https://github.com/rerdavies/nwindows/", "_blank");
-                                    }}>
-                                        <GitHubIcon />
-                                    </IconButton>
+                                <div style={{ color: "#FFF", marginLeft: 8, flex: "0 0 auto" }}>
+                                    <ToolbarTooltip title="NWindow github Repository" placement='bottom-end'>
+                                        <IconButton color="inherit" onClick={() => {
+                                            window.open("https://github.com/rerdavies/nwindows/", "_blank");
+                                        }}>
+                                            <GitHubIcon />
+                                        </IconButton>
+                                    </ToolbarTooltip>
+                                </div>
+                            )}
+                            {!hideNavBar && (
+                                <div style={{ color: "#FFF", marginLeft: 8, flex: "0 0 auto" }}>
+                                    <ToolbarTooltip title="Sponsorship" placement='bottom-end'>
+                                        <IconButton color="inherit" onClick={() => {
+                                            window.open("https://github.com/sponsors/rerdavies", "_blank");
+                                        }}>
+                                            <img src={VolunteerLoveIconWhite} />
+                                        </IconButton>
+                                    </ToolbarTooltip>
                                 </div>
                             )}
 

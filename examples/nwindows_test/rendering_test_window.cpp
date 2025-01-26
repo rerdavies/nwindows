@@ -8,10 +8,10 @@
  *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *   copies of the Software, and to permit persons to whom the Software is
  *   furnished to do so, subject to the following conditions:
- 
+
  *   The above copyright notice and this permission notice shall be included in all
  *   copies or substantial portions of the Software.
- 
+
  *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,6 +22,11 @@
  */
 
 #include "tests.hpp"
+
+#ifndef DISPLAY_MOUSE_AND_KEYBOARD
+#define DISPLAY_MOUSE_AND_KEYBOARD 1
+#endif
+
 
 static uint32_t blend(uint32_t color0, uint32_t color1, int i)
 {
@@ -41,7 +46,7 @@ static uint32_t blend(uint32_t color0, uint32_t color1, int i)
 }
 
 void dialog_test_window(NWindow::ptr window) {
-    NWindow::ptr dialog = NWindow::create(window, 55, AUTO_SIZE) | title("_Test Dialog");
+    NWindow::ptr dialog = NWindow::create(window, 55, AUTO_SIZE) | title("Test Dialog");
     std::weak_ptr<NWindow> dlgRef = dialog;
     NColorPair textColor = dialog->make_color_pair(0x8080A0, 0x202020);
     dialog | add_child(
@@ -77,8 +82,11 @@ void dialog_test_window(NWindow::ptr window) {
                 | width(10)
                 | on_clicked(
                     [dlgRef](NMouseButton button, NClickedEventArgs& event_args) mutable {
-                        event_args.handled = true;
-                        dlgRef.lock()->close();
+                        if (button == NMouseButton::Left)
+                        {
+                            event_args.handled = true;
+                            dlgRef.lock()->close();
+                        }
                     }
                 )
             )
@@ -125,8 +133,8 @@ void rendering_test_window(NWindow::ptr parent_window)
                     NTextElement::create("Normal", NAttribute::Normal));
                 horizontalStack->add_child(
                     NTextElement::create("Underline", NAttribute::Underline));
-                horizontalStack->add_child(
-                    NTextElement::create("Invisible", NAttribute::Invisible));
+                // horizontalStack->add_child(
+                //     NTextElement::create("Invisible", NAttribute::Invisible));
                 horizontalStack->add_child(
                     NTextElement::create("Protect", NAttribute::Protect));
 
@@ -297,9 +305,13 @@ void rendering_test_window(NWindow::ptr parent_window)
                 | on_clicked([windowRef = window->weak_ptr()](
                     NMouseButton button,
                     NClickedEventArgs& args) {
-                        auto window = windowRef.lock();
-                        if (!window) return;
-                        window->close();
+                        if (button == NMouseButton::Left)
+                        {
+                            args.handled = true;
+                            auto window = windowRef.lock();
+                            if (!window) return;
+                            window->close();
+                        }
                     }
                 )
             );
@@ -308,7 +320,11 @@ void rendering_test_window(NWindow::ptr parent_window)
             dialogButton->on_clicked.subscribe(
                 [windowRef](NMouseButton button, NClickedEventArgs& args)
                 {
-                    dialog_test_window(windowRef.lock());
+                    if (button == NMouseButton::Left)
+                    {
+                        args.handled = true;
+                        dialog_test_window(windowRef.lock());
+                    }
                 });
             verticalStack->add_child(container);
         }

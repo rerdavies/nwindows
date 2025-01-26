@@ -134,7 +134,7 @@ function makeIndexData(indexEntries: RegisteredIndexEntry[]): IndexData {
     return result;
 }
 
-let keywordIdRegex = /^([^_]+)__([^_]+(?:_.+)?)$/;
+let keywordIdRegex = /^([^_]+)__(?:_?)([^_]+(?:_.+)?)$/;
 
 function makeKeywordData(indexData: IndexData): Map<string, IndexLink> {
     let result = new Map<string, IndexLink>();

@@ -1763,7 +1763,9 @@ namespace nwindows
         NElement::ptr get_clickable_element_at(const NPoint& pt) { return get_clickable_element_at(pt.x, pt.y); }
 
         static constexpr int MAX_BUTTON = 4;
-        std::array<NElement::ptr, (size_t)MAX_BUTTON> button_down_elements_;
+        std::array<std::weak_ptr<NElement>, (size_t)MAX_BUTTON> button_pressed_elements_;
+        NElement::ptr get_button_pressed_element(NMouseButton button);
+        void set_button_pressed_element(NMouseButton button, NElement*element);
 
         NElement::ptr button1_down_element = nullptr;
         NElement::ptr button2_down_element = nullptr;
@@ -1808,6 +1810,10 @@ namespace nwindows
 
         int current_mouse_x_ = -1;
         int current_mouse_y_ = -1;
+        bool left_button_pressed_ = false;
+        bool middle_button_pressed_ = false;
+        bool right_button_pressed_ = false;
+        bool extra_button_pressed_ = false;
 
     };
 

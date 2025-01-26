@@ -35,9 +35,6 @@
 
 #include "tests.hpp"
 
-#ifndef DISPLAY_MOUSE_AND_KEYBOARD
-#define DISPLAY_MOUSE_AND_KEYBOARD 1
-#endif
 
 using namespace nwindows;
 

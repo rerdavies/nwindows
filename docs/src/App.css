@@ -60,6 +60,13 @@ button:focus-visible {
 }
 
 
+.persistent_scroll_div 
+{
+  overflow-y: auto;
+  overflow-x: auto;
+  flex: 1 1 1px;
+  background: #FFFFFF;
+}
 
 .docs_footer {
   flex: 0 0 48px;
@@ -94,7 +101,9 @@ body {
 
 .app_body {
   flex: 1 1 1px;
-  overflow-y: auto;
+  overflow-y: none;
+  border-radius: 0px ! important;
+  box-shadow: none ! important;
 }
 
 .mono {

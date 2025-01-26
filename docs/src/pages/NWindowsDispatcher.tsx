@@ -23,7 +23,7 @@
 
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
-import M from '../M';
+import M, {ML} from '../M';
 import ClassDescription, { MethodDescription } from '../ClassDescription';
 import Code from '../Code';
 
@@ -36,7 +36,7 @@ function NWindowsDispatcher() {
             <p>NWindows is single-threaded. It doesn't have to run on the main thread; but all NWindows
                 methods, with the exception of dispatcher methods, must be called from a single thread.
             </p>
-            <p>The NWindows dispatcher maintains a  queue of functions (C++ lambdas) that will be executed 
+            <p>The NWindows dispatcher maintains a  queue of functions (C++ lambdas, method pointers, or callable objects) that will be executed 
                 in order they are added to the queue. The dispatcher executes in the NWindows main event loop,
                 and can be used to 
             </p>
@@ -51,13 +51,13 @@ function NWindowsDispatcher() {
                     processes have completed.
                 </li>
             </ul>
-            <p>Applications can call <M>post</M> methods on any <M>NWindow</M>, but functions are
+            <p>Applications can call <ML name="NWindow::post" /> methods on any <ML name="NWindow"/>, but functions are
                 relayed to the top-level window's dispatcher. There is only one message loop,
-                which is executed by <M>NWindow::run()</M> on the top-level window. And there is
+                which is executed by <ML fullName name="NWindow::run()" /> on the top-level window. And there is
                 only one dispatch queue, which is owned by the top-level window, so posted functions
                 can and will still execute if they are posted to a child window that is subsequently closed.</p>
-            <p>Each <M>post</M> method returns a <M>PostHandle</M> which can be used to
-                cancel execution of a posted function, using <M>NWindow::cancel_post</M>.</p>
+            <p>Each <M>post</M> method returns a <ML name="PostHandle" /> which can be used to
+                cancel execution of a posted function, using <ML fullName name="NWindow::cancel_post()"/>.</p>
             <p>Any context that a posted lambda carries must be provided through
                 lambda capture variables. Great care should be taken when capturing
                 variables to make sure that captured variables are still valid when
@@ -98,8 +98,10 @@ function NWindowsDispatcher() {
     NWindows::clock_t::time_point when, 
     std::function<void(void)>&& func);`} >
                     <p>Post a function to be executed at the specified time. The function will be executed
-                        on the main NWindows thread. This method is thread-safe.
+                        on the main NWindows thread.
                     </p>
+                    <p>This method is thread-safe.</p>
+
                 </MethodDescription>
                 <MethodDescription indexName="PostHandle NWindow::post(std::function<void(void)>&& func)" method={
                     `PostHandle post(
@@ -110,7 +112,7 @@ function NWindowsDispatcher() {
                         the message loop, and after all other event-loop processes
                         have completed.
                     </p>
-                    <p>This method can be called from any thread.</p>
+                    <p>This method is thread-safe.</p>
                 </MethodDescription>
                 <MethodDescription indexName="bool cancel_post(PostHandle handle)" 
                     method={
@@ -121,7 +123,7 @@ function NWindowsDispatcher() {
                         is executing. If the function has already executed, <M>cancel_post</M> will return <M>false</M>.
                         If the function was successfully prevented from executing, <M>cancel_post</M> returns true.
                     </p>
-                    <p><M>cancel_post</M> can be safely called from any thread.</p>
+                    <p>This method is thread-safe.</p>
                 </MethodDescription>
 
                 

@@ -2271,6 +2271,32 @@ void NWindow::handle_window_mouse_move(NMouseEventArgs& event_args)
     on_mouse_move.fire(event_args);
 
 }
+NElement::ptr NWindow::get_button_pressed_element(NMouseButton button)
+{
+    size_t iButton = (size_t)button;
+    if (iButton >= button_pressed_elements_.size())
+    {
+        throw std::runtime_error("Invalid argument.");
+    }
+    return button_pressed_elements_[iButton].lock();
+}
+
+void NWindow::set_button_pressed_element(NMouseButton button, NElement* element)
+{
+    size_t iButton = (size_t)button;
+    if (iButton >= button_pressed_elements_.size())
+    {
+        throw std::runtime_error("Invalid argument.");
+    }
+    if (!element)
+    {
+        button_pressed_elements_[iButton] = std::weak_ptr<NElement>();
+    }
+    else {
+        button_pressed_elements_[iButton] = element->shared_from_this<NElement>();
+    }
+}
+
 
 void NWindow::handle_button_released(int x, int y, NMouseButton button, NMouseEventArgs& event_args_)
 {
@@ -2289,12 +2315,8 @@ void NWindow::handle_button_released(int x, int y, NMouseButton button, NMouseEv
 
 
     event_args.handled = false;
-    size_t iButton = (size_t)button;
-    if (iButton >= button_down_elements_.size()) {
-        throw std::runtime_error("Value out of range.");
-    }
-    NElement::ptr button_down_element = button_down_elements_[iButton];
-    button_down_elements_[iButton] = nullptr;
+    NElement::ptr button_down_element = get_button_pressed_element(button);
+    set_button_pressed_element(button, nullptr);
 
     bool handled = false;
     if (button_down_element) {
@@ -2362,11 +2384,7 @@ void NWindow::handle_button_pressed(int x, int y, NMouseButton button, NMouseEve
 
     if (!handled)
     {
-        size_t iButton = (size_t)button;
-        if (iButton >= button_down_elements_.size()) {
-            throw std::runtime_error("Invalid argument.");
-        }
-        button_down_elements_[iButton] = element;
+        set_button_pressed_element(button, element.get());
     }
 }
 
@@ -2375,10 +2393,10 @@ bool NWindow::handle_mouse_event(MEVENT& event)
 {
     NMouseEventArgs event_args(this);
 
-    event_args.left_button_pressed = (event.bstate & BUTTON1_PRESSED) != 0;
-    event_args.middle_button_pressed = (event.bstate & BUTTON2_PRESSED) != 0;
-    event_args.right_button_pressed = (event.bstate & BUTTON3_PRESSED) != 0;
-    event_args.extra_button_pressed = (event.bstate & BUTTON4_PRESSED) != 0;
+    event_args.left_button_pressed = left_button_pressed_;
+    event_args.middle_button_pressed = middle_button_pressed_;
+    event_args.right_button_pressed = right_button_pressed_;
+    event_args.extra_button_pressed = extra_button_pressed_;
 
 
     event_args.alt = (event.bstate & BUTTON_ALT) != 0;
@@ -2421,25 +2439,34 @@ bool NWindow::handle_mouse_event(MEVENT& event)
 
     if (event.bstate & BUTTON1_PRESSED)
     {
+        event_args.left_button_pressed = true;
+        left_button_pressed_ = true;
         handle_button_pressed(event.x, event.y, NMouseButton::Left, event_args);
 
     }
     if (event.bstate & BUTTON2_PRESSED)
     {
+        event_args.middle_button_pressed = true;
+        middle_button_pressed_ = true;
         handle_button_pressed(event.x, event.y, NMouseButton::Middle, event_args);
     }
     if (event.bstate & BUTTON3_PRESSED)
     {
+        event_args.right_button_pressed = true;
+        right_button_pressed_ = true;
         handle_button_pressed(event.x, event.y, NMouseButton::Right, event_args);
     }
     if (event.bstate & BUTTON3_PRESSED)
     {
+        event_args.extra_button_pressed = true;
+        extra_button_pressed_ = true;
         handle_button_pressed(event.x, event.y, NMouseButton::Extra, event_args);
     }
 
     if (event.bstate & BUTTON1_RELEASED)
     {
         event_args.left_button_pressed = false;
+        left_button_pressed_ = false;
 
         for_each_child_window([&](NWindow* child) {
             child->handle_button_released(event.x, event.y, NMouseButton::Left, event_args);
@@ -2448,6 +2475,7 @@ bool NWindow::handle_mouse_event(MEVENT& event)
     if (event.bstate & BUTTON2_RELEASED)
     {
         event_args.middle_button_pressed = false;
+        middle_button_pressed_ = false;
 
         for_each_child_window([&](NWindow* child) {
             child->handle_button_released(event.x, event.y, NMouseButton::Middle, event_args);
@@ -2456,6 +2484,7 @@ bool NWindow::handle_mouse_event(MEVENT& event)
     if (event.bstate & BUTTON3_RELEASED)
     {
         event_args.right_button_pressed = false;
+        right_button_pressed_ = false;
 
         for_each_child_window([&](NWindow* child) {
             child->handle_button_released(event.x, event.y, NMouseButton::Right, event_args);
@@ -2463,7 +2492,8 @@ bool NWindow::handle_mouse_event(MEVENT& event)
     }
     if (event.bstate & BUTTON4_RELEASED)
     {
-        event_args.right_button_pressed = false;
+        event_args.extra_button_pressed = false;
+        extra_button_pressed_ = false;
 
         for_each_child_window([&](NWindow* child) {
             child->handle_button_released(event.x, event.y, NMouseButton::Extra, event_args);
@@ -2935,7 +2965,7 @@ bool NCheckboxElement::handle_clicked(NMouseButton button, NClickedEventArgs& ev
         checked(!checked());
         event_args.handled = true;
         return true;
-    }   
+    }
     return false;;
 }
 
@@ -3859,9 +3889,9 @@ void NTextEditElement::render()
             color_off(color);
         }
 
-        }
-
     }
+
+}
 
 static std::string sanitize_paste(const std::string& value)
 {
@@ -5628,8 +5658,11 @@ void NPopupMenuWindow::Init(NWindow::ptr parentWindow, const std::vector<NMenuIt
                 element->on_clicked.subscribe(
                     [this, item_id = item.item_id]
                     (NMouseButton button, NClickedEventArgs& event_args) {
-                        this->handle_item_selected(item_id);
-                        this->close();
+                        if (button == NMouseButton::Left)
+                        {
+                            this->handle_item_selected(item_id);
+                            this->close();
+                        }
                     }
                 );
             }
@@ -6039,9 +6072,12 @@ void NMessageWindow::init(NWindow::ptr parent_window, NMessageType message_type,
                     | nwindows::width(10)
                     | nwindows::on_clicked([](NMouseButton button, NClickedEventArgs& event_args)
                         {
-                            NMessageWindow::ptr thisPtr = std::static_pointer_cast<NMessageWindow>(event_args.window);
-                            thisPtr->on_closed.fire(thisPtr);
-                            event_args.window->close();
+                            if (button == NMouseButton::Left)
+                            {
+                                NMessageWindow::ptr thisPtr = std::static_pointer_cast<NMessageWindow>(event_args.window);
+                                thisPtr->on_closed.fire(thisPtr);
+                                event_args.window->close();
+                            }
                         }
                     )
                 )
@@ -6067,10 +6103,13 @@ void NMessageWindow::init(NWindow::ptr parent_window, NMessageType message_type,
                     | nwindows::width(10)
                     | nwindows::on_clicked([](NMouseButton button, NClickedEventArgs& event_args)
                         {
-                            NMessageWindow::ptr thisPtr = std::static_pointer_cast<NMessageWindow>(event_args.window);
-                            thisPtr->on_closed.fire(thisPtr);
+                            if (button == NMouseButton::Left)
+                            {
+                                NMessageWindow::ptr thisPtr = std::static_pointer_cast<NMessageWindow>(event_args.window);
+                                thisPtr->on_closed.fire(thisPtr);
 
-                            event_args.window->close();
+                                event_args.window->close();
+                            }
                         }
                     )
                 )
