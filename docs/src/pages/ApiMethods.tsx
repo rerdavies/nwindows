@@ -24,7 +24,6 @@
 import DocsPage from '../DocsPage';
 import { DocsTitle } from '../DocsNav';
 import { MethodDescription } from '../ClassDescription';
-import M from '../M';   
 import SectionHead from '../SectionHead';
 
 function ApiMethods() {

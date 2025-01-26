@@ -2,6 +2,7 @@
 
 using namespace nwindows;
 
+
 class ContextEditElement : public NTextEditElement {
 private:
     ContextEditElement(
@@ -114,6 +115,7 @@ private:
 
 int main(void)
 {
+ 
     auto window = NWindow::create(AUTO_SIZE, AUTO_SIZE)
         | add_child(
             NVerticalStackElement::create()
