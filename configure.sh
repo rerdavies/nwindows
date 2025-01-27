@@ -2,8 +2,8 @@
 
 # Configure cmake build.
 echo Configuring cmake build...
-mkdir build
+mkdir -p build
 cd build
-cmake ..
+cmake ..  "$@"
 cd ..
 

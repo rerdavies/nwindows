@@ -56,7 +56,7 @@ sudo apt-get install ./yourpackagename`} />
                 <p>NWindows headers will be installed in the <M>/usr/include/NWindows</M> directory, 
                 and the <M>libnwindows.a</M> static library will be installed in the <M>/usr/lib</M> directory.</p>
 
-                <SectionHead text="Prerequisites"/>
+                <SectionHead text="Build Prerequisites"/>
                 <p>NWindows requires the following development tools to be installed.</p>
                 <ul>
                     <li>A reasonably modern compiler with support for C++20.</li>
@@ -165,6 +165,12 @@ git clone https://github.com/rerdavies/nwindows.git`
 ./install.sh     # Installs NWindows in /usr/local/include and /usr/local/lib`
                         } />
                     </li>
+                    <li>You can optionally build a debian package for NWindows using the following command:
+                        <Code style={{ marginTop: 16, marginBottom: 16 }} text={
+                            `./makePackage.sh`
+                        } />   
+                        <p>The Debian package will be placed in the <M>./build</M> directory of the NWindows project.</p> 
+                    </li>
                 </ul>
                 <SectionHead text="Building the Documentation" />
                 <p>
@@ -181,7 +187,28 @@ git clone https://github.com/rerdavies/nwindows.git`
                 <p>If you are using CMake, and building NWindows as a submodule, you can disable the documentation build by setting the <M>NWINDOWS_BUILD_DOCUMENTATION</M> variable to <M>OFF</M> in your top-level <M>CMakeLists.txt</M> file.</p>
                 <Code text={`set(NWINDOWS_BUILD_DOCUMENTATION OFF)`} />
             </div>
+            <SectionHead text="CMake Cache Variables" />
+            <p>The CMake build for NWindows uses the following cache variables: </p>
+            <Code text={`set(NWINDOWS_BUILD_DOCUMENTATION ON CACHE BOOL "Build the Vite Documentation website?")
+set(NWINDOWS_BUILD_EXAMPLES ON CACHE BOOL "Build the example projects?")
+set(NWINDOWS_STRICT_COMPILER_OPTIONS ON CACHE BOOL "Use strict compiler warnings and errors?")
+`} />
+            <p>By default, NWindows builds with strict compiler options:</p>
+            <Code text={`-Wall -Wextra -Wpedantic -Werror`} />
 
+            <p>Setting <M>NWINDOWS_STRICT_COMPILER_OPTIONS</M> to <M>OFF</M> will make Nwindows build without any of these
+            options.</p>
+            <p>If you are using NWindows as a git submodule, you can set these variables in your 
+                top-level <M>CMakeLists.txt</M> file to control the build of NWindows. For example, to disable building the documentation, add the following line to your top-level <M>CMakeLists.txt</M> file 
+            before adding the NWindows submodule directory:</p>
+            <Code text={`set(NWINDOWS_BUILD_DOCUMENTATION OFF)`} />
+            <p>If you are building NWindows as a standalone project, you can set these variables on the command line when 
+                running <M>cmake</M>. For example, to disable building the documentation, run the following command:</p>  
+            <Code text={`cmake -DNWINDOWS_BUILD_DOCUMENTATION=OFF ...`} />
+            <p><M>./init.sh</M> will accept additional command-line arguments that are 
+            passed through to CMake, so you can run:</p>
+            <Code text={`./init.sh -DNWINDOWS_BUILD_DOCUMENTATION=OFF`} />
+            <p>Because settings are cached, you do not need to specify these settings again when you run <M>./build.sh</M>.</p>
 
         </DocsPage>
     );

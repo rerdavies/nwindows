@@ -13,8 +13,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(NWINDOWS_BUILD_DOCUMENTATION ON CACHE BOOL "Build the Vite Documentation website?")
 set(NWINDOWS_BUILD_EXAMPLES ON CACHE BOOL "Build the example projects?")
-# Set to ON if you wish to set compler options froma parent CMakeList.txt file.
-set(NWINDOWS_DEFAULT_COMPILER_OPTIONS OFF CACHE BOOL "Use default compiler options?")
+set(NWINDOWS_STRICT_COMPILER_OPTIONS ON CACHE BOOL "Use strict compiler warnings and errors?")
 
 # Set version numbers in source files.
 configure_file(
@@ -35,7 +34,7 @@ configure_file(
 
 
 
-if (NOT NWINDOWS_DEFAULT_COMPILER_OPTIONS)
+if (NWINDOWS_STRICT_COMPILER_OPTIONS)
 
     set(CMAKE_CXX_STANDARD 20)
 

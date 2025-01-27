@@ -3,33 +3,8 @@ Blog examples:
 
     int button
     lost_mouse_capture
+    
+    set(NWINDOWS_DEFAULT_COMPILER_OPTIONS OFF CACHE BOOL "Use default compiler options?")
+    set(NWINDOWS_STRICT_COMPILER_OPTIONS ON CACHE BOOL "Use strict compiler warnings and errors?")
 
 
-usr/bin/c++ -O2 -g -DNDEBUG  examples/context_edit/CMakeFiles/context_edit.dir/context_edit.cpp.o 
-    -o examples/context_edit/context_edit  
-  src/libnwindows.a  -lpanelw  -lncursesw && :
-
-/usr/bin/c++ -O2 -g -DNDEBUG  
-    examples/nwindows_test/CMakeFiles/nwindows_test.dir/test_main.cpp.o 
-    examples/nwindows_test/CMakeFiles/nwindows_test.dir/box_test_window.cpp.o 
-    examples/nwindows_test/CMakeFiles/nwindows_test.dir/menu_test_window.cpp.o 
-    examples/nwindows_test/CMakeFiles/nwindows_test.dir/unicode_test_window.cpp.o 
-    examples/nwindows_test/CMakeFiles/nwindows_test.dir/edit_text_test_window.cpp.o 
-    examples/nwindows_test/CMakeFiles/nwindows_test.dir/error_test_window.cpp.o 
-    examples/nwindows_test/CMakeFiles/nwindows_test.dir/rendering_test_window.cpp.o 
-    -o examples/nwindows_test/nwindows_test  
-
-src/libnwindows.a  -lpanelw  -lncursesw  
-
-
-[build] /usr/bin/ld: examples/nwindows_test/CMakeFiles/nwindows_test.dir/box_test_window.cpp.o: in function 
-    `nwindows::NRadioGroupElement::create(nwindows::NOrientation, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&, int)'
-    :
-[build] /home/robin/src/nwindows/src/include/NWindows/NWindows.hpp:1171:(.text._ZN8nwindows18NRadioGroupElement6createENS_12NOrientationERKSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS8_EEi[_ZN8nwindows18NRadioGroupElement6createENS_12NOrientationERKSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS8_EEi]+0x83): 
-    undefined reference to `nwindows::NRadioGroupElement::NRadioGroupElement(
-            nwindows::NOrientation, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
-[build] /usr/bin/ld: examples/nwindows_test/CMakeFiles/nwindows_test.dir/menu_test_window.cpp.o: in function `menu_test_window(std::shared_ptr<nwindows::NWindow>)::{lambda(nwindows::NMouseButton, nwindows::NClickedEventArgs&)#1}::operator()(nwindows::NMouseButton, nwindows::NClickedEventArgs&) const [clone .isra.0]':
-
-
-nwindows::NRadioGroupElement::NRadioGroupElement(nwindows::NOrientation, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
-nwindows::NRadioGroupElement::NRadioGroupElement(nwindows::NOrientation, std::__debug::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
