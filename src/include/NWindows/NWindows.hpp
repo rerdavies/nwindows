@@ -735,7 +735,7 @@ namespace nwindows
         using self = NContainerElement;
         using super = NElement;
 
-        virtual bool is_container() const { return true; }
+        virtual bool is_container() const override { return true; }
 
         // Do not add or remove children directly.  Use add_child and remove_child.
         std::vector<NElement::ptr>& children() { return children_; }
@@ -756,7 +756,7 @@ namespace nwindows
 
         virtual NSize measure(const NSize& available) override;
         virtual void arrange(const NRect& rect) override;
-        virtual void render();
+        virtual void render() override;
 
         virtual NElement::ptr get_element_at(int x, int y) override;
         NElement::ptr get_element_at(const NPoint& pt) { return get_element_at(pt.x, pt.y); }
@@ -868,7 +868,7 @@ namespace nwindows
         virtual bool handle_mouse_enter(NMouseEventArgs& event_args) override;
         virtual bool handle_mouse_button_pressed(NMouseButton  button, NMouseEventArgs& event_args) override;
         virtual bool handle_mouse_button_released(NMouseButton  button, NMouseEventArgs& event_args) override;
-        virtual void handle_focused(bool);
+        virtual void handle_focused(bool) override;
         bool pressed() { return pressed_; }
     protected:
         NColorPair disabled_color() const { return disabled_color_; }
@@ -1594,13 +1594,12 @@ namespace nwindows
         virtual bool handle_mouse_event(MEVENT& event);
 
 
-        virtual void arrange(const NRect& bounds);
+        virtual void arrange(const NRect& bounds) override;
         virtual NSize measure(const NSize& available) override;
         virtual void render() override;
 
     private:
 
-        bool processing_exception_ = false;
         std::string fatal_error_message_;
 
         bool bubble_mouse_event(NElement::ptr element, const std::function<bool(NElement&)>& fn);
@@ -1808,8 +1807,6 @@ namespace nwindows
         NRect last_window_bounds_; //(-1,-1,-1,-1);
 
 
-        int current_mouse_x_ = -1;
-        int current_mouse_y_ = -1;
         bool left_button_pressed_ = false;
         bool middle_button_pressed_ = false;
         bool right_button_pressed_ = false;

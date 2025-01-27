@@ -816,23 +816,18 @@ NRect NWindow::calculate_window_position(int max_width, int max_height)
         {
             // autosize the window.
             NSize available = { width(),height() };
-            if (available.width < 0 || available.height < 0)
-            {
-                available = measure(available);
-
-            }
-            bounds.width = available.width;
-            bounds.height = available.height;
+            available = measure(available);
+            measured_.width  = std::max(0,available.width);
+            measured_.height = std::max(0,available.height);
         }
         else {
             measured_.width = width();
             measured_.height = height();
         }
     }
-    else {
-        bounds.width = measured_.width;
-        bounds.height = measured_.height;
-    }
+    bounds.width = measured_.width;
+    bounds.height = measured_.height;
+    
     if (bounds.x == AUTO_SIZE)
     {
         bounds.x = (max_width - bounds.width) / 2;
@@ -931,7 +926,7 @@ bool NWindow::update_window_size()
     {
         changed |= childWindow->update_window_size();
     }
-    return false;
+    return changed;
 
 }
 
@@ -2793,7 +2788,7 @@ bool NElement::simulate_keyboard_click(NElement* source, NMouseButton button)
 
     this->keyboard_clicking_timer_ = this->window()->post(
         std::chrono::milliseconds(150),
-        [thisPointer, source, button]()mutable {
+        [thisPointer, button]()mutable {
             auto element = thisPointer.lock();
             if (!element) return;
             element->keyboard_clicking_timer_ = 0;
@@ -3112,7 +3107,6 @@ void NRadioGroupElement::update_child_layout() {
     auto unchecked_text = this->unchecked_text();
 
 
-    int totalWidth = 0;
     int checkedTextLength = utf8_wc_length(checked_text);
 
     int maxWidth = 0;
@@ -3124,7 +3118,6 @@ void NRadioGroupElement::update_child_layout() {
         {
             maxWidth = w;
         }
-        totalWidth += w;
     }
 
     if (orientation_ == NOrientation::Vertical)

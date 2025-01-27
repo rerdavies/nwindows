@@ -35,23 +35,25 @@ function InstallingNWindows() {
     return (
         <DocsPage route={route}>
             <div>
-                <h1>{DocsTitle(route)}</h1> <h2>Prerequisites</h2> <p>
-                <Name>NWindows</Name> requires the following
-                development libraries to be installed. </p> <p>
-                <ul> <li>ncursesw development headers and
-                libraries.</li> <li>Optionally, <M>xclip</M>.
-                NWindows uses the <M>xclip</M> program to copy
-                and paste text to and from the Linux clipboard.
-                If not installed, clipboard operations will work,
-                but will not be able to copy and paste text to
-                and from other applications. </li> <li>Headers
-                and binaries for the ICU unicode libraries.</li>
-                </ul> </p> <p>On Debian-based systems (including
-                Ubuntu), you can install the dependencies using
-                the following commands:</p> <Code text={ `sudo
-                apt install libncursesw5-dev xclip libicu-dev
-`               }
-                />
+                <h1>{DocsTitle(route)}</h1> <h2>Prerequisites</h2> 
+                <p>
+                    <Name>NWindows</Name> requires the following
+                    development libraries to be installed. </p> 
+                    <ul> <li>ncursesw development headers and
+                        libraries.</li>
+                        <li>Optionally, <M>xclip</M>.
+                            NWindows uses the <M>xclip</M> program to copy
+                            and paste text to and from the Linux clipboard.
+                            If not installed, clipboard operations will work,
+                            but will not be able to copy and paste text to
+                            and from other applications. </li>
+                        <li>Headers
+                            and binaries for the ICU unicode libraries.</li>
+                    </ul>
+                <p>On Debian-based systems (including
+                    Ubuntu), you can install the dependencies using
+                    the following commands:</p>
+                <Code text={`sudo apt install libncursesw5-dev xclip libicu-dev`} />
                 <p>If you intend to build the NWindows documentation set, you will have to install Node.js and npm.</p>
                 <Code text={`sudo apt install nodejs npm`} />
                 <p>Then execute the following commands to install documentation pre-requisites</p>
@@ -79,7 +81,7 @@ npm install`} />
                     </li>
                     <li>
                         Issue the following command to install NWindows as a submodule of your project:
-                        <Code style={{ marginTop: 16,marginBottom: 16 }} text={
+                        <Code style={{ marginTop: 16, marginBottom: 16 }} text={
                             `git submodule add https:://github.com/rerdavies/nwindows.git`
                         }
                         />
@@ -132,11 +134,11 @@ git clone https://github.com/rerdavies/nwindows.git`
                 <p>To debug the documentation, and run a development web server, </p>
                 <Code text={`cd docs
 ./debug.sh`} />
-            <p>You will want to install React developer tools in your browser. Debug the documentation using Chrome developer tools within the browser.</p>
-            <p>If you are using CMake, and building NWindows as a submodule, you can disable the documentation build by setting the <M>NWINDOWS_BUILD_DOCUMENTATION</M> variable to <M>OFF</M> in your top-level <M>CMakeLists.txt</M> file.</p>
-            <Code text={`set(NWINDOWS_BUILD_DOCUMENTATION OFF)`} />
+                <p>You will want to install React developer tools in your browser. Debug the documentation using Chrome developer tools within the browser.</p>
+                <p>If you are using CMake, and building NWindows as a submodule, you can disable the documentation build by setting the <M>NWINDOWS_BUILD_DOCUMENTATION</M> variable to <M>OFF</M> in your top-level <M>CMakeLists.txt</M> file.</p>
+                <Code text={`set(NWINDOWS_BUILD_DOCUMENTATION OFF)`} />
             </div>
-            
+
 
         </DocsPage>
     );

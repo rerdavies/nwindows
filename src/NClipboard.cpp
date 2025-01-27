@@ -225,7 +225,7 @@ namespace nwindows
             pclose(pipe);
             return true;
         }
-        std::string get_text() {
+        std::string get_text() override {
             try {
                 auto output = sysExecForOutput("xclip", "-selection clipboard -o");
                 if (output.exitCode != EXIT_SUCCESS)

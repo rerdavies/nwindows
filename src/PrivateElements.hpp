@@ -110,7 +110,7 @@ namespace nwindows::private_elements
 
         static ptr create() { return std::shared_ptr<self>(new self()); }
     protected:
-        virtual NColorPair get_color();
+        virtual NColorPair get_color() override;
 
         virtual void render() override;
         virtual NSize measure(const NSize& available) override;

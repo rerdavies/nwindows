@@ -161,16 +161,16 @@ class DynamicIcuLoader
 public:
     using ptr = std::shared_ptr<DynamicIcuLoader>;
     // Function pointer types
-    using ucol_open_t = typeof(&ucol_open);
-    using ucol_close_t = typeof(&ucol_close);
-    using ucol_strcoll_t = typeof(&ucol_strcoll);
-    using ucol_strcollUTF8_t = typeof(&ucol_strcollUTF8);
-    using ucol_setStrength_t = typeof(&ucol_setStrength);
-    using ucol_getLocaleByType_t = typeof(&ucol_getLocaleByType);
-    using u_errorName_t = typeof(&u_errorName);
-    using unorm2_composePair_t = typeof(&unorm2_composePair);
-    using unorm2_getInstance_t = typeof(&unorm2_getInstance);
-    using unorm2_normalize_t = typeof(&unorm2_normalize);
+    using ucol_open_t = decltype(&ucol_open);
+    using ucol_close_t = decltype(&ucol_close);
+    using ucol_strcoll_t = decltype(&ucol_strcoll);
+    using ucol_strcollUTF8_t = decltype(&ucol_strcollUTF8);
+    using ucol_setStrength_t = decltype(&ucol_setStrength);
+    using ucol_getLocaleByType_t = decltype(&ucol_getLocaleByType);
+    using u_errorName_t = decltype(&u_errorName);
+    using unorm2_composePair_t = decltype(&unorm2_composePair);
+    using unorm2_getInstance_t = decltype(&unorm2_getInstance);
+    using unorm2_normalize_t = decltype(&unorm2_normalize);
 
 
 
@@ -500,7 +500,7 @@ namespace {
         virtual std::string Decompose(const std::string&str) const override;
         virtual std::u16string Normalize(const std::u16string&str) const override;
         virtual std::u16string Decompose(const std::u16string&str) const override;
-
+        NormalizerType Type() const { return normalizerType; }
     private:
         std::shared_ptr<LocaleImpl> localeImpl;
         NormalizerType normalizerType;
@@ -779,7 +779,7 @@ class LocaleImpl : public UnicodeServices, public std::enable_shared_from_this<L
 public:
     LocaleImpl();
     LocaleImpl(const std::string& locale);
-    virtual const std::string& CurrentLocale() const;
+    virtual const std::string& CurrentLocale() const override;
     virtual Collator::ptr MakeCollator() override;
     virtual UnicodeNormalizer::ptr MakeNormalizer(NormalizerType normalizerType)  override;
 

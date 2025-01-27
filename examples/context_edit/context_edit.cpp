@@ -39,7 +39,7 @@ protected:
     }
 
     // Show the context menu on right click.
-    virtual bool handle_clicked(NMouseButton button, NClickedEventArgs& event_args)
+    virtual bool handle_clicked(NMouseButton button, NClickedEventArgs& event_args) override
     {
         if (button == NMouseButton::Right) // Right click!
         {
