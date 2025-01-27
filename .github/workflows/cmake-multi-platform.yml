@@ -102,10 +102,10 @@ jobs:
     - name: Generate Artifacts
       uses: actions/upload-artifact@v4
       if: ${{ matrix.os == 'ubuntu-latest' && matrix.c_compiler == 'gcc' }}
-      path: |
-        build/*.deb
-        #build/_CPack_Packages/Linux/DEB/
-      retention-days: 5
+      with:
+        path: |
+          build/*.deb
+        retention-days: 5
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
