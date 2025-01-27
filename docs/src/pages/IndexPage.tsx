@@ -27,6 +27,8 @@ import SiteIndexData from "../SiteIndexData";
 import SearchBox from "../SearchBox";
 import { useState } from "react";
 import PageColumn from "../PageColumn";
+import Paper from "@mui/material/Paper";
+import PersistentScrollDiv from "../PersistentScrollDiv";
 
 
 
@@ -42,17 +44,17 @@ export default function IndexPage() {
 
     }
     return (
-        <div style={{ display: "flex", flexFlow: "column nowrap", flex: "1 1 auto", height: "100%", overflowX: "hidden" }}>
-            <div style={{ marginTop: 36, flex: "0 0 auto" }}>
-                <PageColumn >
+        <Paper className="app_body" style={{display:"flex",flexFlow:"column nowrap",flex:"1 1 1px"}}>
+            <div style={{flex: "0 0 auto",boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.5)", zIndex: 1}}>
+                <PageColumn  >
 
                     <div style={{ display: "flex", flexFlow: "row nowrap", justifyContent: "space-between", alignItems: "center" }}>
-                        { (!searchOpen || window.innerWidth > 500) ?
+                        {(!searchOpen || window.innerWidth > 500) ?
                             (<h2 className="section-head" style={{ marginBottom: 0, marginTop: 0, flexShrink: 1 }}>Index</h2>)
                             : (<div style={{ flex: "1 1 auto" }}></div>)
                         }
                         <SearchBox open={searchOpen}
-                        onSearchChangedWithDelay={(searchString) => {
+                            onSearchChangedWithDelay={(searchString) => {
                                 setSearchString(searchString);
 
                             }}
@@ -60,11 +62,10 @@ export default function IndexPage() {
                         />
                     </div>
                 </PageColumn>
-                <hr style={{ marginTop: 0, marginBottom: 12 }} />
             </div>
 
-            <div style={{ flex: "1 1 auto", overflowX: "auto", overflowY: "auto" }}>
-                <DocsPage route="/index" >
+            <PersistentScrollDiv tag="index" style={{ flex: "1 1 1px", overflowX: "auto", overflowY: "auto" }}>
+                <PageColumn >
 
                     {
                         !found && <h4>Not found.</h4>
@@ -83,8 +84,8 @@ export default function IndexPage() {
                                                     return (
                                                         <p key={index} className="indexLink" >
                                                             <Link to={ref.route} state={{ showElement: ref.elementId }}>
-                                                            <div><p className="indexTitle">{label}</p></div>
-                                                            <div><p className="indexSubtitle">{ref.text}</p></div>
+                                                                <div><p className="indexTitle">{label}</p></div>
+                                                                <div><p className="indexSubtitle">{ref.text}</p></div>
                                                             </Link>
                                                         </p>
                                                     )
@@ -103,9 +104,9 @@ export default function IndexPage() {
                             )
                         })
                     }
-                </DocsPage>
-            </div>
-        </div>
+                </PageColumn>
+            </PersistentScrollDiv>
+        </Paper>
 
     )
 }

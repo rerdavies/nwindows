@@ -98,6 +98,7 @@ function App() {
     })
 
     let isSearchPage = location.pathname === "/search";
+    let isIndexPage = location.pathname === "/index";
     const compactNavBar = windowWidth < 600 && !isSearchPage;
     const fullNavBar = !compactNavBar && !isSearchPage;
 
@@ -234,7 +235,7 @@ function App() {
                                     <div style={{ flex: "1 1 1px" }} />
                                 )
                             }
-                            {!isSearchPage && (
+                            {(!isSearchPage && !isIndexPage) && (
                                 <MainPageSearchBox open={searchOpen} onOpen={(open) => { setSearchOpen(open); }} />
                             )}
                             {!hideNavBar && (
@@ -309,7 +310,7 @@ function App() {
                                         <div style={{ flex: "1 1 1px" }} />
                                     )
                                 }
-                                {!isSearchPage && (
+                                {(!isSearchPage && !isIndexPage) && (
                                     <MainPageSearchBox open={searchOpen} onOpen={(open) => { setSearchOpen(open); }} />
                                 )}
 
