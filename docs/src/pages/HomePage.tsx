@@ -34,6 +34,7 @@ import { WhereToGoFromHere } from '../DocsNav';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import PersistentScrollDiv from '../PersistentScrollDiv';
+import { NWindowsVersion } from '../NWindowsVersionInfo';
 
 function HomePage() {
 
@@ -43,7 +44,7 @@ function HomePage() {
                 <PageColumn>
                     <div>
                         <Banner subtitle="TUI Library" />
-                        <p>INITIAL DEPLOYMENT IN PROGRESS. NOT YET READY FOR USE!!!</p>
+                        <p><i>NWindows {NWindowsVersion}</i></p>
                         <p>
                             The <span className="name">NWindows</span> library is a C++ text user interface (TUI) library for building console applications.
                             The library uses elements to compose user interfaces using an innovative and concise manipulator system. The library provides a

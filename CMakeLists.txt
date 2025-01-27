@@ -7,12 +7,31 @@ project(nwindows
 )
 set(NWINDOWS_RELEASE_QUALIFIER "-beta1")
 
+
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(NWINDOWS_BUILD_DOCUMENTATION ON CACHE BOOL "Build the Vite Documentation website?")
 set(NWINDOWS_BUILD_EXAMPLES ON CACHE BOOL "Build the example projects?")
 # Set to ON if you wish to set compler options froma parent CMakeList.txt file.
 set(NWINDOWS_DEFAULT_COMPILER_OPTIONS OFF CACHE BOOL "Use default compiler options?")
+
+# Set version numbers in source files.
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/config/NWindowsVersionInfo.hpp.in"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/include/NWindows/NWindowsVersionInfo.hpp"
+)
+
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/config/NWindowsVersionInfo.tsx.in"
+    "${CMAKE_CURRENT_SOURCE_DIR}/docs/src/NWindowsVersionInfo.tsx"
+)
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/config/README.md"
+    "${CMAKE_CURRENT_SOURCE_DIR}/README.md"
+)
+
+
 
 
 
