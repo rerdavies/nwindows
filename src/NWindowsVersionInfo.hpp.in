@@ -21,27 +21,22 @@
  *   SOFTWARE.
  */
 
-import Banner from "../Banner";
-import { NavTree } from "../DocsNav";
-import DocsPage from "../DocsPage";
+#pragma once
+
+#include <format>
+// Uses Semantic Versioning
+#define NWINDOWS_MAJOR_VERSION ${PROJECT_VERSION_MAJOR}
+#define NWINDOWS_MINOR_VERSION ${PROJECT_VERSION_MINOR}
+#define NWINDOWS_BUILD_NUMBER ${PROJECT_VERSION_PATCH}  // increments with each release
+#define NWINDOWS_RELEASE_QUALIFIER "${NWINDOWS_RELEASE_QUALIFIER}"
 
 
-const localHostUrlRx = /http:\/\/localhost[:\/]/;
+
+#define NWINDOWS_VERSION_STRING() \
+    std::format("NWindows {}.{}.{}{}", \
+        NWINDOWS_MAJOR_VERSION,\
+        NWINDOWS_MINOR_VERSION,\
+        NWINDOWS_BUILD_NUMBER,\
+        NWINDOWS_RELEASE_QUALIFIER)
 
 
-function Documentation() {
-    let localHostPage = window.location.href.match(localHostUrlRx) != null;
-
-    return (
-        <DocsPage route="/documentation">
-            <div >
-                <Banner subtitle="Documentation" />
-                <div className="toc" style={{ marginLeft: 67, marginTop: 34 }}>
-                    { NavTree(localHostPage) }
-                </div>
-            </div>
-        </DocsPage>
-    );
-}
-
-export default Documentation;

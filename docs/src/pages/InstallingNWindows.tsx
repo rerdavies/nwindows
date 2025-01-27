@@ -36,6 +36,14 @@ function InstallingNWindows() {
         <DocsPage route={route}>
             <div>
                 <h1>{DocsTitle(route)}</h1> <h2>Prerequisites</h2> 
+                <p>NWindows requires the following development tools to be installed.</p>
+                <ul>
+                    <li>A reasonably modern compiler with support for C++20.</li>
+                    <li>CMake</li>
+                    <li>nodejs, and npm (required if you plan to build the documentation).</li>
+                </ul>
+                <p>On Debian-based systems (including Ubuntu), you can install the required development tools using the following command:</p>
+                <Code text={`sudo apt install g++ cmake nodejs npm`} />
                 <p>
                     <Name>NWindows</Name> requires the following
                     development libraries to be installed. </p> 
@@ -54,21 +62,24 @@ function InstallingNWindows() {
                     Ubuntu), you can install the dependencies using
                     the following commands:</p>
                 <Code text={`sudo apt install libncursesw5-dev xclip libicu-dev`} />
-                <p>If you intend to build the NWindows documentation set, you will have to install Node.js and npm.</p>
-                <Code text={`sudo apt install nodejs npm`} />
-                <p>Then execute the following commands to install documentation pre-requisites</p>
-                <Code text={`cd docs
-npm install`} />
-                <h2>Linking with NWindows</h2>
+
+                <p>Although you do not need to use Visual Studio Code, NWindows was developed using Visual Studio Code. 
+                    VS Code integrates particularly well with NWindow's CMake build system. Install the following extension in 
+                    Visual Studio Code to get the best experience:
+                </p>
+                <ul>
+                    <li>
+                        C++ Extension Pack (by Microsoft) - This extension pack also includes the CMake and CMake Tools extensions.
+                    </li>
+                </ul>
+
+                <SectionHead text="Using NWindows as a git Submodule" />
                 <p>
-                    To incorporate NWindows in your project, you have two alternatives: you can either install NWindows as a github submodule in
-                    your project and use CMake to build NWindows, and configure your project to use NWindows headers and libraries; or you can build and install
+                    To incorporate NWindows in your project, you have two alternatives: you can either install NWindows as a github 
+                    submodule in your project and use CMake to build NWindows, and configure your project to use NWindows headers and libraries; or you can build and install
                     the NWindows project, which will add NWindows headers into the <M>/usr/local/include</M> directory, and add the
                     <M>libnwindows.a</M> static library to <M>/usr/local/lib</M>.
                 </p>
-                <p>
-                    Because NWindows is a C++ library, you will need to statically link with <M>libnwindows.a</M>. Compile-time
-                    C++ APIs should remain fairly stable; but any extension to NWindows would break a <M>libnwindows.so</M> shared library.</p>
                 <p>
                     To add NWindows as a git submodule of your own project, follow this procedure:
                 </p>
@@ -97,16 +108,26 @@ npm install`} />
                         directories, and linker commands to your project compile commands in a single step.
 
                         <Code style={{ marginTop: 16, marginBottom: 16 }} text={
-                            `project(your_project your_files.cpp)
-        
-target_link_libraries(your_project PRIVATE nwindows)
+                            `cmake_minimum_required(VERSION 3.16.0)
 
-`
+set(CMAKE_CXX_STANDARD 20)
+
+add_executable(hello_world
+    hello_world.cpp
+)
+
+target_link_libraries(
+    hello_world PRIVATE
+    nwindows
+)`
                         } />
                     </li>
                 </ul>
-
-                <p>To, instead, build and install NWindows as a development component, follow these steps:</p>
+                <SectionHead text="Building and Installing NWindows" />
+                <p>If you are not using git, you can, instead, build the NWindows project and install it. Doing so 
+                    will copy NWindows headers into the <M>/usr/local/include/NWindows</M> directory, and the <M>libnwindows.a</M> static 
+                    library into <M>/usr/local/lib</M>. NWindows does not provide a dynamic library, because versioning 
+                    C++ library .so files is not practical or sustainable.</p>
                 <ul>
                     <li>Clone the NWindows project from Github:
                         <Code style={{ marginTop: 16, marginBottom: 16 }} text={
@@ -115,6 +136,7 @@ cd ~/src     #or wherever you want to put the project
 git clone https://github.com/rerdavies/nwindows.git`
                         } />
                     </li>
+                    <li>Make sure you have installed the pre-requisite packages listed above.</li>
                     <li>Change to the root directory of cloned project and issue the following commands:
                         <Code style={{ marginTop: 16, marginBottom: 16 }} text={
                             `./configure.sh   # Configures the CMake build system
@@ -128,7 +150,7 @@ git clone https://github.com/rerdavies/nwindows.git`
                     NWindows uses Typescript, React, and Vite to build its documentation set. The documentation is built in the <M>docs</M> directory of the NWindows
                     project. The documentation build procedure is run when performing release builds, but not during debug builds.
                 </p>
-                <p>To build the documentation, follow these steps:</p>
+                <p>To build the documentation manually, follow these steps:</p>
                 <Code text={`cd docs
 ./build.sh`} />
                 <p>To debug the documentation, and run a development web server, </p>

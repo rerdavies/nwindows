@@ -5,6 +5,10 @@ set(CMAKE_CXX_STANDARD 20)
 
 # add_compile_definitions(_GLIBCXX_DEBUG)
 
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/NWindowsVersionInfo.hpp.in"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/NWindows/NWindowsVersionInfo.hpp"
+)
 
 
 add_library(nwindows 

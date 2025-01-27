@@ -5,11 +5,12 @@ project(nwindows
     HOMEPAGE_URL "https://rerdavies.github.io/nwindows/"
     LANGUAGES CXX
 )
+set(NWINDOWS_RELEASE_QUALIFIER "-beta1")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(NWINDOWS_BUILD_DOCUMENTATION ON CACHE BOOL "Build the Vite Documentation website?")
-set(NWINDOWS_BUILD_EXAMPLES ON CACHE BOOL "Build the exmaple projects?")
+set(NWINDOWS_BUILD_EXAMPLES ON CACHE BOOL "Build the example projects?")
 # Set to ON if you wish to set compler options froma parent CMakeList.txt file.
 set(NWINDOWS_DEFAULT_COMPILER_OPTIONS OFF CACHE BOOL "Use default compiler options?")
 

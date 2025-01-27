@@ -325,13 +325,16 @@ function RenderTree(tree: DocsTree) {
     );
 }
 
-function buildDocsTree() {
+function buildDocsTree(localHostPage: boolean = false): DocsTree {
     let root: DocsTree = { page: docsIndex[0], children: [] };
     var index: { [id: string]: DocsTree; } = {};
     index[root.page.route] = root;
 
     for (let i = 1; i < docsIndex.length; i++) {
         let page = docsIndex[i];
+        if (page.route == "/index_builder" && !localHostPage) {
+            continue;
+        }
         let treeItem: DocsTree = { page: page, children: [] };
         index[page.route] = treeItem;
         let parent = index[page.up];
@@ -340,8 +343,8 @@ function buildDocsTree() {
     return root;
 
 }
-export function NavTree() {
-    let root: DocsTree = buildDocsTree();
+export function NavTree(localHostPage: boolean = false) {
+    let root: DocsTree = buildDocsTree(localHostPage);
     return RenderTree(root);
 }
 

@@ -33,16 +33,14 @@ function PlatformSupport() {
                 <h1>1.0 - Platform Support</h1>
                 <p>
                     <span className='name'>NWindows</span> should build and run on any Linux distribution that supports the <M>ncursesw</M> library. 
-                    A compiler with relatively complete C++20 support is required. GCC 12.3 is known to work.
+                    A compiler with relatively complete C++20 support is required. NWindows has will build properly using the following compilers:
                 </p>
+                <ul>
+                    <li>gcc or g++ 12.3 or later</li>
+                    <li>clang 18.1.3 and probably earlier versions as well</li>
+                </ul>
                 <p>
-                    <span className='name'>NWindows</span> does not currently build on Windows, but it should be trivial to make it run on Windows 10 
-                    or later. The <M>ncurses</M> library is available on Windows platforms. There are a two known portability issue that are
-                    marked in sources with a <M>static_assert</M>s because it's uncertain how a particular function call is implemented in
-                    Windows. And there's one piece of untested code relating to Windows clipboard handling that will probably work, but has not been 
-                    compiled or tested. None of the problems are particularly difficult to fix. Each <M>static_assert</M> has a comment describing the 
-                    problem, and possible solutions. If you make fixes, please push a change back into
-                    the <Name>NWindows</Name> github repository.
+                    <span className='name'>NWindows</span> does not currently build on Windows, but we plan to add Windows support shortly.
                 </p>
                 <h2>Unicode Support</h2>
                 <p><Name>NWindows</Name> provides Unicode support, but you should use it cautiously.
@@ -50,7 +48,7 @@ function PlatformSupport() {
                 <p><Name>NWindows</Name> provides the following support for Unicode:</p>
                 <ul>
                     <li>All std::strings are assumed to contain UTF-8 characters.</li>
-                    <li>On xterm terminals, almost all Unicode characters are correctly displayed. Emoji, double-width characters, and composed accents
+                    <li>On xterm terminals, and graphics mode terminals, almost all Unicode characters are correctly displayed. Emoji, double-width characters, and composed accents
                         are all supported.
                     </li>
                     <li>On text-mode terminals, UTF-8 characters are correctly mapped to available characters on the current terminal. Extended Unicode characters

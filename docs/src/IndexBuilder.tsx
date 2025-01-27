@@ -27,6 +27,7 @@ import Code from "./Code";
 import M from "./M";
 import IndexData, { IndexEntry, IndexReference, IndexLink } from "./IndexData";
 import Paper from "@mui/material/Paper";
+import PersistentScrollDiv from "./PersistentScrollDiv";
 
 
 class RegisteredIndexEntry {
@@ -316,59 +317,119 @@ done
 `;
         return text;
     }
+    static  site_map_priority = new Map<string,number>([    
+        ["/documentation",0.9],
+        ["/installing",0.8],
+        ["/using",0.8],
+        ["/apis",0.8],
+        ["/index",0.0],
+        ["/search",0.0],
+        ["/index_builder",0.0]
+
+    ]);
+
+    get_site_map_priority(route: string): number {
+        if (IndexBuilder.site_map_priority.has(route))
+        {
+            return IndexBuilder.site_map_priority.get(route)!;
+        }
+        return 0.5;
+    }
+    make_site_map() {
+
+        let date = new Date().toISOString();
+        date = date.substring(0, date.indexOf("T"));
+
+        let text = `<?xml version="1.0" encoding="UTF-8"?>
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>http://rerdavies.github.io/nwindows</loc>
+        <lastmod>` + date + `</lastmod>
+        <priority>1.0</priority>
+    </url>
+`;
+
+
+        let routePaths = RoutePaths();
+
+        for (let routePath of routePaths) {
+            let priority = this.get_site_map_priority(routePath);
+            if (priority !== 0.0) {
+                text += `    <url>
+        <loc>` + "http://rerdavies.github.io/nwindows" + routePath + `</loc>
+        <lastmod>` + date + `</lastmod>
+        <priority>` + this.get_site_map_priority(routePath) + `</priority>
+    </url>
+`;
+            }
+        }
+        text += `</urlset>
+`;
+        return text;
+    }
 
     render() {
         return (
-            <Paper className="app_body">
-                <div style={{ margin: 32, overflowY: "auto" }}>
-                    <h1>Index Builder</h1>
-                    <p>Builds index data files for the project. Redo this procedure each time documentation files are edited.</p>
-                    <p>Copy the results into the named source files verbatim.</p>
-                    {this.state.complete ?
-                        (
-                            <div>
-                                <p><M>docs/src/SiteIndexData.tsx</M></p>
-                                <div style={{maxHeight: 240, overflowY: "auto", paddingRight: 8}}>
-                                        
-                                    <Code language="text" text={this.state.indexText}   />
-                                </div>
+            <PersistentScrollDiv>
+                <Paper className="app_body" style={{ margin: 32, padding: 32 }}>
+                    <div style={{ margin: 32 }}>
+                        <h1>Index Builder</h1>
+                        <p>Builds index data files for the project. Redo this procedure each time documentation files are edited.</p>
+                        <p>Copy the results into the named source files verbatim.</p>
+                        {this.state.complete ?
+                            (
+                                <div>
+                                    <p><M>docs/src/SiteIndexData.tsx</M></p>
+                                    <div style={{ maxHeight: 240, overflowY: "auto", paddingRight: 8 }}>
 
-                                <p></p>
-                                <p><M>docs/make_route_pages.sh</M></p>
-                                <div style={{maxHeight: 240, overflowY: "auto", paddingRight: 8}}>
-                                    <Code language="text" text={this.make_copy_route_pages()} />
-                                </div>
-                            </div>
-                        )
-                        : (
-                            <div>
-                                <p>Building index...</p>
-                                <p style={{ marginLeft: 32 }}> {this.state.currentRoute}</p>
+                                        <Code language="text" text={this.state.indexText} />
+                                    </div>
 
-                                <div style={{
-                                    marginLeft: 32, marginRight: 32, border: "2px solid #000000",
-                                    overflowX: "auto", overflowY: "auto", height: 300, opacity: 0.5
-                                }}>
-                                    {this.state.currentComponent &&
-                                        (
-                                            <React.Suspense fallback={<div>Loading...</div>} >
-                                                <Loader
-                                                    route={this.state.currentRoute}
-                                                    onComplete={(route) => {
-                                                        this.onRouteComplete(route);
-                                                    }}
-                                                    onLoad={() => { }}
-                                                >
+                                    <p></p>
+                                    <p><M>docs/make_route_pages.sh</M></p>
+                                    <div style={{ maxHeight: 240, overflowY: "auto", paddingRight: 8 }}>
+                                        <Code language="text" text={this.make_copy_route_pages()} />
+                                    </div>
+                                    <p><M>docs/public/sitemap.xml</M></p>
+                                    <div style={{ maxHeight: 240, overflowY: "auto", paddingRight: 8 }}>
+                                        <Code language="text" text={this.make_site_map()} />
+                                    </div>
 
-                                                    {<this.state.currentComponent />}
-                                                </Loader>
-                                            </React.Suspense>
-                                        )
-                                    }
                                 </div>
-                            </div>)}
-                </div>
-            </Paper>
+                            )
+                            : (
+                                <div>
+                                    <p>Building index...</p>
+                                    <p style={{ marginLeft: 32 }}> {this.state.currentRoute}</p>
+
+                                    <div style={{
+                                        marginLeft: 32, marginRight: 32, border: "2px solid #000000",
+                                        overflowX: "auto", overflowY: "auto", height: 300, opacity: 0.5
+                                    }}>
+                                        {this.state.currentComponent &&
+                                            (
+                                                <React.Suspense fallback={<div>Loading...</div>} >
+                                                    <Loader
+                                                        route={this.state.currentRoute}
+                                                        onComplete={(route) => {
+                                                            this.onRouteComplete(route);
+                                                        }}
+                                                        onLoad={() => { }}
+                                                    >
+
+                                                        {<this.state.currentComponent />}
+                                                    </Loader>
+                                                </React.Suspense>
+                                            )
+                                        }
+                                    </div>
+                                </div>
+                            )
+                        }
+                    </div>
+                </Paper>
+            </PersistentScrollDiv>
         );
     }
 }

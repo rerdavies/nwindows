@@ -302,6 +302,13 @@ const indexData = new IndexData([
             `method bool NWindow::cancel_post(PostHandle handle)`, 
             `method__NWindow_cancel_post`),
     ]),
+    new IndexEntry("char32_to_utf8string", [
+        new IndexReference(
+            `/apis/methods`, 
+            `5.6 - Methods`, 
+            `method std::string char32_to_utf8string(char32_t c)`, 
+            `method___char32_to_utf8string`),
+    ]),
     new IndexEntry("character_filter", [
         new IndexReference(
             `/apis/classes/NTextEditElement`, 
@@ -3385,6 +3392,27 @@ const indexData = new IndexData([
             `method NPoint NRect::top_right() const`, 
             `method__NRect_top_right`),
     ]),
+    new IndexEntry("u16string_to_utf8", [
+        new IndexReference(
+            `/apis/methods`, 
+            `5.6 - Methods`, 
+            `method std::string u16string_to_utf8(const std::u16string& u16str)`, 
+            `method___u16string_to_utf8`),
+    ]),
+    new IndexEntry("u32string_to_utf8", [
+        new IndexReference(
+            `/apis/methods`, 
+            `5.6 - Methods`, 
+            `method std::string u32string_to_utf8(const std::u32string& u32str)`, 
+            `method___u32string_to_utf8`),
+    ]),
+    new IndexEntry("u32string_to_wstring", [
+        new IndexReference(
+            `/apis/methods`, 
+            `5.6 - Methods`, 
+            `method std::wstring u32string_to_wstring(const std::u32string& u32str)`, 
+            `method___u32string_to_wstring`),
+    ]),
     new IndexEntry("unchecked_text", [
         new IndexReference(
             `/using/elements`, 
@@ -3427,6 +3455,95 @@ const indexData = new IndexData([
             `5.7.9 - NElement`, 
             `property NElement::user_data`, 
             `property__NElement_user_data`),
+    ]),
+    new IndexEntry("utf8_char32_at", [
+        new IndexReference(
+            `/apis/methods`, 
+            `5.6 - Methods`, 
+            `method char32_t utf8_char32_at(const std::string& utf8_str, size_t position)`, 
+            `method___utf8_char32_at`),
+    ]),
+    new IndexEntry("utf8_decrement", [
+        new IndexReference(
+            `/apis/methods`, 
+            `5.6 - Methods`, 
+            `method size_t utf8_decrement(const std::string&utf8_str,size_t position)`, 
+            `method___utf8_decrement`),
+    ]),
+    new IndexEntry("utf8_increment", [
+        new IndexReference(
+            `/apis/methods`, 
+            `5.6 - Methods`, 
+            `method size_t utf8_increment(const std::string& utf8_str, size_t position)`, 
+            `method___utf8_increment`),
+    ]),
+    new IndexEntry("utf8_length", [
+        new IndexReference(
+            `/apis/methods`, 
+            `5.6 - Methods`, 
+            `method size_t utf8_length(const std::string& utf8_str)`, 
+            `method___utf8_length`),
+    ]),
+    new IndexEntry("utf8_line_wrap", [
+        new IndexReference(
+            `/apis/methods`, 
+            `5.6 - Methods`, 
+            `method std::vector<std::string> utf8_line_wrap(const std::string& text, size_t  line_length)`, 
+            `method___utf8_line_wrap`),
+    ]),
+    new IndexEntry("utf8_substr", [
+        new IndexReference(
+            `/apis/methods`, 
+            `5.6 - Methods`, 
+            `method std::string utf8_substr(const std::string& text, size_t start, size_t length = std::numeric_limits<size_t>::max())`, 
+            `method___utf8_substr`),
+    ]),
+    new IndexEntry("utf8_to_u16string", [
+        new IndexReference(
+            `/apis/methods`, 
+            `5.6 - Methods`, 
+            `method std::u16string utf8_to_u16string(const std::string& str)`, 
+            `method___utf8_to_u16string`),
+    ]),
+    new IndexEntry("utf8_to_u32string", [
+        new IndexReference(
+            `/apis/methods`, 
+            `5.6 - Methods`, 
+            `method std::u32string utf8_to_u32string(const std::string& str)`, 
+            `method___utf8_to_u32string`),
+    ]),
+    new IndexEntry("utf8_to_wstring", [
+        new IndexReference(
+            `/apis/methods`, 
+            `5.6 - Methods`, 
+            `method std::wstring utf8_to_wstring(const std::string& utf8_str)`, 
+            `method___utf8_to_wstring`),
+    ]),
+    new IndexEntry("utf8_wc_length", [
+        new IndexReference(
+            `/apis/methods`, 
+            `5.6 - Methods`, 
+            `method size_t utf8_wc_length(const std::string&utf8_str, size_t start, size_t end)`, 
+            `method___utf8_wc_length`),
+        new IndexReference(
+            `/apis/methods`, 
+            `5.6 - Methods`, 
+            `method size_t utf8_wc_length(const std::string&utf8_str)`, 
+            `method___utf8_wc_length`),
+    ]),
+    new IndexEntry("utf8_wc_substr", [
+        new IndexReference(
+            `/apis/methods`, 
+            `5.6 - Methods`, 
+            `method std::string utf8_wc_substr(const std::string& text, size_t start, int length)`, 
+            `method___utf8_wc_substr`),
+    ]),
+    new IndexEntry("utf8_wide_character_width", [
+        new IndexReference(
+            `/apis/methods`, 
+            `5.6 - Methods`, 
+            `method size_t utf8_wide_character_width(const std::string&utf8_str,size_t position)`, 
+            `method___utf8_wide_character_width`),
     ]),
     new IndexEntry("vertical_line", [
         new IndexReference(
@@ -3563,6 +3680,13 @@ const indexData = new IndexData([
             `property NTextElement::wrap_text`, 
             `property__NTextElement_wrap_text`),
     ]),
+    new IndexEntry("wstring_to_utf8", [
+        new IndexReference(
+            `/apis/methods`, 
+            `5.6 - Methods`, 
+            `method std::string wstring_to_utf8(const std::wstring& wstr)`, 
+            `method___wstring_to_utf8`),
+    ]),
 ]);
 
 const SiteIndexData = () => { return indexData; }
@@ -3604,6 +3728,7 @@ let keywordIndexMap = new Map<string,IndexLink>([
     ["MouseEventArgs::button2_pressed", {route: "/apis/structs", id: "field__MouseEventArgs_button2_pressed", classRef: false}],
     ["MouseEventArgs::button3_pressed", {route: "/apis/structs", id: "field__MouseEventArgs_button3_pressed", classRef: false}],
     ["NWindow::cancel_post", {route: "/apis/classes/NWindow", id: "method__NWindow_cancel_post", classRef: false}],
+    ["char32::to_utf8string", {route: "/apis/methods", id: "method___char32_to_utf8string", classRef: false}],
     ["NTextEditElement::character_filter", {route: "/apis/classes/NTextEditElement", id: "method__NTextEditElement_character_filter", classRef: false}],
     ["NMenuItem::checked", {route: "/apis/structs", id: "field__NMenuItem_checked", classRef: false}],
     ["NCheckboxElement::checked", {route: "/apis/classes/NCheckboxElement", id: "property__NCheckboxElement_checked", classRef: false}],
@@ -3943,11 +4068,26 @@ let keywordIndexMap = new Map<string,IndexLink>([
     ["NRect::top_left", {route: "/apis/structs", id: "method__NRect_top_left", classRef: false}],
     ["NWindow::top_level_window", {route: "/apis/classes/NWindow", id: "property__NWindow_top_level_window", classRef: false}],
     ["NRect::top_right", {route: "/apis/structs", id: "method__NRect_top_right", classRef: false}],
+    ["u16string::to_utf8", {route: "/apis/methods", id: "method___u16string_to_utf8", classRef: false}],
+    ["u32string::to_utf8", {route: "/apis/methods", id: "method___u32string_to_utf8", classRef: false}],
+    ["u32string::to_wstring", {route: "/apis/methods", id: "method___u32string_to_wstring", classRef: false}],
     ["NRadioGroupElement::unchecked_text", {route: "/apis/classes/NRadioGroupElement", id: "property__NRadioGroupElement_unchecked_text", classRef: false}],
     ["NCheckboxElement::unchecked_text", {route: "/apis/classes/NCheckboxElement", id: "property__NCheckboxElement_unchecked_text", classRef: false}],
     ["NWindow::UNCOMPOSABLE", {route: "/apis/classes/NWindow", id: "constexpr__NWindow_UNCOMPOSABLE", classRef: false}],
     ["NEvent::unsubscribe", {route: "/apis/classes/NEvent", id: "method__NEvent_unsubscribe", classRef: false}],
     ["NElement::user_data", {route: "/apis/classes/NElement", id: "property__NElement_user_data", classRef: false}],
+    ["utf8::char32_at", {route: "/apis/methods", id: "method___utf8_char32_at", classRef: false}],
+    ["utf8::decrement", {route: "/apis/methods", id: "method___utf8_decrement", classRef: false}],
+    ["utf8::increment", {route: "/apis/methods", id: "method___utf8_increment", classRef: false}],
+    ["utf8::length", {route: "/apis/methods", id: "method___utf8_length", classRef: false}],
+    ["utf8::line_wrap", {route: "/apis/methods", id: "method___utf8_line_wrap", classRef: false}],
+    ["utf8::substr", {route: "/apis/methods", id: "method___utf8_substr", classRef: false}],
+    ["utf8::to_u16string", {route: "/apis/methods", id: "method___utf8_to_u16string", classRef: false}],
+    ["utf8::to_u32string", {route: "/apis/methods", id: "method___utf8_to_u32string", classRef: false}],
+    ["utf8::to_wstring", {route: "/apis/methods", id: "method___utf8_to_wstring", classRef: false}],
+    ["utf8::wc_length", {route: "/apis/methods", id: "method___utf8_wc_length", classRef: false}],
+    ["utf8::wc_substr", {route: "/apis/methods", id: "method___utf8_wc_substr", classRef: false}],
+    ["utf8::wide_character_width", {route: "/apis/methods", id: "method___utf8_wide_character_width", classRef: false}],
     ["NElement::vertical_line", {route: "/apis/classes/NElement", id: "method__NElement_vertical_line", classRef: false}],
     ["NMenuItem::wants_shortcut_key", {route: "/apis/classes/NMenuElement", id: "method__NMenuItem_wants_shortcut_key", classRef: false}],
     ["NButtonElement::wants_shortcut_key", {route: "/apis/classes/NButtonElement", id: "method__NButtonElement_wants_shortcut_key", classRef: false}],
@@ -3967,6 +4107,7 @@ let keywordIndexMap = new Map<string,IndexLink>([
     ["NElement::window_to_screen", {route: "/apis/classes/NElement", id: "method__NElement_window_to_screen", classRef: false}],
     ["window::to_screen", {route: "/apis/classes/NElement", id: "method___window_to_screen", classRef: false}],
     ["NTextElement::wrap_text", {route: "/apis/classes/NTextElement", id: "property__NTextElement_wrap_text", classRef: false}],
+    ["wstring::to_utf8", {route: "/apis/methods", id: "method___wstring_to_utf8", classRef: false}],
 ]);
 
 export function KeywordIndexMap(): Map<string,IndexLink> {

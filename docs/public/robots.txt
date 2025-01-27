@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rerdavies.github.io/nwindows/sitemap.xml
