@@ -35,7 +35,28 @@ function InstallingNWindows() {
     return (
         <DocsPage route={route}>
             <div>
-                <h1>{DocsTitle(route)}</h1> <h2>Prerequisites</h2> 
+                <h1>{DocsTitle(route)}</h1> 
+                <SectionHead text="Installing Pre-built Packages"/>
+                <p>We recommend compiling NWindows rather than installing the pre-built packages. However, the NWindows project 
+                    does provide pre-built packages for Debian-based Linux distributions, including Ubuntu. Packages are built on
+                    Ubuntu 22.04, using GCC, and and amd64 and arm64 versions of the packages are provided. They should work on most recent Debian-based distributions. If you encounter problems, you will need to
+                    build NWindows yourself. (It's a relatively painless build procedure).</p>
+                <p>To install NWindows from a Debian package, go to  the <a href="https://github.com/rerdavies/nwindows/releases">NWindows Releases</a> web page, 
+                    select the version you would like to install,
+                    and click on the <b><i>Assets</i></b> dropdown to view available <b><i>.deb</i></b> packages. Select the package that 
+                    is appropriate for your system, and download it.
+                    </p>
+                    <p>After downloading the package, install it using the following commands:</p>
+                    <Code text={`cd ~/Downloads
+sudo apt-get install ./yourpackagename`} />
+                <p>The package name must be prefixed with './' to indicate that the package is in the current directory.</p>
+                <p><M>apt-get</M> will give a message about missing permissions. This is normal. It's complaining about the fact that it 
+                cannot download the file in a sandbox, and has to &mdash; instead &mdash; copy the file into staging directories directly.
+                Despite the rather ominous warning, the package will have been installed anyway. </p>    
+                <p>NWindows headers will be installed in the <M>/usr/include/NWindows</M> directory, 
+                and the <M>libnwindows.a</M> static library will be installed in the <M>/usr/lib</M> directory.</p>
+
+                <SectionHead text="Prerequisites"/>
                 <p>NWindows requires the following development tools to be installed.</p>
                 <ul>
                     <li>A reasonably modern compiler with support for C++20.</li>
