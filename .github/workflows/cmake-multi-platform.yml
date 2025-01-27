@@ -28,7 +28,7 @@ jobs:
       matrix:
         os: [ubuntu-latest,ubuntu-24.04-arm]  # windows-latest
         build_type: [Release]
-        c_compiler: [gcc  # , clang, cl
+        c_compiler: [gcc]  # , clang, cl
         cpp_compiler: [g++]
         include:
           #- os: windows-latest
