@@ -28,7 +28,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]  # windows-latest
         build_type: [Release]
-        c_compiler: [gcc]  # , clang, cl
+        c_compiler: [gcc, clang]  # , clang, cl
         include:
           #- os: windows-latest
           #  c_compiler: cl
@@ -94,6 +94,24 @@ jobs:
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+
+    - name: Package
+      # Package your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
+      run: cpack --config ${{ steps.strings.outputs.build-output-dir }}/CPackConfig.cmake --config ${{ matrix.build_type }}
+
+    - name: Generate Artifacts
+          uses: actions/upload-artifact@v4
+          if: ${{ matrix.os == 'ubuntu-latest' && matrix.c_compiler == 'gcc' }}
+          name: artifact
+          path: |
+            build/*.deb
+            #build/_CPack_Packages/Linux/DEB/
+          retention-days: 5
+              name: artifact
+              path: |
+                  build/*.deb
+                  #build/_CPack_Packages/Linux/DEB/
+              retention-days: 5
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
