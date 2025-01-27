@@ -50,7 +50,7 @@ which displays the following output when executed.
 
 [Documentation](https://rerdavies.github.io/nwindows/documentation)
 
-&nbsp;&nbsp;[Licenses](https://rerdavies.github.io/nwindows/licenses)
+&nbsp;&nbsp;&nbsp;&nbsp;[Licenses](https://rerdavies.github.io/nwindows/licenses)
 
 &nbsp;&nbsp;&nbsp;&nbsp;[1.0 - Platform Support](https://rerdavies.github.io/nwindows/support)
 
