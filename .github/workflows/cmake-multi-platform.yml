@@ -97,7 +97,7 @@ jobs:
 
     - name: Package
       # Package your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      run: cpack --config ${{ steps.strings.outputs.build-output-dir }}/CPackConfig.cmake --config ${{ matrix.build_type }}
+      run: ./makePackage.sh
 
     - name: Generate Artifacts
       uses: actions/upload-artifact@v4
