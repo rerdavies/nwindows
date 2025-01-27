@@ -21,16 +21,20 @@
  *   SOFTWARE.
  */
 
-import ReleaseNodesMd from "./assets/ReleaseNotes.txt";
+import ReleaseNotesMd from "./../assets/ReleaseNotes.md?raw";
+import DocsPage from "../DocsPage";
+import { DocsTitle } from "../DocsNav";
+import Markdown from "react-markdown";
 
 
 export default function ReleaseNotes() {
+    let route = "/ReleaseNotes";
     return (
-        <div className="docs_page" style={{ background: "#FFF",display: "flex", flex: "1 1 1px",flexFlow: "column nowrap", position: "relative" }}>
-        <div style={{padding: 32}}>
-            <h1>Release Notes</h1>
-            <div dangerouslySetInnerHTML={{__html: ReleaseNodesMd}}></div>
-        </div>
-    </div>
-    );  
+        <DocsPage route={route}>
+            <h1>{DocsTitle(route)}</h1>
+            <div className="markdown">
+                <Markdown>{ReleaseNotesMd.toString()}</Markdown>
+            </div>
+        </DocsPage>
+    );
 }

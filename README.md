@@ -44,4 +44,6 @@ which displays the following output when executed.
 
 &nbsp;&nbsp;![image](docs/public/image/hello_world.png)
 
+## Where to Go From Here
+
 See the [documentation](https://github.io/rerdavies/nwindows> for more information, and for instructions on installing, and using *NWindows*.

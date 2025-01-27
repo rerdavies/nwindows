@@ -91,6 +91,7 @@ const ClassNTextEditElement = React.lazy(() => import("./pages/ClassNTextEditEle
 const ClassNEvent = React.lazy(() => import("./pages/ClassNEvent"));
 const IndexPage = React.lazy(() => import("./pages/IndexPage"));
 const ScratchPage = React.lazy(() => import("./pages/ScratchPage"));
+const ReleaseNotes = React.lazy(() => import("./pages/ReleaseNotes"));
 
 
 interface DocsPage {
@@ -154,6 +155,7 @@ const indexedComponents: IndexedComponent[] = [
     { route: "/apis/classes/NCheckboxElement", component: () => ClassNCheckboxElement },
     { route: "/apis/classes/NTextEditElement", component: () => ClassNTextEditElement },
     { route: "/apis/classes/NEvent", component: () => ClassNEvent },
+    { route: "/ReleaseNotes", component: () => ReleaseNotes },
 ];
 
 export function IndexedComponents() {
@@ -210,10 +212,11 @@ let docsIndex: DocsPage[] = [
     { route: "/apis/classes/NTextEditElement", title: "5.7.18 - NTextEditElement", up: "/apis/classes" },
     { route: "/apis/classes/NVerticalStackElement", title: "5.7.19 - NVerticalStackElement", up: "/apis/classes" },
     { route: "/apis/classes/NWindow", title: "5.7.20 - NWindow", up: "/apis/classes" },
+    { route: "/ReleaseNotes", title: "NWindows Release Notes", up: "/documentation" },
 
-    // XXX Delete me!
-    { route: "/index_builder", title: "Index Builder", up: "/documentation", },
     { route: "/index", title: "Index", up: "/documentation", },
+
+    { route: "/index_builder", title: "Index Builder", up: "/documentation", },
 
 ];
 

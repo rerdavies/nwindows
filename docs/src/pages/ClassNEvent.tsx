@@ -34,10 +34,10 @@ import Code from '../Code';
 import M, { ML } from '../M';
 
 function ClassNEvent() {
-
+    let route = "/apis/classes/NEvent";
     return (
-        <DocsPage route="/apis/classes/NEvent">
-            <h1>{DocsTitle("/apis/classes/NEvent")}</h1>
+        <DocsPage route={route}>
+            <h1>{DocsTitle(route)}</h1>
 
             <ClassDescription name="NEvent" text={`template<typename... Args>
 class NEvent<void(Args...)>`} >
