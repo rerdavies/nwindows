@@ -36,9 +36,9 @@ jobs:
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
-          #- os: ubuntu-latest
-          #  c_compiler: clang
-          #  cpp_compiler: clang++
+          - os: ubuntu-latest
+            c_compiler: clang
+            cpp_compiler: clang++
         exclude:
           - os: windows-latest
             c_compiler: gcc
@@ -100,18 +100,13 @@ jobs:
       run: cpack --config ${{ steps.strings.outputs.build-output-dir }}/CPackConfig.cmake --config ${{ matrix.build_type }}
 
     - name: Generate Artifacts
-          uses: actions/upload-artifact@v4
-          if: ${{ matrix.os == 'ubuntu-latest' && matrix.c_compiler == 'gcc' }}
-          name: artifact
-          path: |
-            build/*.deb
-            #build/_CPack_Packages/Linux/DEB/
-          retention-days: 5
-              name: artifact
-              path: |
-                  build/*.deb
-                  #build/_CPack_Packages/Linux/DEB/
-              retention-days: 5
+      uses: actions/upload-artifact@v4
+      if: ${{ matrix.os == 'ubuntu-latest' && matrix.c_compiler == 'gcc' }}
+      name: artifact
+      path: |
+        build/*.deb
+        #build/_CPack_Packages/Linux/DEB/
+      retention-days: 5
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
