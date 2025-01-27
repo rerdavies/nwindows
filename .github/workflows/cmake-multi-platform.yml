@@ -102,7 +102,6 @@ jobs:
     - name: Generate Artifacts
       uses: actions/upload-artifact@v4
       if: ${{ matrix.os == 'ubuntu-latest' && matrix.c_compiler == 'gcc' }}
-      name: artifact
       path: |
         build/*.deb
         #build/_CPack_Packages/Linux/DEB/
