@@ -46,4 +46,4 @@ which displays the following output when executed.
 
 ## Where to Go From Here
 
-See the [documentation](https://github.io/rerdavies/nwindows> for more information, and for instructions on installing, and using *NWindows*.
+See the [documentation](https://rerdavies.github.io/nwindows) for more information, and for instructions on installing, and using *NWindows*.
