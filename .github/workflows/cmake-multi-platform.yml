@@ -37,6 +37,7 @@ jobs:
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
+            build_type: [Release]
         exclude:
           - os: windows-latest
             c_compiler: gcc
@@ -97,10 +98,20 @@ jobs:
       # Package your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: ./makePackage.sh
 
-    - name: Generate Artifacts
+    - name: AMD64  Artifact
       uses: actions/upload-artifact@v4
-      if: ${{ matrix.c_compiler == 'gcc' }}
+      if: ${{ matrix.os == 'latest-ubuntu' matrix.c_compiler == 'gcc' }}
       with:
+        name: amd4-deb
+        path: |
+          build/*.deb
+        retention-days: 5
+
+    - name: ARM64  Artifact
+      uses: actions/upload-artifact@v4
+      if: ${{ matrix.os == 'ubuntu-24.04-arm' matrix.c_compiler == 'gcc' }}
+      with:
+        name: amd4-deb
         path: |
           build/*.deb
         retention-days: 5
