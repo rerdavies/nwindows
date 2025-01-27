@@ -46,8 +46,6 @@ which displays the following output when executed.
 
 ## Where to Go From Here
 
-## Where to Go From Here
-
 [Website](https://rerdavies.github.io/nwindows)
 
 [Documentation](https://rerdavies.github.io/nwindows/documentation)
