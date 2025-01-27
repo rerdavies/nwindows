@@ -66,9 +66,17 @@ if(NOT DEFINED ENV{GITHUB_ACTIONS})
     add_subdirectory("docs")
 endif()
 
+EXECUTE_PROCESS( COMMAND dpkg --print-architecture COMMAND tr -d '\n' OUTPUT_VARIABLE DEBIAN_ARCHITECTURE )
+
+
 #debian packaging 
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Robin E. R. Davies <rerdavies@gmail.com>")
-set(CPACK_DEBIAN_FILE_NAME 'nwindows$CMAKE_PACKAGE_MAJOR-$ARCH.deb')
+set(CPACK_DEBIAN_FILE_NAME "nwindows_${PROJECT_VERSION}${NWINDOWS_RELEASE_QUALIFIER}_${DEBIAN_ARCHITECTURE}.deb")
 set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Modern Text User Interface Library for C++")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Modern Text User Interface Library for C++")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "xclip, libicu-dev")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Robin E. R. Davies <rerdavies@gmail.com>")
+set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
+set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://rerdavies.github.io/nwindows/")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+
 include(CPack)
