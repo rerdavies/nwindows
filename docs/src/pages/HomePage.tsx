@@ -117,8 +117,9 @@ int main(void) {
                         </div>
 
                         <div style={{ flex: "1 1 auto" }}>
-                            <p style={{ marginTop: 8 }}>NWindows is written by an independent developer. Your support and sponsorship for this, and other Open Source projects
-                   ``             by Robin Davies would mean more
+                            <p style={{ marginTop: 8 }}>NWindows is written by an independent developer. Your support and sponsorship for this, and other Open Source 
+                                projects
+                                by Robin Davies would mean more
                                 than you would think. You can make a monthly or a one time donation at Robin Davies' <a href="https://github.com/sponsors/rerdavies">GitHub Sponsorship page</a>.
 
                             </p>
