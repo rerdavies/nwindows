@@ -22,7 +22,6 @@
  */
 
 import { Link } from "react-router-dom";
-import DocsPage from "../DocsPage";
 import SiteIndexData from "../SiteIndexData";
 import SearchBox from "../SearchBox";
 import { useState } from "react";
