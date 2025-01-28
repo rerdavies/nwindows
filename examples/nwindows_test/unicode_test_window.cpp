@@ -30,7 +30,12 @@ void unicode_test_window(NWindow::ptr parentWindow /* = nullptr */)
     NTextElement::ptr keyIndicator;
 
     std::string oGrave = u32string_to_utf8(U"o\u0300");
-    auto boundsColor = window->make_color_pair(0xC0C0C0, 0x4040C0);
+    NColorPair boundsColor;
+    if (parentWindow && parentWindow->max_color_pairs() > 8) {
+        boundsColor = window->make_color_pair(0xC0C0C0, 0x4040C0);
+    } else {
+        boundsColor = window->make_color_pair(0xE00000, 0x000000);
+    }
     window
         | title("Unicode Tests")
         | add_child(

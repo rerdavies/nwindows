@@ -32,8 +32,6 @@ configure_file(
 
 
 
-
-
 if (NWINDOWS_STRICT_COMPILER_OPTIONS)
 
     set(CMAKE_CXX_STANDARD 20)
