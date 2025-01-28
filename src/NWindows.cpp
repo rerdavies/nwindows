@@ -681,7 +681,7 @@ void NWindow::run()
         {
             // ignore.
         }
-        std::cerr << std::format("Error: Unhandled exception. {}", e.what()) << std::endl;
+        std::cerr << "Error: Unhandled exception. " << e.what() << std::endl;
         exit(EXIT_FAILURE);
     }
     if (fatal_error_message_.length() > 0)

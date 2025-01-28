@@ -1014,7 +1014,7 @@ namespace nwindows
         bool wrap_text() const { return wrap_text_; }
 
 
-        bool password_;
+        bool password_ = false;
 
         void scroll_adjust();
         NTextSelection selection_;

@@ -77,7 +77,7 @@ void menu_test_window(NWindow::ptr parentWindow /* = nullptr */)
                                 source->window()->shared_from_this<NWindow>(),
                                 NMessageType::Info,
                                 "Menu Test",
-                                std::format("Item selected: {}", item_id)
+                                NSS("Item selected: " << item_id)
                             );
                         })
 
@@ -101,7 +101,7 @@ void menu_test_window(NWindow::ptr parentWindow /* = nullptr */)
                                 source->window()->shared_from_this<NWindow>(),
                                 NMessageType::Info,
                                 "Menu Test",
-                                std::format("Item selected: {}", item_id)
+                                NSS("Item selected:" << item_id)
                             );
                         })
 

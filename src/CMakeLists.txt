@@ -12,6 +12,7 @@ add_library(nwindows
     include/NWindows/NUtf8.hpp
     include/NWindows/NEvent.hpp
     include/NWindows/NUnicodeServices.hpp
+    include/NWindows/nss.hpp
     PrivateElements.hpp
     NWindows.cpp
     NUnicodeServices.cpp
@@ -23,7 +24,7 @@ set_target_properties(
     nwindows 
     PROPERTIES
         PUBLIC_HEADER 
-            "include/NWindows/NClipboard.hpp;include/NWindows/NWindows.hpp;include/NWindows/NUtf8.hpp;include/NWindows/NEvent.hpp;include/NWindows/NUnicodeServices.hpp"
+            "include/NWindows/nss.hpp;include/NWindows/NClipboard.hpp;include/NWindows/NWindows.hpp;include/NWindows/NUtf8.hpp;include/NWindows/NEvent.hpp;include/NWindows/NUnicodeServices.hpp"
 )
 
 set_property(TARGET nwindows PROPERTY POSITION_INDEPENDENT_CODE ON) # -fPic on GCC.

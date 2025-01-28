@@ -23,6 +23,9 @@
 
 #include "tests.hpp"
 
+#include <NWindows/nss.hpp>
+#include <iomanip>
+
 void edit_text_test_window(NWindow::ptr parentWindow /*= nullptr */)
 {
     NWindow::ptr window = NWindow::create(parentWindow, 4, 2, 55, AUTO_SIZE);
@@ -89,18 +92,18 @@ void edit_text_test_window(NWindow::ptr parentWindow /*= nullptr */)
     window->on_key.subscribe(
         [keyIndicator](NKeyEventArgs& args) mutable
         {
-            std::string utf8Text = wstring_to_utf8(std::wstring(1, args.key));
+            std::string utf8Text = u32string_to_utf8(std::u32string(1, args.key));
             if (args.key < 32) {
                 utf8Text = " ";
             }
-            keyIndicator->text(std::format("Key: '{}' {}", utf8Text, (int64_t)args.key));
+            keyIndicator->text(NSS("Key: '" << utf8Text << "' " << (int64_t)args.key));
         }
     );
 
     window->on_key_code.subscribe(
         [keyIndicator](NKeyCodeEventArgs& args) mutable
         {
-            keyIndicator->text(std::format("Keycode: 0{:o}", args.key_code));
+            keyIndicator->text(NSS("Keycode: 0" << std::oct <<  args.key_code));
         }
     );
 

@@ -27,8 +27,8 @@
 #include <locale>
 #include "Finally.hpp"
 #include <string>
-#include <format>
-#include "NWindows/NUtf8.hpp"
+#include <NWindows/nss.hpp>
+#include <NWindows/NUtf8.hpp>
 #include <iostream>
 
 #include "NWindows/NWindows.hpp"
@@ -158,7 +158,7 @@ int main(void)
     if (NElement::allocated_element_count() != 0)
     {
         std::cerr << "Allocated NElements: " << NElement::allocated_element_count() << std::endl;
-        throw std::runtime_error(std::format("{} Nelements not deleted.", NElement::allocated_element_count()));
+        throw std::runtime_error(NSS(NElement::allocated_element_count() << " Nelements not deleted."));
     }
 #endif
 
