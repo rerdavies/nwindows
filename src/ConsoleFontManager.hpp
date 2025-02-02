@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2025 Robin E. R. Davies
+ *   Copyright (c) 2024-2025 Robin E. R. Davies
  *   All rights reserved.
 
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -8,10 +8,10 @@
  *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *   copies of the Software, and to permit persons to whom the Software is
  *   furnished to do so, subject to the following conditions:
- 
+
  *   The above copyright notice and this permission notice shall be included in all
  *   copies or substantial portions of the Software.
- 
+
  *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,19 +20,23 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *   SOFTWARE.
  */
-
 #pragma once
+#include <memory>
+#include "NWindows/NoCopyNoMove.hpp"
 
-#include <NWindows/NWindows.hpp>
+namespace nwindows::internal
+{
+    // patches checkbox characters into EGA/VGA fonts when running on TTYs.
+    class ConsoleFontManager : public NoCopyNoMove
+    {
+    protected:
+        ConsoleFontManager();
+    public:
+        virtual ~ConsoleFontManager();
+        using self = ConsoleFontManager;
+        using ptr = std::shared_ptr<self>;
+        static ptr create();
+    };
+}
 
-using namespace nwindows;
-void rendering_test_window(NWindow::ptr parent_window);
-void box_test_window(NWindow::ptr parentWindow = nullptr);
-void unicode_test_window(NWindow::ptr parentWindow = nullptr);
-void edit_text_test_window(NWindow::ptr parentWindow = nullptr);
-void dialog_test_window(NWindow::ptr parentWindow = nullptr);
-void popup_menu_test_window(NWindow::ptr parentWindow = nullptr);
-void menu_test_window(NWindow::ptr parentWindow = nullptr);
-void error_test_window(NWindow::ptr parentWindow = nullptr);
-void ascii_fallback_test_window(NWindow::ptr parentWindow = nullptr );
-void console_font_test_window(NWindow::ptr parentWindow = nullptr );
+

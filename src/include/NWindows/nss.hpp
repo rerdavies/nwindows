@@ -22,5 +22,6 @@
 #include <sstream>
 #include <iostream>
 
+// Fallback formatter for systems without <format> support.
 // usage:   NSS("xyz" << 123 << 45.6) returning a std::string rvalue.
 #define NSS(x) ( ((std::stringstream&)(std::stringstream() << x )).str())

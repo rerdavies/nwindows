@@ -49,6 +49,9 @@
 
 namespace nwindows
 {
+    namespace internal {
+        class ConsoleFontManager;
+    };
     class NWindow;
     class NPopupWindow;
     class NPopupMenuWindow;
@@ -56,6 +59,7 @@ namespace nwindows
     class Collator;
     class UnicodeNormalizer;
     class NContainerElement;
+    class ConsoleFont;
 
     constexpr int AUTO_SIZE = std::numeric_limits<int>::min();
     constexpr int NO_ITEM_ID = std::numeric_limits<int>::min();
@@ -288,9 +292,13 @@ namespace nwindows
         int x = 0, y = 0, width, height;
 
         int left() const { return x; }
+        void left(int value) { width += x - value; x = value; }
         int right() const { return x + width; }
+        void right(int value) { width = value-x;}
         int top() const { return y; }
+        void top(int value) { height += y - value; y = value; }
         int bottom() const { return y + height; }
+        void bottom(int value) { height = value - y; }  
 
         NPoint top_left() const { return NPoint(left(), top()); }
         NPoint top_right() const { return NPoint(right(), top()); }
@@ -1070,6 +1078,9 @@ namespace nwindows
         void render() override;
         NSize measure(const NSize& available) override;
     private:
+        bool has_unicode_checked_text() const;
+        bool has_unicode_unchecked_text() const;
+
         std::string label_;
         std::string checked_text_ = ""; // ◉ 
         std::string unchecked_text_ = ""; // ○
@@ -1216,6 +1227,9 @@ namespace nwindows
         virtual void handle_detaching() override;
 
     private:
+        bool has_unicode_checked_text() const;
+        bool has_unicode_unchecked_text() const;
+
         void update_child_elements();
         void update_child_layout();
 
@@ -1413,6 +1427,8 @@ namespace nwindows
         bool is_unicode_locale() const { return is_unicode_locale_; }
         bool can_display_character(char32_t c) const;
 
+        std::shared_ptr<ConsoleFont> console_font() const { return this->top_level_window()->console_font_; } 
+
 
         static ptr create(int width, int height, NColorPalette* color_palette = nullptr)
         {
@@ -1557,6 +1573,7 @@ namespace nwindows
         static constexpr char32_t UNCOMPOSABLE = (char32_t)-1;
         char32_t compose_characters(char32_t left, char32_t right) const;
 
+        WINDOW *curses_window() const { return curses_window_;}
     protected:
 
         bool closed() const { return closed_; }
@@ -1599,6 +1616,7 @@ namespace nwindows
         virtual void render() override;
 
     private:
+        std::shared_ptr<internal::ConsoleFontManager> console_font_manager_;
 
         std::string fatal_error_message_;
 
@@ -1686,6 +1704,8 @@ namespace nwindows
         std::shared_ptr<UnicodeServices> unicode_services_;
         std::shared_ptr<Collator> collator_;
         std::shared_ptr<UnicodeNormalizer> normalizer_;
+
+        std::shared_ptr<ConsoleFont> console_font_;
         static std::string locale_;
         bool is_unicode_locale_ = false;
 

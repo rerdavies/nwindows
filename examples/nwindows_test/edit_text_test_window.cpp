@@ -94,7 +94,7 @@ void edit_text_test_window(NWindow::ptr parentWindow /*= nullptr */)
         {
             std::string utf8Text = u32string_to_utf8(std::u32string(1, args.key));
             if (args.key < 32) {
-                utf8Text = " ";
+                utf8Text = std::string(" "); // gcc 12.2 bug workaround.
             }
             keyIndicator->text(NSS("Key: '" << utf8Text << "' " << (int64_t)args.key));
         }

@@ -9,6 +9,8 @@ add_executable(nwindows_test
     edit_text_test_window.cpp
     error_test_window.cpp
     rendering_test_window.cpp
+    ascii_fallback_test_window.cpp
+    console_font_test_window.cpp
 )
 
 target_link_libraries(
