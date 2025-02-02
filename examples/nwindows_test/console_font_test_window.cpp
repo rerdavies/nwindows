@@ -115,16 +115,17 @@ static NElement::ptr native_character_grid(NWindow::ptr parentWindow)
 
 void console_font_test_window(NWindow::ptr parentWindow /* = nullptr */)
 {
+    if (!parentWindow->console_font())
+    {
+        NMessageWindow::create(parentWindow,NMessageType::Error,"","Not running on an EGA/VGA console.");
+        return;
+    }
+
     auto console_font = parentWindow->console_font();
 
     NWindow::ptr window = NWindow::create(parentWindow, AUTO_SIZE, AUTO_SIZE);
     NTextElement::ptr keyIndicator;
 
-    if (!console_font)
-    {
-        NMessageWindow::create(parentWindow,NMessageType::Error,"","Not running on an EGA/VGA console.");
-        return;
-    }
 
     window
         | title("Console Font Test")
