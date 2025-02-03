@@ -66,7 +66,6 @@ NElement::ptr unicode_map_display(NWindow::ptr parentWindow)
     {
         const auto& map = font->get_unicode_map();
 
-        char32_t glyph = 0xF000;
         for (const auto& mapEntry : map)
         {
             ss << mapEntry.unicode_chars;
@@ -75,7 +74,6 @@ NElement::ptr unicode_map_display(NWindow::ptr parentWindow)
                 ss << "=" << sequence;
             }
             ss << "; ";
-            ++glyph;
         }
     }
     std::string maptext = ss.str();

@@ -148,7 +148,6 @@ namespace nwindows::internal {
 
         std::vector<uint8_t> data;
         int file_type_ = -1;
-        size_t character_count_ = 0L;
         size_t char_data_offset_ = 0L;
         size_t char_data_end_ = 0L;
         size_t map_data_end_ = 0L;
@@ -204,11 +203,12 @@ struct psf2_header {
 
 constexpr uint16_t PSF2_HAS_UNICODE_TABLE = 0x0001;
 
-constexpr uint16_t PSF2_MAXVERSION = 0;
+// constexpr uint16_t PSF2_MAXVERSION = 0;
+
 
 /* UTF8 separators */
-constexpr uint8_t PSF2_END_GLYPH_ENTRY = 0xFF;
-constexpr uint8_t PSF2_START_SEQUENCE = 0xFE;
+constexpr char PSF2_END_GLYPH_ENTRY = (char)0xFF;
+constexpr char PSF2_START_SEQUENCE = (char)0xFE;
 
 void ConsoleFontImpl::save(const std::filesystem::path& fontPath)
 {
