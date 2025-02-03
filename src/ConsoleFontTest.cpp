@@ -348,7 +348,8 @@ int main(int argc, char** argv)
                 if (path.string().ends_with(".psf.gz"))
                 {
                     TempFile tempFile(".psf");
-                    system(("gunzip -c " + path.string() + " > " + tempFile.path().string()).c_str());
+                    auto _ = system(("gunzip -c " + path.string() + " > " + tempFile.path().string()).c_str());
+                    (void)_; // unuszed.
 
                     test_font(path, tempFile.path());
 
