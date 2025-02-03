@@ -304,7 +304,9 @@ strings=(`+ "\\\n";
         let routePaths = RoutePaths();
 
         for (let routePath of routePaths) {
-            text += "     \"" + routePath + "\"\\\n";
+            if (routePath !== "/index_builder") {
+                text += "     \"" + routePath + "\"\\\n";
+            }
         }
 
         text += `)
@@ -381,18 +383,18 @@ done
                             (
                                 <div>
                                     <p><M>docs/src/SiteIndexData.tsx</M></p>
-                                    <div style={{ maxHeight: 240, overflowY: "auto", paddingRight: 8 }}>
+                                    <div style={{ maxHeight: 180, overflowY: "auto", paddingRight: 8 }}>
 
                                         <Code language="text" text={this.state.indexText} />
                                     </div>
 
                                     <p></p>
                                     <p><M>docs/make_route_pages.sh</M></p>
-                                    <div style={{ maxHeight: 240, overflowY: "auto", paddingRight: 8 }}>
+                                    <div style={{ maxHeight: 180, overflowY: "auto", paddingRight: 8 }}>
                                         <Code language="text" text={this.make_copy_route_pages()} />
                                     </div>
                                     <p><M>docs/public/sitemap.xml</M></p>
-                                    <div style={{ maxHeight: 240, overflowY: "auto", paddingRight: 8 }}>
+                                    <div style={{ maxHeight: 180, overflowY: "auto", paddingRight: 8 }}>
                                         <Code language="text" text={this.make_site_map()} />
                                     </div>
 

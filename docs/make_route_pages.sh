@@ -59,7 +59,7 @@ strings=(\
      "/apis/classes/NTextEditElement"\
      "/apis/classes/NVerticalStackElement"\
      "/apis/classes/NWindow"\
-     "/index_builder"\
+     "/ReleaseNotes"\
      "/index"\
      "/search"\
 )
