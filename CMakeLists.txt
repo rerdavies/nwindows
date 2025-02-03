@@ -31,6 +31,12 @@ configure_file(
 )
 
 
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/ReleaseNotes.md"
+    "${CMAKE_CURRENT_SOURCE_DIR}/docs/src/assets/ReleaseNotes.md"
+)
+
+
 
 if (NWINDOWS_STRICT_COMPILER_OPTIONS)
 
