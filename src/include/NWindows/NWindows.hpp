@@ -1750,6 +1750,7 @@ namespace nwindows
         std::vector<PANEL*> panel_stack_; // root level window only.
 
         NWindow* parent_window_ = nullptr;
+        NWindow* top_level_window_ = nullptr;
         std::vector<NWindow::ptr> child_windows_; // for ownership.
 
         std::string title_;

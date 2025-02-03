@@ -1176,6 +1176,7 @@ void NWindow::add_child_window(NWindow::ptr child)
 {
     this->child_windows_.push_back(child);
     child->parent_window_ = this;
+    child->top_level_window_ = this->top_level_window_;
     child->is_unicode_locale_ = this->is_unicode_locale_;
     child->color_palette(this->color_palette_);
 
@@ -1192,6 +1193,7 @@ bool NWindow::remove_child_window(NWindow* child)
         if (i->get() == child)
         {
             child->parent_window_ = nullptr;
+            child->top_level_window_ = nullptr;
             child_windows_.erase(i);
             return true;
         }
@@ -1201,21 +1203,11 @@ bool NWindow::remove_child_window(NWindow* child)
 
 NWindow* NWindow::top_level_window()
 {
-    NWindow* window = this;
-    while (window->parent_window_ != nullptr)
-    {
-        window = window->parent_window_;
-    }
-    return window;
+    return this->top_level_window_;
 }
 const NWindow* NWindow::top_level_window() const
 {
-    const NWindow* window = this;
-    while (window->parent_window_ != nullptr)
-    {
-        window = window->parent_window_;
-    }
-    return window;
+    return this->top_level_window_;
 }
 
 
@@ -1286,6 +1278,8 @@ void NWindow::init_root_window()
     {
         throw std::runtime_error("A root window already exists. Create a child window instead, by supplying a parent window argument to NWindow::create.");
     }
+    this->top_level_window_ = this;
+
     std::string old_locale = ::setlocale(LC_ALL, "");
     std::string locale = ::setlocale(LC_ALL, nullptr);
 
@@ -6315,6 +6309,10 @@ void NWindow::handle_is_active_changed(bool activated)
 
 bool NWindow::can_display_character(char32_t c) const
 {
+    if (this->top_level_window() != this)
+    {
+        return this->top_level_window()->can_display_character(c);
+    }
     // Simple cache implementation, assuming that the underlying call 
     // requires a round-trip wire transit,
 
