@@ -21,4 +21,4 @@
  *   SOFTWARE.
  */
 
-export const NWindowsVersion = "0.0.2-beta2";
+export const NWindowsVersion = "0.0.3-beta3";
