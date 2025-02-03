@@ -1,10 +1,12 @@
 ## Release Notes
 
-### NWindows 0.0.2-beta1
+### NWindows 0.0.2-beta2
 
 - Polyfill checkbox/radio-button/dropdon characters on EGA/VGA (Linux) terminals.
-- can_display_character tests display font on Linux EGA/VGA terminals.
 - Fallback to ASCII for particularly incapable terminals.
+- Back-port to GCC12.2 for Debian Bookworm.
+
+
 
 
 ### NWindows 0.0.1-beta1

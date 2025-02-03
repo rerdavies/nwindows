@@ -28,8 +28,8 @@
 // Uses Semantic Versioning
 #define NWINDOWS_MAJOR_VERSION 0
 #define NWINDOWS_MINOR_VERSION 0
-#define NWINDOWS_BUILD_NUMBER 1  // increments with each release
-#define NWINDOWS_RELEASE_QUALIFIER "-beta1"
+#define NWINDOWS_BUILD_NUMBER 2  // increments with each release
+#define NWINDOWS_RELEASE_QUALIFIER "-beta2"
 
 
 
