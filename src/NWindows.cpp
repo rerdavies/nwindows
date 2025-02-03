@@ -573,7 +573,8 @@ bool NWindow::handle_window_key_code(int key)
 
 static void sys_clear()
 {
-    system("clear");
+    int ignored = system("clear");
+    (void)ignored; 
 }
 void NWindow::run()
 {
