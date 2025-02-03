@@ -39,6 +39,7 @@
 #include "NEvent.hpp"
 #include "NClipboard.hpp"
 #include "NUtf8.hpp"
+#include <unordered_map>
 
 #include "NWindowsVersionInfo.hpp"
 
@@ -1426,6 +1427,7 @@ namespace nwindows
         static void set_locale(const std::string& locale);
         bool can_display_character(char32_t c) const;
 
+
         std::shared_ptr<ConsoleFont> console_font() const { return this->top_level_window()->console_font_; } 
 
 
@@ -1615,6 +1617,9 @@ namespace nwindows
         virtual void render() override;
 
     private:
+        bool can_display_character_(char32_t c) const;
+        std::unordered_map<char32_t,bool> can_display_character_cache_;
+
 
         bool is_unicode_locale() const { return is_unicode_locale_; }
 

@@ -109,16 +109,16 @@ void dump_unicode_ioctl()
     Finally closeConsoleFd([console_fd]() { close(console_fd); });
 
 
-    std::vector<uint8_t> fontdata;
-    fontdata.resize(512 * 32);
+    std::vector<uint8_t> font_data;
+    font_data.resize(512 * 32);
 
-    struct consolefontdesc fontdesc;
-    fontdesc.charcount = 512;
-    fontdesc.chardata = (char*)fontdata.data();
-    fontdesc.charheight = 32;
+    struct consolefontdesc font_desc;
+    font_desc.charcount = 512;
+    font_desc.chardata = (char*)font_data.data();
+    font_desc.charheight = 32;
 
     errno = 0;
-    int rc = ioctl(console_fd, GIO_FONTX, &fontdesc);
+    int rc = ioctl(console_fd, GIO_FONTX, &font_desc);
 
     if (rc != 0)
     {
@@ -126,7 +126,7 @@ void dump_unicode_ioctl()
         std::cout << "FontX not supported. " << msg << std::endl;
     }
     else {
-        std::cout << "Fontx supported: " << fontdesc.charcount << " characters, height: " << fontdesc.charheight << std::endl;
+        std::cout << "Fontx supported: " << font_desc.charcount << " characters, height: " << font_desc.charheight << std::endl;
     }
 
 

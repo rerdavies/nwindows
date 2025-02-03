@@ -4573,7 +4573,7 @@ static bool use_raspberry_pi_fallback() {
     {
         g_checked_raspberry_pi = true;
 
-        // Are we running in raspi lxterminal?
+        // Are we running in Raspberry Pi lxterminal?
                 // GIO_LAUNCHED_DESKTOP_FILE=/usr/share/raspi-ui-overrides/applications/lxterminal.desktop
         const char* term = std::getenv("GIO_LAUNCHED_DESKTOP_FILE");
         g_use_raspberry_pi_fallback = false;
@@ -6313,8 +6313,29 @@ void NWindow::handle_is_active_changed(bool activated)
 }
 
 
-
 bool NWindow::can_display_character(char32_t c) const
+{
+    // Simple cache implementation, assuming that the underlying call 
+    // requires a round-trip wire transit,
+
+    auto ff = can_display_character_cache_.find(c);
+    if (ff != can_display_character_cache_.end())
+    {
+        return ff->second;
+    }
+    bool result = can_display_character_(c);
+    
+    // moral constness.
+    const_cast<NWindow*>(this)->can_display_character_cache_[c] = result;
+
+    return result;
+}
+// std::unordered_map<char32_t,bool> NWindow::can_display_character_cache_;
+
+
+
+
+bool NWindow::can_display_character_(char32_t c) const
 {
     // Figure out whether wcwidth() works on Windows for emoji (and other extended unicode characters)
     // or figure out an alternative.
