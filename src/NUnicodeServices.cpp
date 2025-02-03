@@ -57,7 +57,7 @@
 #include "NWindows/NUtf8.hpp"
 #include <mutex>
 #include <filesystem>
-#include <format>
+#include "NWindows/nss.hpp"
 
 #define U_SHOW_CPLUSPLUS_API 0
 
@@ -149,7 +149,7 @@ static int getICUVersion(void* libHandle) {
         }
         if (version == -1)
         {
-            throw std::runtime_error(std::format("Unable to determine libicui18n.so version: {}", error));
+            throw std::runtime_error(NSS("Unable to determine libicui18n.so version: " << error));
         }
     }
     return version;
@@ -242,12 +242,12 @@ private:
             library_handle = dlopen("libicui18n.so", RTLD_LAZY);
             if (!library_handle)
             {
-                throw std::runtime_error(std::format("Error loading libicui18n.so: {}", dlerror()));
+                throw std::runtime_error(NSS("Error loading libicui18n.so: " << dlerror()));
             }
             uc_library_handle = dlopen("libicuuc.so", RTLD_LAZY);
             if (!uc_library_handle)
             {
-                throw std::runtime_error(std::format("Error loading libicuuc.so: {}", dlerror()));
+                throw std::runtime_error(NSS("Error loading libicuuc.so: " << dlerror()));
             }
 
 
@@ -262,52 +262,52 @@ private:
             if (!ucol_open_fn)
             {
 
-                throw std::runtime_error(std::format("Error loading ucol_open: {}", dlerror()));
+                throw std::runtime_error(NSS("Error loading ucol_open: " << dlerror()));
             }
 
             // Load ucol_close
             ucol_close_fn = reinterpret_cast<ucol_close_t>(dlsym(library_handle, VersionedName("ucol_close", version).c_str()));
             if (!ucol_close_fn)
             {
-                throw std::runtime_error(std::format("Error loading ucol_close: {}", dlerror()));
+                throw std::runtime_error(NSS("Error loading ucol_close: " << dlerror()));
             }
 
             // Load ucol_strcoll
             ucol_strcoll_fn = reinterpret_cast<ucol_strcoll_t>(dlsym(library_handle, VersionedName("ucol_strcoll", version).c_str()));
             if (!ucol_strcoll_fn)
             {
-                throw std::runtime_error(std::format("Error loading ucol_strcoll: ", dlerror()));
+                throw std::runtime_error(NSS("Error loading ucol_strcoll: " << dlerror()));
             }
             ucol_strcollUTF8_fn = reinterpret_cast<ucol_strcollUTF8_t>(dlsym(library_handle, VersionedName("ucol_strcollUTF8", version).c_str()));
             if (!ucol_strcoll_fn)
             {
-                throw std::runtime_error(std::format("Error loading ucol_strcoll: ", dlerror()));
+                throw std::runtime_error(NSS("Error loading ucol_strcoll: " << dlerror()));
             }
             this->ucol_setStrength_fn = reinterpret_cast<ucol_setStrength_t>(dlsym(library_handle, VersionedName("ucol_setStrength", version).c_str()));
             if (!ucol_setStrength_fn)
             {
-                throw std::runtime_error(std::format("Error loading ucol_setStrength: ", dlerror()));
+                throw std::runtime_error(NSS("Error loading ucol_setStrength: " << dlerror()));
             }
             this->ucol_getLocaleByType_fn = reinterpret_cast<ucol_getLocaleByType_t>(dlsym(library_handle, VersionedName("ucol_getLocaleByType", version).c_str()));
             if (!ucol_getLocaleByType_fn)
             {
-                throw std::runtime_error(std::format("Error loading ucol_getLocaleByType: ", dlerror()));
+                throw std::runtime_error(NSS("Error loading ucol_getLocaleByType: " << dlerror()));
             }
 
             this->u_errorName_fn = reinterpret_cast<u_errorName_t>(dlsym(uc_library_handle, VersionedName("u_errorName", version).c_str()));
             if (!u_errorName_fn)
             {
-                throw std::runtime_error(std::format("Error loading u_errorName: ", dlerror()));
+                throw std::runtime_error(NSS("Error loading u_errorName: " << dlerror()));
             }
             this->unorm2_composePair_fn = reinterpret_cast<unorm2_composePair_t>(dlsym(uc_library_handle, VersionedName("unorm2_composePair", version).c_str()));
             if (!unorm2_composePair_fn)
             {
-                throw std::runtime_error(std::format("Error loading unorm2_composePair: ", dlerror()));
+                throw std::runtime_error(NSS("Error loading unorm2_composePair: " << dlerror()));
             }
             this->unorm2_getInstance_fn = reinterpret_cast<unorm2_getInstance_t>(dlsym(uc_library_handle, VersionedName("unorm2_getInstance", version).c_str()));
             if (!u_errorName_fn)
             {
-                throw std::runtime_error(std::format("Error loading unorm2_getInstance: ", dlerror()));
+                throw std::runtime_error(NSS("Error loading unorm2_getInstance: " << dlerror()));
             }
             this->unorm2_normalize_fn = reinterpret_cast<unorm2_normalize_t>(
                 dlsym(
@@ -317,7 +317,7 @@ private:
             );
             if (!unorm2_normalize_fn)
             {
-                throw std::runtime_error(std::format("Error loading unorm2_getInstance: ", dlerror()));
+                throw std::runtime_error(NSS("Error loading unorm2_getInstance: " << dlerror()));
             }
 
         }
@@ -543,12 +543,12 @@ namespace {
         normalizer = icuLoader->unorm2_getInstance_fn(nullptr, mode.c_str(), UNORM2_COMPOSE, &status);
         if (U_FAILURE(status))
         {
-            throw std::runtime_error(std::format("Failed to create normalizer: {}", icuLoader->u_errorName_fn(status)));
+            throw std::runtime_error(NSS("Failed to create normalizer: " << icuLoader->u_errorName_fn(status)));
         }
         denormalizer = icuLoader->unorm2_getInstance_fn(nullptr, mode.c_str(), UNORM2_DECOMPOSE, &status);
         if (U_FAILURE(status))
         {
-            throw std::runtime_error(std::format("Failed to create normalizer: {}", icuLoader->u_errorName_fn(status)));
+            throw std::runtime_error(NSS("Failed to create normalizer: " << icuLoader->u_errorName_fn(status)));
         }
     }
 
@@ -568,7 +568,7 @@ namespace {
 
         if (U_FAILURE(status) && status != U_BUFFER_OVERFLOW_ERROR)
         {
-            throw std::runtime_error(std::format("Failed to decompose string: {}", icuLoader->u_errorName_fn(status)));
+            throw std::runtime_error(NSS("Failed to decompose string: " << icuLoader->u_errorName_fn(status)));
         }
         std::u16string result;
         result.resize(count);
@@ -581,7 +581,7 @@ namespace {
 
         if (U_FAILURE(status))
         {
-            throw std::runtime_error(std::format("Failed to decompose string: {}", icuLoader->u_errorName_fn(status)));
+            throw std::runtime_error(NSS("Failed to decompose string: " << icuLoader->u_errorName_fn(status)));
         }
         return u16string_to_utf8(result);
 
@@ -596,7 +596,7 @@ namespace {
 
         if (U_FAILURE(status) && status != U_BUFFER_OVERFLOW_ERROR)
         {
-            throw std::runtime_error(std::format("Failed to decompose string: {}", icuLoader->u_errorName_fn(status)));
+            throw std::runtime_error(NSS("Failed to decompose string: " << icuLoader->u_errorName_fn(status)));
         }
         std::u16string result;
         result.resize(count);
@@ -609,7 +609,7 @@ namespace {
 
         if (U_FAILURE(status))
         {
-            throw std::runtime_error(std::format("Failed to decompose string: {}", icuLoader->u_errorName_fn(status)));
+            throw std::runtime_error(NSS("Failed to decompose string: " << icuLoader->u_errorName_fn(status)));
         }
         return result;
 
@@ -626,7 +626,7 @@ namespace {
 
         if (U_FAILURE(status) && status != U_BUFFER_OVERFLOW_ERROR)
         {
-            throw std::runtime_error(std::format("Failed to normalize string: {}", icuLoader->u_errorName_fn(status)));
+            throw std::runtime_error(NSS("Failed to normalize string: " << icuLoader->u_errorName_fn(status)));
         }
         std::u16string result;
         result.resize(count);
@@ -638,7 +638,7 @@ namespace {
 
         if (U_FAILURE(status))
         {
-            throw std::runtime_error(std::format("Failed to normalize string: {}", icuLoader->u_errorName_fn(status)));
+            throw std::runtime_error(NSS("Failed to normalize string: " << icuLoader->u_errorName_fn(status)));
         }
 
 
@@ -655,7 +655,7 @@ namespace {
 
         if (U_FAILURE(status) && status != U_BUFFER_OVERFLOW_ERROR)
         {
-            throw std::runtime_error(std::format("Failed to normalize string: {}", icuLoader->u_errorName_fn(status)));
+            throw std::runtime_error(NSS("Failed to normalize string: " << icuLoader->u_errorName_fn(status)));
         }
         std::u16string result;
         result.resize(count);
@@ -667,7 +667,7 @@ namespace {
 
         if (U_FAILURE(status))
         {
-            throw std::runtime_error(std::format("Failed to normalize string: {}", icuLoader->u_errorName_fn(status)));
+            throw std::runtime_error(NSS("Failed to normalize string: " << icuLoader->u_errorName_fn(status)));
         }
 
 
@@ -719,7 +719,7 @@ CollatorImpl::CollatorImpl(std::shared_ptr<LocaleImpl> localeImpl, const char* l
 
     if (U_FAILURE(status))
     {
-        throw std::runtime_error(std::format("Failed to create collator: {}", (int64_t)status));
+        throw std::runtime_error(NSS("Failed to create collator: " << (int64_t)status));
     }
     SetStrength(CollatorStrength::Primary);
 }
@@ -741,7 +741,7 @@ const char* CollatorImpl::GetLocale() const
     result = icuLoader->ucol_getLocaleByType_fn(this->collator, ULocDataLocaleType::ULOC_ACTUAL_LOCALE, &err);
     if (U_FAILURE(err))
     {
-        throw std::runtime_error(std::format("Failed to get locale: {}", icuLoader->u_errorName_fn(err)));
+        throw std::runtime_error(NSS("Failed to get locale: " << icuLoader->u_errorName_fn(err)));
     }
     return result;
 }

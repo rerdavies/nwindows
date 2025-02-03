@@ -27,8 +27,8 @@
 #include <locale>
 #include "Finally.hpp"
 #include <string>
-#include <format>
-#include "NWindows/NUtf8.hpp"
+#include <NWindows/nss.hpp>
+#include <NWindows/NUtf8.hpp>
 #include <iostream>
 
 #include "NWindows/NWindows.hpp"
@@ -68,7 +68,7 @@ void test_window()
 
                         NButtonElement::create("_Rendering")
                         | label_alignment(NAlignment::Start)
-                        | width(20)
+                        | width(24)
                         | on_clicked([windowRef = window->weak_ptr()](NMouseButton button, NClickedEventArgs& args) mutable {
                             args.handled = true;
                             rendering_test_window(windowRef.lock());
@@ -78,7 +78,7 @@ void test_window()
 
                         NButtonElement::create("_EditText Test")
                         | label_alignment(NAlignment::Start)
-                        | width(20)
+                        | width(24)
                         | on_clicked([windowRef = window->weak_ptr()](NMouseButton button, NClickedEventArgs& args) mutable {
                             args.handled = true;
                             edit_text_test_window(windowRef.lock());
@@ -88,10 +88,20 @@ void test_window()
 
                         NButtonElement::create("_Unicode Test")
                         | label_alignment(NAlignment::Start)
-                        | width(20)
+                        | width(24)
                         | on_clicked([windowRef = window->weak_ptr()](NMouseButton button, NClickedEventArgs& args) mutable {
                             args.handled = true;
                             unicode_test_window(windowRef.lock());
+                            })
+                    )
+                    | add_child(
+
+                        NButtonElement::create("ASCII Fallback Test")
+                        | label_alignment(NAlignment::Start)
+                        | width(24)
+                        | on_clicked([windowRef = window->weak_ptr()](NMouseButton button, NClickedEventArgs& args) mutable {
+                            args.handled = true;
+                            ascii_fallback_test_window(windowRef.lock());
                             })
                     )
                 )
@@ -100,7 +110,7 @@ void test_window()
 
                         NButtonElement::create("_Menu Test")
                         | label_alignment(NAlignment::Start)
-                        | width(20)
+                        | width(24)
                         | on_clicked([windowRef = window->weak_ptr()](NMouseButton button, NClickedEventArgs& args) mutable {
                             args.handled = true;
                             menu_test_window(windowRef.lock());
@@ -110,7 +120,7 @@ void test_window()
 
                         NButtonElement::create("_Box Test")
                         | label_alignment(NAlignment::Start)
-                        | width(20)
+                        | width(24)
                         | on_clicked([windowRef = window->weak_ptr()](NMouseButton button, NClickedEventArgs& args) mutable {
                             args.handled = true;
                             box_test_window(windowRef.lock());
@@ -120,12 +130,23 @@ void test_window()
 
                         NButtonElement::create("Error Handling")
                         | label_alignment(NAlignment::Start)
-                        | width(20)
+                        | width(24)
                         | on_clicked([windowRef = window->weak_ptr()](NMouseButton button, NClickedEventArgs& args) mutable {
                             args.handled = true;
                             error_test_window(windowRef.lock());
                             })
                     )
+                    | add_child(
+
+                        NButtonElement::create("Console Font Test")
+                        | label_alignment(NAlignment::Start)
+                        | width(24)
+                        | on_clicked([windowRef = window->weak_ptr()](NMouseButton button, NClickedEventArgs& args) mutable {
+                            args.handled = true;
+                            console_font_test_window(windowRef.lock());
+                            })
+                    )
+
                 )
             )
             | add_child(
@@ -158,7 +179,7 @@ int main(void)
     if (NElement::allocated_element_count() != 0)
     {
         std::cerr << "Allocated NElements: " << NElement::allocated_element_count() << std::endl;
-        throw std::runtime_error(std::format("{} Nelements not deleted.", NElement::allocated_element_count()));
+        throw std::runtime_error(NSS(NElement::allocated_element_count() << " Nelements not deleted."));
     }
 #endif
 

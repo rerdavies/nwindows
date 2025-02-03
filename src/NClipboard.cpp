@@ -112,7 +112,7 @@ namespace nwindows
 #include "unistd.h"
 #include <filesystem>
 #include <string>
-#include <format>
+#include "NWindows/nss.hpp"
 
 namespace nwindows
 {
@@ -160,7 +160,7 @@ namespace nwindows
         fs::path fullPath = findOnSystemPath(program);
         if (!fs::exists(fullPath))
         {
-            throw std::runtime_error(std::format("Path does not exist. {}",fullPath.string()));
+            throw std::runtime_error(NSS("Path does not exist. " << fullPath.string()));
         }
         std::stringstream s;
         s << fullPath.c_str() << " " << args << " 2>&1";
@@ -189,7 +189,7 @@ namespace nwindows
             return result;
         }
         else {
-            throw std::runtime_error(std::format("Failed to execute command. {}",fullCommand));
+            throw std::runtime_error(NSS("Failed to execute command. "  << fullCommand));
         }
 
     }

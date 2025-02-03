@@ -22,6 +22,7 @@
  */
 
 #include "tests.hpp"
+#include <iomanip>
 
 #ifndef DISPLAY_MOUSE_AND_KEYBOARD
 #define DISPLAY_MOUSE_AND_KEYBOARD 1
@@ -180,7 +181,7 @@ void rendering_test_window(NWindow::ptr parent_window)
                     horizontalStack->add_child(el);
                 }
                 horizontalStack->add_child(
-                    NTextElement::create(std::format("{} colors, {} pairs ", COLORS, COLOR_PAIRS)));
+                    NTextElement::create(NSS(COLORS << " colors, " <<COLOR_PAIRS << " pairs ")));
 
 
                 verticalStack->add_child(horizontalStack);
@@ -225,7 +226,7 @@ void rendering_test_window(NWindow::ptr parent_window)
 
                 window->on_mouse_move.subscribe([mouseElement](NMouseEventArgs& args) mutable
                     { mouseElement->text(
-                        std::format("{},{}", args.cursor_position.x, args.cursor_position.y)); });
+                        NSS(args.cursor_position.x << "," << args.cursor_position.y )); });
             }
 #endif
             {
@@ -337,16 +338,16 @@ void rendering_test_window(NWindow::ptr parent_window)
             {
                 std::string utf8Text = wstring_to_utf8(std::wstring(1, args.key));
                 if (args.key < 32) {
-                    utf8Text = " ";
+                    utf8Text = std::string(" "); // gcc 12.2 bug workaround.
                 }
-                keyIndicator->text(std::format("Key: '{}' {}", utf8Text, (int64_t)args.key));
+                keyIndicator->text(NSS("Key: '" << utf8Text << "' " << (int64_t)args.key));
             }
         );
 
         window->on_key_code.subscribe(
             [keyIndicator](NKeyCodeEventArgs& args) mutable
             {
-                keyIndicator->text(std::format("Keycode: 0{:o}", args.key_code));
+                keyIndicator->text(NSS("Keycode: 0" << std::oct << args.key_code));
             }
         );
 #endif

@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.16.0)
 project(nwindows
-    VERSION 0.0.1
+    VERSION 0.0.2
     DESCRIPTION "Modern Text User Interface Library for C++."
     HOMEPAGE_URL "https://rerdavies.github.io/nwindows/"
     LANGUAGES CXX
 )
-set(NWINDOWS_RELEASE_QUALIFIER "-beta1")
+set(NWINDOWS_RELEASE_QUALIFIER "-beta2")
 
 
 
@@ -29,8 +29,6 @@ configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/config/README.md"
     "${CMAKE_CURRENT_SOURCE_DIR}/README.md"
 )
-
-
 
 
 

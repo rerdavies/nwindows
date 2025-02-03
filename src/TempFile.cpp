@@ -8,10 +8,10 @@
  *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *   copies of the Software, and to permit persons to whom the Software is
  *   furnished to do so, subject to the following conditions:
- 
+
  *   The above copyright notice and this permission notice shall be included in all
  *   copies or substantial portions of the Software.
- 
+
  *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,23 +21,48 @@
  *   SOFTWARE.
  */
 
-#pragma once
+#include "TempFile.hpp"
 
-#include "nss.hpp"
+#include <unistd.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
-// Uses Semantic Versioning
-#define NWINDOWS_MAJOR_VERSION ${PROJECT_VERSION_MAJOR}
-#define NWINDOWS_MINOR_VERSION ${PROJECT_VERSION_MINOR}
-#define NWINDOWS_BUILD_NUMBER ${PROJECT_VERSION_PATCH}  // increments with each release
-#define NWINDOWS_RELEASE_QUALIFIER "${NWINDOWS_RELEASE_QUALIFIER}"
+using namespace nwindows;
 
-
-
-#define NWINDOWS_VERSION_STRING() \
-    NSS("NWindows " \
-        << NWINDOWS_MAJOR_VERSION \
-        << '.' << NWINDOWS_MINOR_VERSION\
-        << '.' << NWINDOWS_BUILD_NUMBER\
-        << NWINDOWS_RELEASE_QUALIFIER)
+#include <random>
+#include <sstream>
+#include <iomanip>
+#include <fstream>
 
 
+
+static std::random_device rd;
+static std::uniform_int_distribution<uint64_t> dist;
+
+
+
+std::filesystem::path TempFile::make_path(const std::string &extension)
+{
+
+
+    
+    std::filesystem::path tempDir = std::filesystem::temp_directory_path();
+    while (true)
+    {
+        uint64_t high = dist(rd);
+        uint64_t low = dist(rd);
+
+        std::stringstream ss;
+        ss.imbue(std::locale("C"));
+        ss << std::hex << high << std::hex << low << extension;
+
+        std::filesystem::path tempFile = tempDir / ss.str();
+        int f = open(tempFile.c_str(), O_CREAT | O_EXCL | O_RDWR, 0600);
+
+        if (f != -1)
+        {
+            close(f);
+            return tempFile;
+        }
+    }
+}

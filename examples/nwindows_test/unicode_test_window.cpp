@@ -30,7 +30,12 @@ void unicode_test_window(NWindow::ptr parentWindow /* = nullptr */)
     NTextElement::ptr keyIndicator;
 
     std::string oGrave = u32string_to_utf8(U"o\u0300");
-    auto boundsColor = window->make_color_pair(0xC0C0C0, 0x4040C0);
+    NColorPair boundsColor;
+    if (parentWindow && parentWindow->max_color_pairs() > 8) {
+        boundsColor = window->make_color_pair(0xC0C0C0, 0x4040C0);
+    } else {
+        boundsColor = window->make_color_pair(0xE00000, 0x000000);
+    }
     window
         | title("Unicode Tests")
         | add_child(
@@ -55,8 +60,10 @@ void unicode_test_window(NWindow::ptr parentWindow /* = nullptr */)
                 )
                 | add_child(
                     NVerticalStackElement::create()
+                    | alignment(NAlignment::Start)
                     | add_child(NTextElement::create("🛟") | color(boundsColor))
-                    | add_child(NTextElement::create("🛟🛟") | color(boundsColor))
+                    | add_child(NTextElement::create("🛟🛟") | color(boundsColor)) 
+                    | add_child(NTextElement::create("🛟🛟🛟") | color(boundsColor))
                     | add_child(NTextElement::create("🛟🛟🛟") | color(boundsColor))
                     | add_child(
                         NTextElement::create("세계를 향한 대화, 유니코드로 하십시오.")
@@ -67,10 +74,12 @@ void unicode_test_window(NWindow::ptr parentWindow /* = nullptr */)
                 )
                 | add_child(
                     NVerticalStackElement::create()
+                    | alignment(NAlignment::Start)
                     | add_child(NTextElement::create("🦋🦋🦋") | color(boundsColor) | width(2))
                     | add_child(NTextElement::create("🦋🦋🦋") | color(boundsColor) | width(3))
                     | add_child(NTextElement::create("🦋🦋🦋") | color(boundsColor) | width(4))
-                    | add_child(NTextElement::create("🩷💛") | color(boundsColor) | width(AUTO_SIZE) | alignment(NAlignment::Center))
+                    | add_child(NTextElement::create(" 🦋🦋🦋") | color(boundsColor) | width(6))
+                    | add_child(NTextElement::create("💛") | color(boundsColor) | width(AUTO_SIZE) | width(5) | alignment(NAlignment::Center))
                     | add_child(NTextElement::create("👋🏽👋👋🏿") | color(boundsColor) | width(AUTO_SIZE) | alignment(NAlignment::Center))
                 )
                 | add_child(

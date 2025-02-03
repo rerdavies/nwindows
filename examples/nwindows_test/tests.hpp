@@ -34,3 +34,5 @@ void dialog_test_window(NWindow::ptr parentWindow = nullptr);
 void popup_menu_test_window(NWindow::ptr parentWindow = nullptr);
 void menu_test_window(NWindow::ptr parentWindow = nullptr);
 void error_test_window(NWindow::ptr parentWindow = nullptr);
+void ascii_fallback_test_window(NWindow::ptr parentWindow = nullptr );
+void console_font_test_window(NWindow::ptr parentWindow = nullptr );

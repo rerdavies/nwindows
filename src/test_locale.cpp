@@ -26,7 +26,7 @@
 #include <iostream>
 #include "NWindows/NUnicodeServices.hpp"
 #include "NWindows/NUtf8.hpp"
-#include <format>
+#include "NWindows/nss.hpp"
 
 using namespace std;
 using namespace nwindows;
@@ -74,9 +74,9 @@ void test_collation(const char* locale, const std::string& left, const std::stri
     wcout << L"  " << locale << " " << utf8_to_wstring(left) << " == " << utf8_to_wstring(right) << ": " << (result == 0) << endl;
     if (expected != (result == 0))
     {
-        throw std::runtime_error(std::format(
-            "Collation test faled: {} {} == {} expected {} got {}",
-            locale, left, right, expected, (result == 0)));
+        throw std::runtime_error(NSS(
+            "Collation test faled: " << locale << " " << left << " " << right  << " expected " << expected << " got " << (result == 0)
+            ));
     }
 }
 

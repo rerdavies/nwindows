@@ -8,10 +8,10 @@
  *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *   copies of the Software, and to permit persons to whom the Software is
  *   furnished to do so, subject to the following conditions:
- 
+
  *   The above copyright notice and this permission notice shall be included in all
  *   copies or substantial portions of the Software.
- 
+
  *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,24 +20,23 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *   SOFTWARE.
  */
-
 #pragma once
+#include <memory>
+#include "NWindows/NoCopyNoMove.hpp"
 
-#include "nss.hpp"
-
-// Uses Semantic Versioning
-#define NWINDOWS_MAJOR_VERSION ${PROJECT_VERSION_MAJOR}
-#define NWINDOWS_MINOR_VERSION ${PROJECT_VERSION_MINOR}
-#define NWINDOWS_BUILD_NUMBER ${PROJECT_VERSION_PATCH}  // increments with each release
-#define NWINDOWS_RELEASE_QUALIFIER "${NWINDOWS_RELEASE_QUALIFIER}"
-
-
-
-#define NWINDOWS_VERSION_STRING() \
-    NSS("NWindows " \
-        << NWINDOWS_MAJOR_VERSION \
-        << '.' << NWINDOWS_MINOR_VERSION\
-        << '.' << NWINDOWS_BUILD_NUMBER\
-        << NWINDOWS_RELEASE_QUALIFIER)
+namespace nwindows::internal
+{
+    // patches checkbox characters into EGA/VGA fonts when running on TTYs.
+    class ConsoleFontManager : public NoCopyNoMove
+    {
+    protected:
+        ConsoleFontManager();
+    public:
+        virtual ~ConsoleFontManager();
+        using self = ConsoleFontManager;
+        using ptr = std::shared_ptr<self>;
+        static ptr create();
+    };
+}
 
 

@@ -26,6 +26,7 @@
 #include "Finally.hpp"
 #include <iostream>
 #include <ncurses.h>
+#include <fstream>
 #include <sstream>
 #include <signal.h>
 #include <string.h>
@@ -38,9 +39,15 @@
 #include <termios.h>
 #include <locale>
 #include "NWindows/NUnicodeServices.hpp"
+#include <filesystem>
+#include <cstdlib>
+#include <NWindows/ConsoleFont.hpp>
+#include "ConsoleFontManager.hpp"
 
 using namespace nwindows;
+using namespace nwindows::internal;
 using namespace nwindows::private_elements;
+
 
 static std::string menu_item_shortcut(const std::string& text)
 {
@@ -564,6 +571,11 @@ bool NWindow::handle_window_key_code(int key)
 
 }
 
+static void sys_clear()
+{
+    int ignored = system("clear");
+    (void)ignored; 
+}
 void NWindow::run()
 {
     if (parent_window_ != nullptr)
@@ -681,15 +693,26 @@ void NWindow::run()
         {
             // ignore.
         }
-        std::cerr << std::format("Error: Unhandled exception. {}", e.what()) << std::endl;
+        // execute clear command.
+
+
+        sys_clear();
+        this->console_font_manager_ = nullptr;
+
+        std::cerr << "Error: Unhandled exception. " << e.what() << std::endl;
         exit(EXIT_FAILURE);
     }
     if (fatal_error_message_.length() > 0)
     {
+        sys_clear();
+        this->console_font_manager_ = nullptr;
+
         std::wstring wMessage = utf8_to_wstring(fatal_error_message_);
         std::wcerr << wMessage << std::endl;
         exit(EXIT_FAILURE);
     }
+    sys_clear();
+
 }
 
 bool NWindow::handle_default_button() {
@@ -768,8 +791,24 @@ void NWindow::close()
 
         if (curses_window_)
         {
+
+
+            try {
+                // eliminate red color flash as palette changes during shutdown.
+                if (color_palette_->DesktopBackground != color_palette_->Black) {
+                    if (max_colors_ > 8) {
+                        auto defaultColor = make_color_pair(color_palette_->White, color_palette_->Black);
+                        wbkgd(root_curses_window_, defaultColor.attribute());
+                    }
+                }
+            }
+            catch (const std::exception& ignore)
+            {
+                (void)ignore; // ran out of colors? ignore.
+            }
+
             clear_window();
-            //q restore_colors();
+
             del_panel(curses_panel_);
             delwin(curses_window_);
 
@@ -780,6 +819,7 @@ void NWindow::close()
             endwin(); /* End curses mode		  */
             curses_window_ = nullptr;
             curses_panel_ = nullptr;
+            this->console_font_manager_ = nullptr; // restore the console font if we changed it.
         }
         this->quit_ = true;
     }
@@ -817,8 +857,8 @@ NRect NWindow::calculate_window_position(int max_width, int max_height)
             // autosize the window.
             NSize available = { width(),height() };
             available = measure(available);
-            measured_.width  = std::max(0,available.width);
-            measured_.height = std::max(0,available.height);
+            measured_.width = std::max(0, available.width);
+            measured_.height = std::max(0, available.height);
         }
         else {
             measured_.width = width();
@@ -827,7 +867,7 @@ NRect NWindow::calculate_window_position(int max_width, int max_height)
     }
     bounds.width = measured_.width;
     bounds.height = measured_.height;
-    
+
     if (bounds.x == AUTO_SIZE)
     {
         bounds.x = (max_width - bounds.width) / 2;
@@ -1262,6 +1302,19 @@ void NWindow::init_root_window()
 
 
     ESCDELAY = 25;
+
+    // must be called before ncurses initstr().
+    this->console_font_manager_ = ConsoleFontManager::create();
+    this->console_font_ = ConsoleFont::create();
+    if (this->console_font_->can_get_console_font())
+    {
+        this->console_font_->get_console_font(); // most importantly, the unicode maps
+    }
+    else {
+        this->console_font_ = nullptr;
+    }
+
+
     root_curses_window_ = initscr(); /* Start curses mode 		  */
     if (root_curses_window_ == nullptr)
     {
@@ -1284,8 +1337,10 @@ void NWindow::init_root_window()
         init_color(COLOR_WHITE, color_palette_->White);
 
         if (color_palette_->DesktopBackground != color_palette_->Black) {
-            auto desktopColor = make_color_pair(color_palette_->DesktopBackground, color_palette_->DesktopBackground);
-            wbkgd(root_curses_window_, desktopColor.attribute());
+            if (max_colors_ > 8) {
+                auto desktopColor = make_color_pair(color_palette_->DesktopBackground, color_palette_->DesktopBackground);
+                wbkgd(root_curses_window_, desktopColor.attribute());
+            }
         }
 
 
@@ -4486,44 +4541,168 @@ void NRadioGroupElement::unchecked_text(const std::string& value) {
 }
 
 
+
 std::string NCheckboxElement::checked_text() const {
     if (!checked_text_.empty())
     {
         return checked_text_;
     }
-    if (window() && window()->is_unicode_locale())
+    if (window() && has_unicode_unchecked_text())
     {
-        return " 🗹  "; // ☑
+        if (window()->console_font())
+        {
+            return " ☑  "; //☑
+        }
+        if (window()->can_display_character(L'🗹'))
+        {
+            return " 🗹  ";
+        }
+        if (window()->can_display_character(L'☑'))
+        {
+            return " ☑  ";
+        }
     }
-    else {
-        return " [X] ";
-    }
-    return label_;
+    return " [X] ";
 }
+
+static bool g_checked_raspberry_pi = false;
+static bool g_use_raspberry_pi_fallback = false;
+
+static bool use_raspberry_pi_fallback() {
+    if (!g_checked_raspberry_pi)
+    {
+        g_checked_raspberry_pi = true;
+
+        // Are we running in raspi lxterminal?
+                // GIO_LAUNCHED_DESKTOP_FILE=/usr/share/raspi-ui-overrides/applications/lxterminal.desktop
+        const char* term = std::getenv("GIO_LAUNCHED_DESKTOP_FILE");
+        g_use_raspberry_pi_fallback = false;
+        if (term && strcmp(term, "/usr/share/raspi-ui-overrides/applications/lxterminal.desktop") == 0)
+        {
+            // is lxterminal using a bad font?
+            const char* homeEnv = std::getenv("HOME");
+            std::filesystem::path fileName = std::filesystem::path(homeEnv) / ".config/lxterminal/lxterminal.conf";
+            std::ifstream file(fileName);
+            if (file.is_open()) {
+                std::string line;
+                while (std::getline(file, line))
+                {
+                    if (line.starts_with("fontname="))
+                    {
+                        if (line.find("=Monospace ") != std::string::npos)
+                        {
+                            g_use_raspberry_pi_fallback = true;
+                        }
+                        break;
+                    }
+                }
+
+            }
+
+        }
+
+    }
+    return g_use_raspberry_pi_fallback;
+}
+
+
+bool NCheckboxElement::has_unicode_checked_text() const
+{
+    if (!window()) return false;
+
+    if (window()->can_display_character(L'🗹'))
+    {
+        return true;
+    }
+    if (window()->can_display_character(L'☑'))
+    {
+        return true;
+    }
+    return false;
+
+}
+bool NCheckboxElement::has_unicode_unchecked_text() const
+{
+    if (!window()) return false;
+    if (use_raspberry_pi_fallback() && (!window()->console_font()))
+    {
+        return true;
+    }
+    if (window()->can_display_character(L'□'))
+    {
+        return true;
+    }
+    if (window()->can_display_character(L'☐'))
+    {
+        return true;
+    }
+    return false;
+}
+
 std::string NCheckboxElement::unchecked_text() const
 {
     if (!unchecked_text_.empty())
     {
         return unchecked_text_;
     }
-    if (window() && window()->is_unicode_locale())
+    if (window() && has_unicode_checked_text())
     {
-        return " ☐  ";
+        if (window()->console_font())
+        {
+            return " ☐  "; // u2610
+        }
+        if (use_raspberry_pi_fallback() && (!window()->console_font()))
+        {
+            return " □  ";
+        }
+        if (window()->can_display_character(L'☐'))
+        {
+            return " ☐  ";
+        }
+        if (window()->can_display_character(L'□'))
+        {
+            return " □  ";
+        }
     }
-    else {
-        return " [ ] ";
-    }
-    return label_;
+    return " [ ] ";
 }
+
+bool NRadioGroupElement::has_unicode_checked_text() const
+{
+    if (!window()) return false;
+    if (window()->can_display_character(L'◉'))
+    {
+        return true;
+    }
+    if (window()->can_display_character(L'●'))
+
+    {
+        return true;
+    }
+    return false;
+
+}
+
 
 std::string NRadioGroupElement::checked_text() const {
     if (!checked_text_.empty())
     {
         return checked_text_;
     }
-    if (window() && window()->is_unicode_locale())
+    if (has_unicode_unchecked_text())
     {
-        return " ◉  ";
+        if (window()->console_font())
+        {
+            return " ●  ";
+        }
+        if (window()->can_display_character(L'◉'))
+        {
+            return " ◉  ";
+        }
+        if (window()->can_display_character(L'●'))
+        {
+            return " ●  ";
+        }
     }
     else {
         return " (X) ";
@@ -4531,19 +4710,33 @@ std::string NRadioGroupElement::checked_text() const {
 
     return checked_text_;
 }
+
+bool NRadioGroupElement::has_unicode_unchecked_text() const
+{
+    if (!window()) return false;
+    if (window()->can_display_character(L'○'))
+    {
+        return true;
+    }
+    return false;
+
+
+}
+
+
 std::string  NRadioGroupElement::unchecked_text() const {
     if (!unchecked_text_.empty())
     {
         return unchecked_text_;
     }
-    if (window() && window()->is_unicode_locale())
+    if (has_unicode_checked_text())
     {
-        return " ○  ";
+        if (window()->can_display_character(L'○'))
+        {
+            return " ○  ";
+        }
     }
-    else {
-        return " ( ) ";
-    }
-    return unchecked_text_;
+    return " ( ) ";
 }
 
 void NRadioGroupElement::disabled(bool value)
@@ -4703,7 +4896,7 @@ std::string NDropdownElement::suffix() const
     {
         return suffix_;
     }
-    if (window() && window()->is_unicode_locale())
+    if (window() && window()->can_display_character(L'⏷'))
     {
         return " ⏷ ";
     }
@@ -5568,22 +5761,22 @@ void NPopupMenuWindow::handle_cancelled()
 static const std::string CHECKMARK_PREFIX = " ✓ ";
 static const std::string ASCII_CHECKMARK_PREFIX = " X ";
 
-static std::string checkmark_prefix(bool is_unicode) {
-    if (is_unicode)
+static std::string checkmark_prefix(NWindow* window) {
+    if (window->can_display_character(L'✓'))
     {
         return CHECKMARK_PREFIX;
     }
     return ASCII_CHECKMARK_PREFIX;
 }
-int NPopupMenuWindow::measure_prefix(const NMenuItem& item, bool is_unicode_locale)
+int NPopupMenuWindow::measure_prefix(std::shared_ptr<NWindow> window, const NMenuItem& menuItem)
 {
-    if (item.display_check)
+    if (menuItem.display_check)
     {
-        return this->measure_text(checkmark_prefix(is_unicode_locale));
+        return measure_text(checkmark_prefix(this));
     }
-    else if (item.icon.length() != 0)
+    else if (menuItem.icon.length() != 0)
     {
-        return this->measure_text(item.icon) + 2;
+        return measure_text(menuItem.icon) + 2;
     }
     else {
         return 1;
@@ -5608,7 +5801,7 @@ void NPopupMenuWindow::Init(NWindow::ptr parentWindow, const std::vector<NMenuIt
 
     int prefixWidth = 0;
     for (auto& item : menu_items) {
-        prefixWidth = std::max(prefixWidth, measure_prefix(item, parentWindow->is_unicode_locale()));
+        prefixWidth = std::max(prefixWidth, measure_prefix(parentWindow, item));
     }
 
     for (auto& item : menu_items)
@@ -5664,7 +5857,7 @@ void NPopupMenuWindow::Init(NWindow::ptr parentWindow, const std::vector<NMenuIt
             if (item.display_check) {
                 if (item.checked)
                 {
-                    prefix = checkmark_prefix(parentWindow->is_unicode_locale());
+                    prefix = checkmark_prefix(parentWindow.get());
                 }
             }
             else if (item.icon.length() != 0)
@@ -5773,9 +5966,9 @@ void NSubmenuMenuItemElement::open(bool value)
                     if (this_)
                     {
                         this_->on_cancelled.fire(this_);
+                        this_->popup_window_ = nullptr; // don't call close()
+                        this_->open(false);
                     }
-                    this_->popup_window_ = nullptr; // don't call close()
-                    this_->open(false);
                 }
             );
         }
@@ -5795,7 +5988,7 @@ void NSubmenuMenuItemElement::open(bool value)
 void NSubmenuMenuItemElement::handle_attached(NWindow* window)
 {
     super::handle_attached(window);
-    if (window->is_unicode_locale())
+    if (window->can_display_character(L'⏵'))
     {
         this->suffix(" ⏵ ");
     }
@@ -6026,23 +6219,24 @@ NMessageWindow::ptr NMessageWindow::create(
 
 void NMessageWindow::init(NWindow::ptr parent_window, NMessageType message_type, const std::string& message, int text_block_width)
 {
-    if (parent_window->is_unicode_locale())
+    std::string iconText;
+
+    switch (message_type)
+    {
+    case NMessageType::Error:
+        iconText = "🛑︎\uFE0E"; // (\uFe0E = display b&w variant)
+        break;
+    case NMessageType::Warning:
+        iconText = "⚠️";
+        break;
+    case NMessageType::Info:
+        iconText = "🛈";
+        break;
+    }
+
+    if (parent_window->can_display_character(utf8_char32_at(iconText,0)))
     {
         // with an icon.
-        std::string iconText;
-
-        switch (message_type)
-        {
-        case NMessageType::Error:
-            iconText = "🛑︎\uFE0E"; // (\uFe0E = display b&w variant)
-            break;
-        case NMessageType::Warning:
-            iconText = "⚠️";
-            break;
-        case NMessageType::Info:
-            iconText = "🛈";
-            break;
-        }
 
         this->add_child(
             NVerticalStackElement::create()
@@ -6124,8 +6318,19 @@ bool NWindow::can_display_character(char32_t c) const
 {
     // Figure out whether wcwidth() works on Windows for emoji (and other extended unicode characters)
     // or figure out an alternative.
-    static_assert(sizeof(char32_t) == sizeof(wchar_t), "wchar_t must be 32 bits");
-    return wcwidth((wchar_t)c) != -1;
+    static_assert(sizeof(char32_t) == sizeof(wchar_t), "wchar_t is not 32 bits");
+
+    if (this->console_font_) {
+        if (c >= (char32_t)0xF000 && c < (char32_t)0xF200)
+        {
+            size_t glyph = (size_t)(c - 0xF0000);
+            return glyph < this->console_font_->glyph_count();
+        }
+        return this->console_font_->is_valid_character(c);
+    }
+    if (wcwidth((wchar_t)c) == -1) return false;
+
+    return true;
 }
 
 

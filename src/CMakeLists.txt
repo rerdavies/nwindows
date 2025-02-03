@@ -12,18 +12,28 @@ add_library(nwindows
     include/NWindows/NUtf8.hpp
     include/NWindows/NEvent.hpp
     include/NWindows/NUnicodeServices.hpp
+    include/NWindows/nss.hpp
+    include/NWindows/ConsoleFont.hpp
+    include/NWindows/NoCopyNoMove.hpp
     PrivateElements.hpp
     NWindows.cpp
     NUnicodeServices.cpp
     NUnicodeServices.cpp
     NUtf8.cpp
     NClipboard.cpp
+    TempFile.cpp TempFile.hpp
+    ConsoleFontManager.hpp
+    ConsoleFontManager.cpp
+    ConsoleFont.cpp
+
+    SyntheticCharacters.hpp
+    SyntheticCharacters.cpp
 )
 set_target_properties(
     nwindows 
     PROPERTIES
         PUBLIC_HEADER 
-            "include/NWindows/NClipboard.hpp;include/NWindows/NWindows.hpp;include/NWindows/NUtf8.hpp;include/NWindows/NEvent.hpp;include/NWindows/NUnicodeServices.hpp"
+            "include/NWindows/NoCopyNoMove.hpp;include/NWindows/nss.hpp;include/NWindows/NClipboard.hpp;include/NWindows/NWindows.hpp;include/NWindows/NUtf8.hpp;include/NWindows/NEvent.hpp;include/NWindows/NUnicodeServices.hpp"
 )
 
 set_property(TARGET nwindows PROPERTY POSITION_INDEPENDENT_CODE ON) # -fPic on GCC.
@@ -63,6 +73,16 @@ target_link_libraries(
     locale_test PRIVATE
     nwindows
 )
+
+add_executable(console_font_test 
+    ConsoleFontTest.cpp
+    CommandLineParser.cpp CommandLineParser.hpp
+)
+target_link_libraries (
+    console_font_test PRIVATE
+    nwindows
+)   
+
 
 INSTALL(TARGETS nwindows
     LIBRARY DESTINATION lib

@@ -5,7 +5,7 @@
 [![Documentation](https://img.shields.io/badge/documentation-Examples-blue)](https://github.com/rerdavies/nwindows/tree/main/examples)
 <!--[![Documentation](https://img.shields.io/badge/documentation-Release%20Notes-blue)](https://reravies.github.io/nwindows/) -->
 
-*0.0.1-beta1*
+*0.0.2-beta2*
 
 The *NWindows* library is a C++ text user interface (TUI) library for building console applications on Linux.
 The library uses elements to compose user interfaces using an innovative and concise manipulator system. The library provides a rich set of elements with which to build user interfaces.
