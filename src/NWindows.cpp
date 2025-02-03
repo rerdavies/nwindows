@@ -790,8 +790,24 @@ void NWindow::close()
 
         if (curses_window_)
         {
+
+
+            try {
+                // eliminate red color flash as palette changes during shutdown.
+                if (color_palette_->DesktopBackground != color_palette_->Black) {
+                    if (max_colors_ > 8) {
+                        auto defaultColor = make_color_pair(color_palette_->White, color_palette_->Black);
+                        wbkgd(root_curses_window_, defaultColor.attribute());
+                    }
+                }
+            }
+            catch (const std::exception& ignore)
+            {
+                (void)ignore; // ran out of colors? ignore.
+            }
+
             clear_window();
-            //q restore_colors();
+
             del_panel(curses_panel_);
             delwin(curses_window_);
 
@@ -1320,8 +1336,10 @@ void NWindow::init_root_window()
         init_color(COLOR_WHITE, color_palette_->White);
 
         if (color_palette_->DesktopBackground != color_palette_->Black) {
-            auto desktopColor = make_color_pair(color_palette_->DesktopBackground, color_palette_->DesktopBackground);
-            wbkgd(root_curses_window_, desktopColor.attribute());
+            if (max_colors_ > 8) {
+                auto desktopColor = make_color_pair(color_palette_->DesktopBackground, color_palette_->DesktopBackground);
+                wbkgd(root_curses_window_, desktopColor.attribute());
+            }
         }
 
 
@@ -4630,7 +4648,7 @@ std::string NCheckboxElement::unchecked_text() const
     {
         if (window()->console_font())
         {
-           return " ☐  "; // u2610
+            return " ☐  "; // u2610
         }
         if (use_raspberry_pi_fallback() && (!window()->console_font()))
         {
@@ -5742,22 +5760,22 @@ void NPopupMenuWindow::handle_cancelled()
 static const std::string CHECKMARK_PREFIX = " ✓ ";
 static const std::string ASCII_CHECKMARK_PREFIX = " X ";
 
-static std::string checkmark_prefix(bool is_unicode) {
-    if (is_unicode)
+static std::string checkmark_prefix(NWindow* window) {
+    if (window->can_display_character(L'✓'))
     {
         return CHECKMARK_PREFIX;
     }
     return ASCII_CHECKMARK_PREFIX;
 }
-int NPopupMenuWindow::measure_prefix(const NMenuItem& item, bool is_unicode_locale)
+int NPopupMenuWindow::measure_prefix(std::shared_ptr<NWindow> window, const NMenuItem& menuItem)
 {
-    if (item.display_check)
+    if (menuItem.display_check)
     {
-        return this->measure_text(checkmark_prefix(is_unicode_locale));
+        return measure_text(checkmark_prefix(this));
     }
-    else if (item.icon.length() != 0)
+    else if (menuItem.icon.length() != 0)
     {
-        return this->measure_text(item.icon) + 2;
+        return measure_text(menuItem.icon) + 2;
     }
     else {
         return 1;
@@ -5782,7 +5800,7 @@ void NPopupMenuWindow::Init(NWindow::ptr parentWindow, const std::vector<NMenuIt
 
     int prefixWidth = 0;
     for (auto& item : menu_items) {
-        prefixWidth = std::max(prefixWidth, measure_prefix(item, parentWindow->is_unicode_locale()));
+        prefixWidth = std::max(prefixWidth, measure_prefix(parentWindow, item));
     }
 
     for (auto& item : menu_items)
@@ -5838,7 +5856,7 @@ void NPopupMenuWindow::Init(NWindow::ptr parentWindow, const std::vector<NMenuIt
             if (item.display_check) {
                 if (item.checked)
                 {
-                    prefix = checkmark_prefix(parentWindow->is_unicode_locale());
+                    prefix = checkmark_prefix(parentWindow.get());
                 }
             }
             else if (item.icon.length() != 0)
@@ -5947,9 +5965,9 @@ void NSubmenuMenuItemElement::open(bool value)
                     if (this_)
                     {
                         this_->on_cancelled.fire(this_);
+                        this_->popup_window_ = nullptr; // don't call close()
+                        this_->open(false);
                     }
-                    this_->popup_window_ = nullptr; // don't call close()
-                    this_->open(false);
                 }
             );
         }
@@ -5969,7 +5987,7 @@ void NSubmenuMenuItemElement::open(bool value)
 void NSubmenuMenuItemElement::handle_attached(NWindow* window)
 {
     super::handle_attached(window);
-    if (window->is_unicode_locale())
+    if (window->can_display_character(L'⏵'))
     {
         this->suffix(" ⏵ ");
     }
@@ -6200,23 +6218,24 @@ NMessageWindow::ptr NMessageWindow::create(
 
 void NMessageWindow::init(NWindow::ptr parent_window, NMessageType message_type, const std::string& message, int text_block_width)
 {
-    if (parent_window->is_unicode_locale())
+    std::string iconText;
+
+    switch (message_type)
+    {
+    case NMessageType::Error:
+        iconText = "🛑︎\uFE0E"; // (\uFe0E = display b&w variant)
+        break;
+    case NMessageType::Warning:
+        iconText = "⚠️";
+        break;
+    case NMessageType::Info:
+        iconText = "🛈";
+        break;
+    }
+
+    if (parent_window->can_display_character(utf8_char32_at(iconText,0)))
     {
         // with an icon.
-        std::string iconText;
-
-        switch (message_type)
-        {
-        case NMessageType::Error:
-            iconText = "🛑︎\uFE0E"; // (\uFe0E = display b&w variant)
-            break;
-        case NMessageType::Warning:
-            iconText = "⚠️";
-            break;
-        case NMessageType::Info:
-            iconText = "🛈";
-            break;
-        }
 
         this->add_child(
             NVerticalStackElement::create()

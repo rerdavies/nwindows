@@ -56,7 +56,7 @@ void test_font(
             << " characters: " << font->character_count()
             << " map: " << (font->has_unicode_map() ? "yes" : "no")
             << " extra: " << (font->extra_bytes());
-        std::u32string sacrificialCharacters = ::nwindows::internal::get_sacrificial_characters(font, 4);
+        std::u32string sacrificialCharacters = ::nwindows::internal::get_sacrificial_characters(font, 6);
         std::cout << " sac: " << u32string_to_utf8(sacrificialCharacters) << std::endl; 
 
         std::cout << std::endl;

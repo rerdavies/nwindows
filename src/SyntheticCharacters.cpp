@@ -466,6 +466,36 @@ static std::vector<uint8_t> make_dropdown(
     }
     return bitmap.data();
 }
+static std::vector<uint8_t> make_flyout(
+    const std::vector<uint8_t>& copyrData,
+    size_t char_width,
+    size_t char_height)
+{
+    MonoBitmap bitmap(copyrData, char_width, char_height);
+    CopyrightDimensions info = get_copyright_dimensions(bitmap);
+
+    bitmap.clear();
+
+    int cx = (info.outer.left()*2 + info.outer.right())/3;
+    int cy = (info.outer.top() + info.outer.bottom())/2;
+    for (int ix = 0; ix < (int)char_width; ++ix)
+    {
+        if (ix >= cx) 
+        {
+            int x0 = ix-cx;
+            x0 = info.outer.width/2-x0;
+            int top0 = std::max(0,cy-x0);
+            int top1 = std::min((int)char_height,cy + x0);
+
+            for (int iy = top0; iy < top1; ++iy)
+            {
+                bitmap.set(ix,iy,true);
+            }
+        }
+    }
+    return bitmap.data();
+}
+
 static std::vector<uint8_t> make_radio_button_unchecked(
     const std::vector<uint8_t>& copyrData,
     size_t char_width,
@@ -528,9 +558,10 @@ void ::nwindows::internal::add_synthetic_characters(ConsoleFont::ptr font)
     char32_t CHECKBOX_CHECKED_CHAR = L'\u2611'; // ☑
     char32_t CHECKBOX_UNCHECKED_CHAR = L'\u2610'; //☐
     char32_t DROPDOWN_CHAR = L'⏷'; // ⏷
+    char32_t FLYOUT_CHAR = L'⏵'; // ⏵
 
 
-    auto sacrificial_characters = get_sacrificial_characters(font, 5);
+    auto sacrificial_characters = get_sacrificial_characters(font, 6);
 
     // use copyright symbol as a template for constructing the new characters.
     size_t copyrIndex = font->get_glyph_position(U'\u00A9').value();
@@ -541,12 +572,14 @@ void ::nwindows::internal::add_synthetic_characters(ConsoleFont::ptr font)
     auto checkboxChecked = make_checkbox_checked(copyrData, font->char_width(), font->char_height());
     auto checkboxUnchecked = make_checkbox_unchecked(copyrData, font->char_width(), font->char_height());
     auto dropdown = make_dropdown(copyrData, font->char_width(), font->char_height());
+    auto flyout = make_flyout(copyrData, font->char_width(), font->char_height());
 
     replace_character(font, sacrificial_characters[0], RADIO_BUTTON_CHECKED_CHAR, radioButtonChecked);
     replace_character(font, sacrificial_characters[1], RADIO_BUTTON_UNCHECKED_CHAR, radioButtonUnchecked);
     replace_character(font, sacrificial_characters[2], CHECKBOX_CHECKED_CHAR, checkboxChecked);
     replace_character(font, sacrificial_characters[3], CHECKBOX_UNCHECKED_CHAR, checkboxUnchecked);
     replace_character(font, sacrificial_characters[4], DROPDOWN_CHAR, dropdown);
+    replace_character(font, sacrificial_characters[5], FLYOUT_CHAR, flyout);
 }
 
 

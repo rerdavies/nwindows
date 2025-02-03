@@ -73,19 +73,11 @@ protected:
         return { 2,1 };
     }
     virtual void render() override {
-        cchar_t ch;
-        memset(&ch,0,sizeof(ch));
-        ch.chars[0] = this->c;
-        ch.chars[1] = 0;
-
-        bool valid = wadd_wch(stdscr,&ch) != ERR;
+        bool valid = window()->can_display_character(this->c);
         move(0,0);
         wchar_t str[2] = {this->c,0};
         if (!valid) {
             str[0] = L'X';
-        }
-        if (ch.chars[0] != this->c) {
-            str[0] = L'?';
         }
         print(str);
     }
@@ -184,7 +176,7 @@ void ascii_fallback_test_window(NWindow::ptr parentWindow /* = nullptr */)
             | margin({ 2,1,2,1 })
             | row_gap(1)
             | add_child(
-                NTextElement::create("Fallbacks only occur on non-Unicode terminals. ◉●○🗹□☑☐")
+                NTextElement::create("Fallbacks only occur on non-Unicode terminals. ●○ ☑☐ ⏵⏷ ◉🗹□")
                 | wrap_text()
             )
             | add_child(

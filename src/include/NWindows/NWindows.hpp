@@ -1424,7 +1424,6 @@ namespace nwindows
 
         // same locale string as std::setlocale
         static void set_locale(const std::string& locale);
-        bool is_unicode_locale() const { return is_unicode_locale_; }
         bool can_display_character(char32_t c) const;
 
         std::shared_ptr<ConsoleFont> console_font() const { return this->top_level_window()->console_font_; } 
@@ -1616,6 +1615,9 @@ namespace nwindows
         virtual void render() override;
 
     private:
+
+        bool is_unicode_locale() const { return is_unicode_locale_; }
+
         std::shared_ptr<internal::ConsoleFontManager> console_font_manager_;
 
         std::string fatal_error_message_;
@@ -1946,7 +1948,7 @@ namespace nwindows
         virtual void handle_cancelled();
 
     private:
-        int measure_prefix(const NMenuItem& menuItem, bool isUnicodeLocale);
+        int measure_prefix(std::shared_ptr<NWindow> window, const NMenuItem& menuItem);
         bool was_item_selected_ = false;
 
     };
